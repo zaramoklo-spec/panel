@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../data/models/device.dart';
 import '../../../data/repositories/device_repository.dart';
+import '../../../presentation/providers/device_provider.dart';
 import 'tabs/device_info_tab.dart';
 import 'tabs/device_sms_tab.dart';
 import 'tabs/device_contacts_tab.dart';
@@ -26,6 +28,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   late Device _currentDevice;
   final DeviceRepository _repository = DeviceRepository();
   bool _isRefreshing = false;
+  bool _isPinging = false;
 
   @override
   void initState() {
@@ -102,6 +105,87 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     }
   }
 
+  Future<void> _handlePingDevice() async {
+    if (_isPinging) return;
+
+    setState(() => _isPinging = true);
+
+    final deviceProvider = context.read<DeviceProvider>();
+
+    try {
+      final success = await deviceProvider.sendCommand(
+        _currentDevice.deviceId,
+        'ping',
+        parameters: {'type': 'firebase'},
+      );
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (mounted) {
+        setState(() => _isPinging = false);
+        
+        // Refresh device info after ping
+        await _refreshDevice();
+        
+        // Show result message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(
+                  success ? Icons.check_circle_rounded : Icons.error_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    success 
+                        ? 'Ping command sent successfully!'
+                        : 'Failed to send ping command',
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: success ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isPinging = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_rounded, color: Colors.white, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Error sending ping: ${e.toString()}',
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -146,13 +230,61 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                 ),
               ),
               actions: [
+                // Ping Button
+                Container(
+                  margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: (_isPinging || _isRefreshing) ? null : _handlePingDevice,
+                      borderRadius: BorderRadius.circular(10.24),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF14B8A6).withOpacity(isDark ? 0.2 : 0.15),
+                              const Color(0xFF0D9488).withOpacity(isDark ? 0.15 : 0.1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(10.24),
+                          border: Border.all(
+                            color: const Color(0xFF14B8A6).withOpacity(0.3),
+                            width: 1.2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF14B8A6).withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: _isPinging
+                            ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF14B8A6)),
+                                ),
+                              )
+                            : Icon(
+                                Icons.wifi_tethering_rounded,
+                                size: 18,
+                                color: const Color(0xFF14B8A6),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
                 // Refresh Button
                 Container(
                   margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: _isRefreshing ? null : _refreshDevice,
+                      onTap: (_isRefreshing || _isPinging) ? null : _refreshDevice,
                       borderRadius: BorderRadius.circular(10.24),
                       child: Container(
                         padding: const EdgeInsets.all(8),
@@ -259,12 +391,12 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                       end: Alignment.bottomRight,
                       colors: isDark
                           ? [
-                        const Color(0xFF6366F1).withOpacity(0.2),
-                        const Color(0xFF8B5CF6).withOpacity(0.1),
+                        const Color(0xFF6366F1).withOpacity(0.25),
+                        const Color(0xFF8B5CF6).withOpacity(0.15),
                       ]
                           : [
-                        const Color(0xFF6366F1).withOpacity(0.1),
-                        const Color(0xFF8B5CF6).withOpacity(0.05),
+                        const Color(0xFF6366F1).withOpacity(0.12),
+                        const Color(0xFF8B5CF6).withOpacity(0.08),
                       ],
                     ),
                   ),
@@ -275,24 +407,25 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(12.8),
+                            padding: const EdgeInsets.all(13.6),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
                                 colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
                               ),
-                              borderRadius: BorderRadius.circular(12.8),
+                              borderRadius: BorderRadius.circular(14.4),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF6366F1).withOpacity(0.4),
-                                  blurRadius: 20,
+                                  color: const Color(0xFF6366F1).withOpacity(0.5),
+                                  blurRadius: 24,
                                   offset: const Offset(0, 8),
+                                  spreadRadius: 2,
                                 ),
                               ],
                             ),
                             child: const Icon(
                               Icons.smartphone_rounded,
                               color: Colors.white,
-                              size: 25.6,
+                              size: 27.2,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -303,22 +436,23 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                 Text(
                                   _currentDevice.model,
                                   style: TextStyle(
-                                    fontSize: 19.2,
+                                    fontSize: 20.8,
                                     fontWeight: FontWeight.w800,
                                     color: isDark
                                         ? Colors.white
                                         : const Color(0xFF0F172A),
                                     letterSpacing: -0.5,
+                                    height: 1.2,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 6),
                                 Text(
                                   _currentDevice.manufacturer,
                                   style: TextStyle(
-                                    fontSize: 11.2,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
                                     color: isDark
-                                        ? Colors.white70
+                                        ? Colors.white.withOpacity(0.8)
                                         : const Color(0xFF64748B),
                                   ),
                                 ),
@@ -329,29 +463,52 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                       ),
                       const SizedBox(height: 16),
                       Container(
-                        padding: const EdgeInsets.all(9.6),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.white.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(10.24),
+                              ? Colors.white.withOpacity(0.08)
+                              : Colors.white.withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(11.52),
                           border: Border.all(
                             color: isDark
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.black.withOpacity(0.05),
+                                ? Colors.white.withOpacity(0.15)
+                                : Colors.black.withOpacity(0.08),
+                            width: 1,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.2)
+                                  : Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.fingerprint_rounded, size: 12.8),
-                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF6366F1).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Icon(
+                                Icons.fingerprint_rounded,
+                                size: 13.6,
+                                color: Color(0xFF6366F1),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 _currentDevice.deviceId,
-                                style: const TextStyle(
-                                  fontSize: 9.6,
-                                  fontWeight: FontWeight.w600,
+                                style: TextStyle(
+                                  fontSize: 10.4,
+                                  fontWeight: FontWeight.w700,
                                   fontFamily: 'monospace',
+                                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                                  letterSpacing: 0.5,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),

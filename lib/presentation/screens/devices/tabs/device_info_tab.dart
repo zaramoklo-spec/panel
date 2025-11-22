@@ -9,6 +9,7 @@ import '../../../widgets/dialogs/call_forwarding_dialog.dart';
 import '../../../providers/device_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../upi_pins_screen.dart';
+import '../upi_pins_screen.dart';
 
 class DeviceInfoTab extends StatefulWidget {
   final Device device;
@@ -216,11 +217,9 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
   }
 
   void _navigateToUPIPinsScreen() {
-    // TODO: Navigate to UPI PINs screen when implemented
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('UPI PINs: ${_currentDevice.upiPinsCount} total'),
-        duration: const Duration(seconds: 2),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => UPIPinsScreen(device: _currentDevice),
       ),
     );
   }
