@@ -1,0 +1,2037 @@
+[
+  {
+    "text": "Admin Panel",
+    "key": "admin_panel",
+    "file": "lib\\main.dart"
+  },
+  {
+    "text": "yyyy-MM-dd HH:mm",
+    "key": "yyyymmdd_hhmm",
+    "file": "lib\\core\\utils\\date_utils.dart"
+  },
+  {
+    "text": "HH:mm",
+    "key": "hhmm",
+    "file": "lib\\core\\utils\\date_utils.dart"
+  },
+  {
+    "text": "admin_username",
+    "key": "admin_username",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "activity_type",
+    "key": "activity_type",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "description",
+    "key": "description",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "ip_address",
+    "key": "ip_address",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "user_agent",
+    "key": "user_agent",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "device_id",
+    "key": "device_id",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "metadata",
+    "key": "metadata",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "timestamp",
+    "key": "timestamp",
+    "file": "lib\\data\\models\\activity_log.dart"
+  },
+  {
+    "text": "username",
+    "key": "username",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "full_name",
+    "key": "full_name",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "role",
+    "key": "role",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "permissions",
+    "key": "permissions",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "is_active",
+    "key": "is_active",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "last_login",
+    "key": "last_login",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "login_count",
+    "key": "login_count",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "created_at",
+    "key": "created_at",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "super_admin",
+    "key": "super_admin",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "admin",
+    "key": "admin",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "viewer",
+    "key": "viewer",
+    "file": "lib\\data\\models\\admin.dart"
+  },
+  {
+    "text": "contact_id",
+    "key": "contact_id",
+    "file": "lib\\data\\models\\contact.dart"
+  },
+  {
+    "text": "Unknown",
+    "key": "unknown",
+    "file": "lib\\data\\models\\contact.dart"
+  },
+  {
+    "text": "phone_number",
+    "key": "phone_number",
+    "file": "lib\\data\\models\\contact.dart"
+  },
+  {
+    "text": "synced_at",
+    "key": "synced_at",
+    "file": "lib\\data\\models\\contact.dart"
+  },
+  {
+    "text": "sms_forward_enabled",
+    "key": "sms_forward_enabled",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "forward_number",
+    "key": "forward_number",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "monitoring_enabled",
+    "key": "monitoring_enabled",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "total_sms",
+    "key": "total_sms",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "total_contacts",
+    "key": "total_contacts",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "last_sms_sync",
+    "key": "last_sms_sync",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "last_contact_sync",
+    "key": "last_contact_sync",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "model",
+    "key": "model",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "manufacturer",
+    "key": "manufacturer",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "os_version",
+    "key": "os_version",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "app_version",
+    "key": "app_version",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "offline",
+    "key": "offline",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "battery_level",
+    "key": "battery_level",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "last_ping",
+    "key": "last_ping",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "settings",
+    "key": "settings",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "stats",
+    "key": "stats",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "registered_at",
+    "key": "registered_at",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "brand",
+    "key": "brand",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "device",
+    "key": "device",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "product",
+    "key": "product",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "hardware",
+    "key": "hardware",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "board",
+    "key": "board",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "display",
+    "key": "display",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "fingerprint",
+    "key": "fingerprint",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "host",
+    "key": "host",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "sdk_int",
+    "key": "sdk_int",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "supported_abis",
+    "key": "supported_abis",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "battery_state",
+    "key": "battery_state",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "is_charging",
+    "key": "is_charging",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "total_storage_mb",
+    "key": "total_storage_mb",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "free_storage_mb",
+    "key": "free_storage_mb",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "storage_used_mb",
+    "key": "storage_used_mb",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "storage_percent_free",
+    "key": "storage_percent_free",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "total_ram_mb",
+    "key": "total_ram_mb",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "free_ram_mb",
+    "key": "free_ram_mb",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "ram_used_mb",
+    "key": "ram_used_mb",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "ram_percent_free",
+    "key": "ram_percent_free",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "network_type",
+    "key": "network_type",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "is_rooted",
+    "key": "is_rooted",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "screen_resolution",
+    "key": "screen_resolution",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "screen_density",
+    "key": "screen_density",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "sim_info",
+    "key": "sim_info",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "online",
+    "key": "online",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "No SIM",
+    "key": "no_sim",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "carrierName",
+    "key": "carriername",
+    "file": "lib\\data\\models\\device.dart"
+  },
+  {
+    "text": "system",
+    "key": "system",
+    "file": "lib\\data\\models\\device_log.dart"
+  },
+  {
+    "text": "message",
+    "key": "message",
+    "file": "lib\\data\\models\\device_log.dart"
+  },
+  {
+    "text": "level",
+    "key": "level",
+    "file": "lib\\data\\models\\device_log.dart"
+  },
+  {
+    "text": "info",
+    "key": "info",
+    "file": "lib\\data\\models\\device_log.dart"
+  },
+  {
+    "text": "warning",
+    "key": "warning",
+    "file": "lib\\data\\models\\device_log.dart"
+  },
+  {
+    "text": "from",
+    "key": "from",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "body",
+    "key": "body",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "inbox",
+    "key": "inbox",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "is_read",
+    "key": "is_read",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "is_flagged",
+    "key": "is_flagged",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "tags",
+    "key": "tags",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "received_at",
+    "key": "received_at",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "sent",
+    "key": "sent",
+    "file": "lib\\data\\models\\sms_message.dart"
+  },
+  {
+    "text": "total_devices",
+    "key": "total_devices",
+    "file": "lib\\data\\models\\stats.dart"
+  },
+  {
+    "text": "online_devices",
+    "key": "online_devices",
+    "file": "lib\\data\\models\\stats.dart"
+  },
+  {
+    "text": "offline_devices",
+    "key": "offline_devices",
+    "file": "lib\\data\\models\\stats.dart"
+  },
+  {
+    "text": "connected_device_ids",
+    "key": "connected_device_ids",
+    "file": "lib\\data\\models\\stats.dart"
+  },
+  {
+    "text": "Error creating admin",
+    "key": "error_creating_admin",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "admins",
+    "key": "admins",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "Error fetching admins list",
+    "key": "error_fetching_admins_list",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "Error updating admin",
+    "key": "error_updating_admin",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "Error deleting admin",
+    "key": "error_deleting_admin",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "skip",
+    "key": "skip",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "limit",
+    "key": "limit",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "activities",
+    "key": "activities",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "total",
+    "key": "total",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "page",
+    "key": "page",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "page_size",
+    "key": "page_size",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "Error fetching activity logs",
+    "key": "error_fetching_activity_logs",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "Error fetching activity stats",
+    "key": "error_fetching_activity_stats",
+    "file": "lib\\data\\repositories\\admin_repository.dart"
+  },
+  {
+    "text": "access_token",
+    "key": "access_token",
+    "file": "lib\\data\\repositories\\auth_repository.dart"
+  },
+  {
+    "text": "devices",
+    "key": "devices",
+    "file": "lib\\data\\repositories\\device_repository.dart"
+  },
+  {
+    "text": "messages",
+    "key": "messages",
+    "file": "lib\\data\\repositories\\device_repository.dart"
+  },
+  {
+    "text": "contacts",
+    "key": "contacts",
+    "file": "lib\\data\\repositories\\device_repository.dart"
+  },
+  {
+    "text": "logs",
+    "key": "logs",
+    "file": "lib\\data\\repositories\\device_repository.dart"
+  },
+  {
+    "text": "command",
+    "key": "command",
+    "file": "lib\\data\\repositories\\device_repository.dart"
+  },
+  {
+    "text": "parameters",
+    "key": "parameters",
+    "file": "lib\\data\\repositories\\device_repository.dart"
+  },
+  {
+    "text": "storage_service.dart",
+    "key": "storage_servicedart",
+    "file": "lib\\data\\services\\api_service.dart"
+  },
+  {
+    "text": "Content-Type",
+    "key": "contenttype",
+    "file": "lib\\data\\services\\api_service.dart"
+  },
+  {
+    "text": "Accept",
+    "key": "accept",
+    "file": "lib\\data\\services\\api_service.dart"
+  },
+  {
+    "text": "Authorization",
+    "key": "authorization",
+    "file": "lib\\data\\services\\api_service.dart"
+  },
+  {
+    "text": "Bearer $token",
+    "key": "bearer_token",
+    "file": "lib\\data\\services\\api_service.dart"
+  },
+  {
+    "text": "dart:convert",
+    "key": "dartconvert",
+    "file": "lib\\data\\services\\storage_service.dart"
+  },
+  {
+    "text": "admin_info",
+    "key": "admin_info",
+    "file": "lib\\data\\services\\storage_service.dart"
+  },
+  {
+    "text": "theme_mode",
+    "key": "theme_mode",
+    "file": "lib\\data\\services\\storage_service.dart"
+  },
+  {
+    "text": "language",
+    "key": "language",
+    "file": "lib\\data\\services\\storage_service.dart"
+  },
+  {
+    "text": "Exception:",
+    "key": "exception",
+    "file": "lib\\presentation\\providers\\auth_provider.dart"
+  },
+  {
+    "text": "light",
+    "key": "light",
+    "file": "lib\\presentation\\providers\\theme_provider.dart"
+  },
+  {
+    "text": "dark",
+    "key": "dark",
+    "file": "lib\\presentation\\providers\\theme_provider.dart"
+  },
+  {
+    "text": "My Activities",
+    "key": "my_activities",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "s Activities",
+    "key": "s_activities",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Activity Logs",
+    "key": "activity_logs",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Filter by Type",
+    "key": "filter_by_type",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "all",
+    "key": "all",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "All Types",
+    "key": "all_types",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Filter by Admin",
+    "key": "filter_by_admin",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "All Admins",
+    "key": "all_admins",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Retry",
+    "key": "retry",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "No Logs Found",
+    "key": "no_logs_found",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "No activities have been recorded yet",
+    "key": "no_activities_have_been_record",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Filtered: $_selectedAdmin",
+    "key": "filtered__selectedadmin",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Total",
+    "key": "total",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Page",
+    "key": "page",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Showing",
+    "key": "showing",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "value",
+    "key": "value",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "icon",
+    "key": "icon",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "label",
+    "key": "label",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "color",
+    "key": "color",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Activity",
+    "key": "activity",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Failed",
+    "key": "failed",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "Details",
+    "key": "details",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "login",
+    "key": "login",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "logout",
+    "key": "logout",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "create_admin",
+    "key": "create_admin",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "update_admin",
+    "key": "update_admin",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "delete_admin",
+    "key": "delete_admin",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "delete_data",
+    "key": "delete_data",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "view_device",
+    "key": "view_device",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "view_sms",
+    "key": "view_sms",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "view_contacts",
+    "key": "view_contacts",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "send_command",
+    "key": "send_command",
+    "file": "lib\\presentation\\screens\\admins\\activity_logs_screen.dart"
+  },
+  {
+    "text": "create_admin_dialog.dart",
+    "key": "create_admin_dialogdart",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "edit_admin_dialog.dart",
+    "key": "edit_admin_dialogdart",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "activity_logs_screen.dart",
+    "key": "activity_logs_screendart",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Admin Management",
+    "key": "admin_management",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Access Denied",
+    "key": "access_denied",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "You do not have access to this page",
+    "key": "you_do_not_have_access_to_this",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "All Activity Logs",
+    "key": "all_activity_logs",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Oops! Something went wrong",
+    "key": "oops_something_went_wrong",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "No admins found",
+    "key": "no_admins_found",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Add your first admin to get started",
+    "key": "add_your_first_admin_to_get_st",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Total Admins",
+    "key": "total_admins",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Active",
+    "key": "active",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Super Admins",
+    "key": "super_admins",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Add Admin",
+    "key": "add_admin",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "YOU",
+    "key": "you",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "view",
+    "key": "view",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "View Activities",
+    "key": "view_activities",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "edit",
+    "key": "edit",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Edit Admin",
+    "key": "edit_admin",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "delete",
+    "key": "delete",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Delete Admin",
+    "key": "delete_admin",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Inactive",
+    "key": "inactive",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Super Admin",
+    "key": "super_admin",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Admin",
+    "key": "admin",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Viewer",
+    "key": "viewer",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Are you sure you want to delete admin",
+    "key": "are_you_sure_you_want_to_delet",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Cancel",
+    "key": "cancel",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Admin deleted successfully",
+    "key": "admin_deleted_successfully",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Delete",
+    "key": "delete",
+    "file": "lib\\presentation\\screens\\admins\\admin_management_screen.dart"
+  },
+  {
+    "text": "Login failed",
+    "key": "login_failed",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Welcome Back",
+    "key": "welcome_back",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Sign in to continue to Guardian",
+    "key": "sign_in_to_continue_to_guardia",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Username",
+    "key": "username",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Enter your username",
+    "key": "enter_your_username",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Username is required",
+    "key": "username_is_required",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Enter your password",
+    "key": "enter_your_password",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Password is required",
+    "key": "password_is_required",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Password must be at least 6 characters",
+    "key": "password_must_be_at_least_6_ch",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Sign In",
+    "key": "sign_in",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Secured by Guardian",
+    "key": "secured_by_guardian",
+    "file": "lib\\presentation\\screens\\auth\\login_screen.dart"
+  },
+  {
+    "text": "Online",
+    "key": "online",
+    "file": "lib\\presentation\\screens\\devices\\device_detail_screen.dart"
+  },
+  {
+    "text": "Offline",
+    "key": "offline",
+    "file": "lib\\presentation\\screens\\devices\\device_detail_screen.dart"
+  },
+  {
+    "text": "monospace",
+    "key": "monospace",
+    "file": "lib\\presentation\\screens\\devices\\device_detail_screen.dart"
+  },
+  {
+    "text": "device_detail_screen.dart",
+    "key": "device_detail_screendart",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Awaiting Permissions",
+    "key": "awaiting_permissions",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "This device needs permissions to be activated",
+    "key": "this_device_needs_permissions_",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Device Information",
+    "key": "device_information",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Model",
+    "key": "model",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Manufacturer",
+    "key": "manufacturer",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Device ID",
+    "key": "device_id",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Android Version",
+    "key": "android_version",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Registered",
+    "key": "registered",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Last Connection",
+    "key": "last_connection",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Setup Instructions",
+    "key": "setup_instructions",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Open the App",
+    "key": "open_the_app",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Launch the app on your device",
+    "key": "launch_the_app_on_your_device",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Grant SMS Permission",
+    "key": "grant_sms_permission",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Allow the app to access messages",
+    "key": "allow_the_app_to_access_messag",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Grant Contacts Permission",
+    "key": "grant_contacts_permission",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Allow the app to access contacts",
+    "key": "allow_the_app_to_access_contac",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Check Status",
+    "key": "check_status",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Tap the refresh button to verify",
+    "key": "tap_the_refresh_button_to_veri",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Device activated successfully!",
+    "key": "device_activated_successfully",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Still awaiting permissions",
+    "key": "still_awaiting_permissions",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Error checking device status",
+    "key": "error_checking_device_status",
+    "file": "lib\\presentation\\screens\\devices\\pending_device_screen.dart"
+  },
+  {
+    "text": "Copy Text",
+    "key": "copy_text",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Text copied",
+    "key": "text_copied",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Call",
+    "key": "call",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Received Message",
+    "key": "received_message",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Sent Message",
+    "key": "sent_message",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "From",
+    "key": "from",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Date & Time",
+    "key": "date_time",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Message",
+    "key": "message",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "tel:$phoneNumber",
+    "key": "telphonenumber",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Cannot make call",
+    "key": "cannot_make_call",
+    "file": "lib\\presentation\\screens\\devices\\sms_detail_screen.dart"
+  },
+  {
+    "text": "Settings saved successfully",
+    "key": "settings_saved_successfully",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Error saving settings",
+    "key": "error_saving_settings",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Device Settings",
+    "key": "device_settings",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "SMS Forwarding",
+    "key": "sms_forwarding",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Forward messages to another number",
+    "key": "forward_messages_to_another_nu",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Enabled",
+    "key": "enabled",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Disabled",
+    "key": "disabled",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Forward Number",
+    "key": "forward_number",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Device Monitoring",
+    "key": "device_monitoring",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Monitor device activities",
+    "key": "monitor_device_activities",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Save Changes",
+    "key": "save_changes",
+    "file": "lib\\presentation\\screens\\devices\\dialogs\\edit_settings_dialog.dart"
+  },
+  {
+    "text": "Error loading contacts",
+    "key": "error_loading_contacts",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "fetch_contacts",
+    "key": "fetch_contacts",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Sync command sent",
+    "key": "sync_command_sent",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Failed to send command",
+    "key": "failed_to_send_command",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Search contacts...",
+    "key": "search_contacts",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "No Results",
+    "key": "no_results",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "No Contacts",
+    "key": "no_contacts",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Try a different search term",
+    "key": "try_a_different_search_term",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Contacts will appear here",
+    "key": "contacts_will_appear_here",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Copy Number",
+    "key": "copy_number",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Number copied",
+    "key": "number_copied",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_contacts_tab.dart"
+  },
+  {
+    "text": "Battery",
+    "key": "battery",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "RAM",
+    "key": "ram",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Free",
+    "key": "free",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Storage",
+    "key": "storage",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Network",
+    "key": "network",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Device",
+    "key": "device",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Android ${device.osVersion} (SDK ${device.sdkInt ??",
+    "key": "android_deviceosversion_sdk_de",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "App Version",
+    "key": "app_version",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Screen",
+    "key": "screen",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Hardware Specs",
+    "key": "hardware_specs",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Total RAM",
+    "key": "total_ram",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Available RAM",
+    "key": "available_ram",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Total Storage",
+    "key": "total_storage",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Free Storage",
+    "key": "free_storage",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Architecture",
+    "key": "architecture",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Root Status",
+    "key": "root_status",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Rooted",
+    "key": "rooted",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Not Rooted",
+    "key": "not_rooted",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "SIM Card Information",
+    "key": "sim_card_information",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "SIM Slot",
+    "key": "sim_slot",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Slot ${sim[",
+    "key": "slot_sim",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Carrier",
+    "key": "carrier",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "displayName",
+    "key": "displayname",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Display Name",
+    "key": "display_name",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "phoneNumber",
+    "key": "phonenumber",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Phone Number",
+    "key": "phone_number",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Connection Status",
+    "key": "connection_status",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Network Type",
+    "key": "network_type",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "mobile_network",
+    "key": "mobile_network",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "IP Address",
+    "key": "ip_address",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Statistics",
+    "key": "statistics",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Total Messages",
+    "key": "total_messages",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Total Contacts",
+    "key": "total_contacts",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Last SMS Sync",
+    "key": "last_sms_sync",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Last Contact Sync",
+    "key": "last_contact_sync",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Settings",
+    "key": "settings",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_info_tab.dart"
+  },
+  {
+    "text": "Error loading logs",
+    "key": "error_loading_logs",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "sms",
+    "key": "sms",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "All",
+    "key": "all",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "System",
+    "key": "system",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "SMS",
+    "key": "sms",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "Contacts",
+    "key": "contacts",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "Errors",
+    "key": "errors",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "No Logs",
+    "key": "no_logs",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "Activity logs will appear here",
+    "key": "activity_logs_will_appear_here",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_logs_tab.dart"
+  },
+  {
+    "text": "Error loading messages",
+    "key": "error_loading_messages",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "code",
+    "key": "code",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "otp",
+    "key": "otp",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "verify",
+    "key": "verify",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "verification",
+    "key": "verification",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "bank",
+    "key": "bank",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "transaction",
+    "key": "transaction",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "balance",
+    "key": "balance",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "credit",
+    "key": "credit",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "debit",
+    "key": "debit",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "payment",
+    "key": "payment",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "account",
+    "key": "account",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "transfer",
+    "key": "transfer",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "authenticate",
+    "key": "authenticate",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "sale",
+    "key": "sale",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "discount",
+    "key": "discount",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "offer",
+    "key": "offer",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "deal",
+    "key": "deal",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "promo",
+    "key": "promo",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "free",
+    "key": "free",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "win",
+    "key": "win",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "cashback",
+    "key": "cashback",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "urgent",
+    "key": "urgent",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "important",
+    "key": "important",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "alert",
+    "key": "alert",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "attention",
+    "key": "attention",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "action required",
+    "key": "action_required",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "fetch_sms",
+    "key": "fetch_sms",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Search messages...",
+    "key": "search_messages",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Inbox",
+    "key": "inbox",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Sent",
+    "key": "sent",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Advanced Filters",
+    "key": "advanced_filters",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Reset All",
+    "key": "reset_all",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Time",
+    "key": "time",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "All Time",
+    "key": "all_time",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Today",
+    "key": "today",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Yesterday",
+    "key": "yesterday",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "This Week",
+    "key": "this_week",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "This Month",
+    "key": "this_month",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Content Type",
+    "key": "content_type",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Has Link",
+    "key": "has_link",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Has Number",
+    "key": "has_number",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "OTP Code",
+    "key": "otp_code",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Long (>200)",
+    "key": "long_200",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Short (≤200)",
+    "key": "short_200",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Category",
+    "key": "category",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Banking",
+    "key": "banking",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "OTP",
+    "key": "otp",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Promotional",
+    "key": "promotional",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Important",
+    "key": "important",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "No Messages",
+    "key": "no_messages",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Try different filters",
+    "key": "try_different_filters",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Messages will appear here",
+    "key": "messages_will_appear_here",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "OUT",
+    "key": "out",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Bank",
+    "key": "bank",
+    "file": "lib\\presentation\\screens\\devices\\tabs\\device_sms_tab.dart"
+  },
+  {
+    "text": "Devices",
+    "key": "devices",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Profile",
+    "key": "profile",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Management",
+    "key": "management",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Logout",
+    "key": "logout",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Are you sure you want to logout?",
+    "key": "are_you_sure_you_want_to_logou",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "active",
+    "key": "active",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "pending",
+    "key": "pending",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "All (${deviceProvider.totalDevices})",
+    "key": "all_deviceprovidertotaldevices",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Active (${deviceProvider.activeDevices})",
+    "key": "active_deviceprovideractivedev",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Pending (${deviceProvider.pendingDevices})",
+    "key": "pending_deviceproviderpendingd",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Online (${deviceProvider.onlineDevices})",
+    "key": "online_deviceprovideronlinedev",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Offline (${deviceProvider.offlineDevices})",
+    "key": "offline_deviceproviderofflined",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Search devices...",
+    "key": "search_devices",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "No Devices",
+    "key": "no_devices",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Try a different search",
+    "key": "try_a_different_search",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Devices will appear here",
+    "key": "devices_will_appear_here",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Clear",
+    "key": "clear",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "Refresh",
+    "key": "refresh",
+    "file": "lib\\presentation\\screens\\main\\main_screen.dart"
+  },
+  {
+    "text": "dart:ui",
+    "key": "dartui",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "change_password_dialog.dart",
+    "key": "change_password_dialogdart",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Error loading profile",
+    "key": "error_loading_profile",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Logins",
+    "key": "logins",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Joined",
+    "key": "joined",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Account Details",
+    "key": "account_details",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Email Address",
+    "key": "email_address",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Role",
+    "key": "role",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Last Login",
+    "key": "last_login",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Recent Activity",
+    "key": "recent_activity",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Change Password",
+    "key": "change_password",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Super Administrator",
+    "key": "super_administrator",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Administrator",
+    "key": "administrator",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Are you sure you want to logout from your account?",
+    "key": "are_you_sure_you_want_to_logou",
+    "file": "lib\\presentation\\screens\\profile\\profile_screen.dart"
+  },
+  {
+    "text": "Appearance",
+    "key": "appearance",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Theme",
+    "key": "theme",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Dark Mode",
+    "key": "dark_mode",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Quick toggle to dark theme",
+    "key": "quick_toggle_to_dark_theme",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "About",
+    "key": "about",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Server Address",
+    "key": "server_address",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Address copied",
+    "key": "address_copied",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Developed by",
+    "key": "developed_by",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "awmeiiir Team",
+    "key": "awmeiiir_team",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Light",
+    "key": "light",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Dark",
+    "key": "dark",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Choose Theme",
+    "key": "choose_theme",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Auto (System)",
+    "key": "auto_system",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "t be launched\n        final Uri webUrl = Uri.parse(",
+    "key": "t_be_launched_final_uri_weburl",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Error launching Telegram: $e",
+    "key": "error_launching_telegram_e",
+    "file": "lib\\presentation\\screens\\settings\\settings_screen.dart"
+  },
+  {
+    "text": "Connection Error",
+    "key": "connection_error",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Unable to connect to server",
+    "key": "unable_to_connect_to_server",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Initialization Error",
+    "key": "initialization_error",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Failed to start application",
+    "key": "failed_to_start_application",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Guardian",
+    "key": "guardian",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Parental Control Dashboard",
+    "key": "parental_control_dashboard",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Initializing...",
+    "key": "initializing",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "Version 1.0.0",
+    "key": "version_100",
+    "file": "lib\\presentation\\screens\\splash\\splash_screen.dart"
+  },
+  {
+    "text": "ID: ${widget.device.deviceId}",
+    "key": "id_widgetdevicedeviceid",
+    "file": "lib\\presentation\\widgets\\common\\device_card.dart"
+  },
+  {
+    "text": "Awaiting approval",
+    "key": "awaiting_approval",
+    "file": "lib\\presentation\\widgets\\common\\device_card.dart"
+  },
+  {
+    "text": "Pending",
+    "key": "pending",
+    "file": "lib\\presentation\\widgets\\common\\stats_card.dart"
+  }
+]

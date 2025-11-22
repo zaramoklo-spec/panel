@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "540653993882",
+    "project_id": "panel-apps-a6858",
+    "storage_bucket": "panel-apps-a6858.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540653993882:android:d80b3211aa7101e9ae8423",
+        "android_client_info": {
+          "package_name": "com.panel.me"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZMA12ATW6NO4qWG0J0QGEFOby7j8y3-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,69 @@
+class SmsMessage {
+  final String id;
+  final String deviceId;
+  final String? from;
+  final String? to;
+  final String body;
+  final DateTime timestamp;
+  final String type;
+  final bool isRead;
+  final bool isFlagged;
+  final List<String> tags;
+  final DateTime receivedAt;
+
+  SmsMessage({
+    required this.id,
+    required this.deviceId,
+    this.from,
+    this.to,
+    required this.body,
+    required this.timestamp,
+    required this.type,
+    required this.isRead,
+    required this.isFlagged,
+    required this.tags,
+    required this.receivedAt,
+  });
+
+  factory SmsMessage.fromJson(Map<String, dynamic> json) {
+    return SmsMessage(
+      id: json['_id'] ?? '',
+      deviceId: json['device_id'] ?? '',
+      from: json['from'],
+      to: json['to'],
+      body: json['body'] ?? '',
+      // ✅ تبدیل milliseconds به DateTime
+      timestamp: json['timestamp'] is int
+          ? DateTime.fromMillisecondsSinceEpoch(json['timestamp'])
+          : DateTime.parse(json['timestamp']),
+      type: json['type'] ?? 'inbox',
+      isRead: json['is_read'] ?? false,
+      isFlagged: json['is_flagged'] ?? false,
+      tags: json['tags'] != null ? List<String>.from(json['tags']) : [],
+      // ✅ handle کردن received_at که ممکنه null باشه
+      receivedAt: json['received_at'] != null
+          ? DateTime.parse(json['received_at'])
+          : DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'device_id': deviceId,
+      'from': from,
+      'to': to,
+      'body': body,
+      'timestamp': timestamp.millisecondsSinceEpoch, // ✅ به عدد تبدیل می‌کنیم
+      'type': type,
+      'is_read': isRead,
+      'is_flagged': isFlagged,
+      'tags': tags,
+      'received_at': receivedAt.toIso8601String(),
+    };
+  }
+
+  bool get isInbox => type == 'inbox';
+  bool get isSent => type == 'sent';
+  String get sender => from ?? to ?? 'Unknown';
+}
