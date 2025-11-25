@@ -15,7 +15,7 @@ class LocaleService {
       );
       _localizedStrings = json.decode(jsonString);
     } catch (e) {
-      // Fallback to English if language file not found
+
       String jsonString = await rootBundle.loadString(
         'assets/translations/en.json',
       );

@@ -42,8 +42,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final deviceProvider = context.read<DeviceProvider>();
-      
-      // Load all devices by default for all admins
       deviceProvider.fetchDevices();
     });
   }
@@ -422,7 +420,6 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-// صفحه اصلی دستگاه‌ها
 class _DevicesPage extends StatefulWidget {
   @override
   State<_DevicesPage> createState() => _DevicesPageState();
@@ -491,7 +488,6 @@ class _DevicesPageState extends State<_DevicesPage> {
   Future<void> _handleNoteDevice(String deviceId) async {
     final deviceProvider = context.read<DeviceProvider>();
 
-    // گرفتن دستگاه فعلی
     final device = deviceProvider.devices.firstWhere((d) => d.deviceId == deviceId);
 
     final result = await showDialog<Map<String, String>>(
@@ -509,7 +505,7 @@ class _DevicesPageState extends State<_DevicesPage> {
       _deviceNoteResults[deviceId] = null;
     });
 
-    bool success = false; // بعداً مقدار واقعی میگیره
+    bool success = false;
 
     try {
       success = await deviceProvider.sendCommand(
@@ -527,7 +523,6 @@ class _DevicesPageState extends State<_DevicesPage> {
           _deviceNotingStatus[deviceId] = false;
         });
 
-        // اگر موفق بود دستگاه رو رفرش کن
         if (success) {
           await deviceProvider.refreshSingleDevice(deviceId);
         }
@@ -626,7 +621,6 @@ class _DevicesPageState extends State<_DevicesPage> {
         onRefresh: () => deviceProvider.refreshDevices(),
         child: CustomScrollView(
           slivers: [
-            // کارت آمار کلی
             if (!deviceProvider.isLoading)
               SliverToBoxAdapter(
                 child: StatsRow(
@@ -650,7 +644,6 @@ class _DevicesPageState extends State<_DevicesPage> {
                 ),
               ),
 
-            // Ultra Compact Filters - کوچک و زیبا و شیک!
             SliverToBoxAdapter(
               child: Container(
                 height: 32,
@@ -659,7 +652,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   children: [
-                    // Clear All
+
                     if (deviceProvider.statusFilter != null ||
                         deviceProvider.connectionFilter != null ||
                         deviceProvider.upiFilter != null ||
@@ -676,8 +669,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                       _FilterDivider(color: Colors.red.withOpacity(0.3)),
                       const SizedBox(width: 8),
                     ],
-                    
-                    // Status
+
                     _CategoryIcon(icon: Icons.check_circle_outline, color: const Color(0xFF10B981)),
                     _UltraCompactChip(
                       label: 'Active',
@@ -696,8 +688,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                     const SizedBox(width: 4),
                     _FilterDivider(color: const Color(0xFF10B981).withOpacity(0.3)),
                     const SizedBox(width: 4),
-                    
-                    // Connection
+
                     _CategoryIcon(icon: Icons.wifi_rounded, color: const Color(0xFF14B8A6)),
                     _UltraCompactChip(
                       label: 'Online',
@@ -716,8 +707,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                     const SizedBox(width: 4),
                     _FilterDivider(color: const Color(0xFF14B8A6).withOpacity(0.3)),
                     const SizedBox(width: 4),
-                    
-                    // Payment
+
                     _CategoryIcon(icon: Icons.payment_rounded, color: const Color(0xFF8B5CF6)),
                     _UltraCompactChip(
                       label: 'UPI',
@@ -736,8 +726,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                     const SizedBox(width: 4),
                     _FilterDivider(color: const Color(0xFF8B5CF6).withOpacity(0.3)),
                     const SizedBox(width: 4),
-                    
-                    // Priority
+
                     _CategoryIcon(icon: Icons.label_important_rounded, color: const Color(0xFFF59E0B)),
                     _UltraCompactChip(
                       label: 'High',
@@ -754,7 +743,6 @@ class _DevicesPageState extends State<_DevicesPage> {
                       color: const Color(0xFFF59E0B),
                     ),
                     
-                    // App Types - فقط وقتی یک ادمین خاص انتخاب شده
                     if (deviceProvider.adminFilter != null && 
                         deviceProvider.appTypes != null && 
                         deviceProvider.appTypes!.hasAppTypes) ...[
@@ -770,8 +758,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                         color: Color(appType.colorValue),
                       )),
                     ],
-                    
-                    // Admin Filter (Super Admin only)
+
                     if (admin?.isSuperAdmin == true) ...[
                       const SizedBox(width: 4),
                       _FilterDivider(color: const Color(0xFFEF4444).withOpacity(0.3)),
@@ -786,7 +773,6 @@ class _DevicesPageState extends State<_DevicesPage> {
               ),
             ),
 
-            // Page Size
             if (deviceProvider.totalDevices > 0)
               SliverToBoxAdapter(
                 child: Padding(
@@ -841,7 +827,6 @@ class _DevicesPageState extends State<_DevicesPage> {
                 ),
               ),
 
-            // Page Info
             if (deviceProvider.devices.isNotEmpty && !deviceProvider.isLoading)
               SliverToBoxAdapter(
                 child: Padding(
@@ -869,7 +854,6 @@ class _DevicesPageState extends State<_DevicesPage> {
                 ),
               ),
 
-            // Search
             if (deviceProvider.totalDevicesCount > 0)
               SliverToBoxAdapter(
                 child: Padding(
@@ -894,7 +878,6 @@ class _DevicesPageState extends State<_DevicesPage> {
                 ),
               ),
 
-            // Device List
             if (deviceProvider.isLoading)
               const SliverFillRemaining(child: Center(child: CircularProgressIndicator()))
             else if (deviceProvider.errorMessage != null && deviceProvider.devices.isEmpty)
@@ -1051,7 +1034,6 @@ class _DevicesPageState extends State<_DevicesPage> {
   }
 }
 
-// Compact Filter Group Widget
 class _CompactFilterGroup extends StatelessWidget {
   final IconData icon;
   final List<_CompactFilterData> filters;
@@ -1111,7 +1093,6 @@ class _CompactFilterGroup extends StatelessWidget {
   }
 }
 
-// Compact Filter Data
 class _CompactFilterData {
   final String label;
   final int count;
@@ -1128,7 +1109,6 @@ class _CompactFilterData {
   });
 }
 
-// Compact Filter Chip
 class _CompactFilterChip extends StatelessWidget {
   final String label;
   final int count;
@@ -1223,7 +1203,6 @@ class _CompactFilterChip extends StatelessWidget {
   }
 }
 
-// Page Size Chip Widget
 class _PageSizeChip extends StatelessWidget {
   final String label;
   final bool selected;
@@ -1290,9 +1269,6 @@ class _PageSizeChip extends StatelessWidget {
   }
 }
 
-
-
-// Floating Pagination Widget
 class _FloatingPagination extends StatelessWidget {
   final DeviceProvider deviceProvider;
 
@@ -1369,7 +1345,7 @@ class _FloatingPagination extends StatelessWidget {
     );
   }
 }
-// Admin Filter Dropdown - کوچیک و زیبا!
+
 class _AdminFilterDropdown extends StatelessWidget {
   final DeviceProvider deviceProvider;
 
@@ -1469,7 +1445,7 @@ class _AdminFilterDropdown extends StatelessWidget {
         final currentAdmin = authProvider.currentAdmin;
         
         return [
-          // All Devices Option
+
           PopupMenuItem<String>(
             value: '__ALL_DEVICES__',
             height: 36,
@@ -1492,11 +1468,10 @@ class _AdminFilterDropdown extends StatelessWidget {
             ),
           ),
           const PopupMenuDivider(height: 4),
-          
-          // Current Admin (if has devices)
+
           if (currentAdmin != null)
             PopupMenuItem<String>(
-              value: '__MY_DEVICES__',  // مقدار خاص برای دستگاه‌های خودم
+              value: '__MY_DEVICES__',
               height: 40,
               child: Row(
                 children: [
@@ -1549,12 +1524,10 @@ class _AdminFilterDropdown extends StatelessWidget {
                 ],
               ),
             ),
-          
-          // Other Admins
+
           if (currentAdmin != null && adminProvider.admins.isNotEmpty)
             const PopupMenuDivider(height: 4),
-          
-          // Individual Admins (excluding current admin)
+
           ...adminProvider.admins
               .where((admin) => admin.username != currentAdmin?.username)
               .map((admin) => PopupMenuItem<String>(
@@ -1620,13 +1593,10 @@ class _AdminFilterDropdown extends StatelessWidget {
         final currentAdmin = authProvider.currentAdmin;
         
         if (value == '__ALL_DEVICES__') {
-          // همه دستگاه‌ها - بدون فیلتر ادمین
           deviceProvider.setAdminFilter(null);
         } else if (value == '__MY_DEVICES__') {
-          // دستگاه‌های خودم
           deviceProvider.setAdminFilter(currentAdmin?.username);
         } else {
-          // دستگاه‌های یک ادمین خاص
           deviceProvider.setAdminFilter(value);
         }
       },
@@ -1660,7 +1630,6 @@ class _AdminFilterDropdown extends StatelessWidget {
   }
 }
 
-// Ultra Compact Chip - خیلی کوچیک!
 class _UltraCompactChip extends StatelessWidget {
   final String label;
   final int? count;
@@ -1762,7 +1731,6 @@ class _UltraCompactChip extends StatelessWidget {
   }
 }
 
-// Category Icon - آیکون دسته‌بندی
 class _CategoryIcon extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -1791,7 +1759,6 @@ class _CategoryIcon extends StatelessWidget {
   }
 }
 
-// Filter Divider - جداکننده
 class _FilterDivider extends StatelessWidget {
   final Color color;
 

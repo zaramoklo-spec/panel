@@ -245,7 +245,7 @@ class _AdminManagementScreenState extends State<AdminManagementScreen> {
               builder: (_) => const CreateAdminFullScreen(),
             ),
           );
-          // Refresh admins list after returning
+
           if (mounted) {
             context.read<AdminProvider>().fetchAdmins();
           }
@@ -525,7 +525,7 @@ class _EnhancedAdminCard extends StatelessWidget {
                               builder: (_) => EditAdminFullScreen(admin: admin),
                             ),
                           );
-                          // Refresh admins list after returning
+
                           if (context.mounted) {
                             context.read<AdminProvider>().fetchAdmins();
                           }

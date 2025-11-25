@@ -33,10 +33,13 @@ class CallLog {
     };
   }
 
-  // Parse timestamp string to DateTime
   DateTime get timestampDate {
     try {
-      return DateTime.parse(timestamp);
+      final date = DateTime.parse(timestamp);
+      if (date.isUtc) {
+        return date.toLocal();
+      }
+      return date;
     } catch (e) {
       return DateTime.now();
     }

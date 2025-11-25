@@ -9,8 +9,8 @@ class DeviceCard extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback? onPing;
   final bool isPinging;
-  final VoidCallback? onNote;  // 👈 جدید
-  final bool isNoting;          // 👈 جدید
+  final VoidCallback? onNote;
+  final bool isNoting;
 
   const DeviceCard({
     super.key,
@@ -18,8 +18,8 @@ class DeviceCard extends StatefulWidget {
     required this.onTap,
     this.onPing,
     this.isPinging = false,
-    this.onNote,    // 👈 جدید
-    this.isNoting = false,  // 👈 جدید
+    this.onNote,
+    this.isNoting = false,
   });
 
   @override
@@ -165,9 +165,7 @@ class _DeviceCardState extends State<DeviceCard> {
                     ),
                   ),
 
-                  // دکمه‌های Ping و Note برای دستگاه‌های فعال 🔥
                   if (widget.device.isActive) ...[
-                    // دکمه Ping
                     if (widget.onPing != null)
                       Container(
                         margin: const EdgeInsets.only(left: 4),
@@ -212,7 +210,6 @@ class _DeviceCardState extends State<DeviceCard> {
                         ),
                       ),
 
-                    // دکمه Note 🔥
                     if (widget.onNote != null)
                       Container(
                         margin: const EdgeInsets.only(left: 4),
@@ -364,7 +361,6 @@ class _DeviceCardState extends State<DeviceCard> {
             ],
           ),
         ),
-        // نوار رنگی سمت چپ برای نشان دادن Note Priority
         if (_getNoteColor() != Colors.transparent)
           Positioned(
             left: 0,

@@ -30,16 +30,15 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
     setState(() => _isLoading = true);
     
     try {
-      // Get FCM token
+
       _fcmToken = await FCMService().getToken();
-      
-      // Get notification settings
+
       _notificationSettings = await FirebaseMessaging.instance.getNotificationSettings();
       
-      debugPrint('?? FCM Token: $_fcmToken');
-      debugPrint('?? Permission: ${_notificationSettings?.authorizationStatus}');
+      debugPrint('FCM Token: $_fcmToken');
+      debugPrint('Permission: ${_notificationSettings?.authorizationStatus}');
     } catch (e) {
-      debugPrint('? Error loading FCM info: $e');
+      debugPrint('Error loading FCM info: $e');
     }
     
     setState(() => _isLoading = false);
@@ -47,7 +46,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
 
   Future<void> _testDeviceNotification() async {
     try {
-      debugPrint('?? Testing device notification...');
+      debugPrint('Testing device notification...');
       
       final notifications = FlutterLocalNotificationsPlugin();
       
@@ -72,14 +71,14 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
       
       _showSuccess('Device notification sent!');
     } catch (e) {
-      debugPrint('? Error: $e');
+      debugPrint('Error: $e');
       _showError('Error: $e');
     }
   }
 
   Future<void> _testUPINotification() async {
     try {
-      debugPrint('?? Testing UPI notification...');
+      debugPrint('Testing UPI notification...');
       
       final notifications = FlutterLocalNotificationsPlugin();
       
@@ -104,7 +103,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
       
       _showSuccess('UPI notification sent!');
     } catch (e) {
-      debugPrint('? Error: $e');
+      debugPrint(''? Error: $e');
       _showError('Error: $e');
     }
   }
@@ -168,7 +167,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // Permission Status Card
+
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -227,8 +226,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
                   ),
                   
                   const SizedBox(height: 16),
-                  
-                  // FCM Token Card
+
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -293,8 +291,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
                   ),
                   
                   const SizedBox(height: 24),
-                  
-                  // Test Notifications Section
+
                   Text(
                     'Test Notifications',
                     style: TextStyle(
@@ -305,8 +302,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
                   ),
                   
                   const SizedBox(height: 12),
-                  
-                  // Test Device Notification Button
+
                   ElevatedButton.icon(
                     onPressed: _testDeviceNotification,
                     icon: const Icon(Icons.phone_android),
@@ -322,8 +318,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
                   ),
                   
                   const SizedBox(height: 12),
-                  
-                  // Test UPI Notification Button
+
                   ElevatedButton.icon(
                     onPressed: _testUPINotification,
                     icon: const Icon(Icons.lock),
@@ -339,8 +334,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
                   ),
                   
                   const SizedBox(height: 12),
-                  
-                  // Refresh Button
+
                   OutlinedButton.icon(
                     onPressed: _loadFCMInfo,
                     icon: const Icon(Icons.refresh),
@@ -354,8 +348,7 @@ class _FCMTestScreenState extends State<FCMTestScreen> {
                   ),
                   
                   const SizedBox(height: 24),
-                  
-                  // Debug Info
+
                   Card(
                     color: Colors.orange.withOpacity(0.1),
                     child: Padding(

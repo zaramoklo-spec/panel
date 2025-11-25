@@ -1,8 +1,8 @@
-// Stub file for flutter_local_notifications on web platform
+
 
 class FlutterLocalNotificationsPlugin {
   Future<void> initialize(dynamic settings, {Function? onDidReceiveNotificationResponse}) async {
-    // Stub implementation
+
   }
   
   Future<void> show(
@@ -12,7 +12,7 @@ class FlutterLocalNotificationsPlugin {
     dynamic notificationDetails, {
     String? payload,
   }) async {
-    // Stub implementation - does nothing on web
+
     print('Notification (web stub): $title - $body');
   }
   

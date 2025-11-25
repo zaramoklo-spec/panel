@@ -213,7 +213,7 @@ class DeviceProvider extends ChangeNotifier {
       _appTypes = await _deviceRepository.getAppTypes(adminUsername: _adminFilter);
       notifyListeners();
     } catch (e) {
-      debugPrint('❌ Error fetching app types: $e');
+      debugPrint(''❌ Error fetching app types: $e');
     }
   }
 
@@ -234,7 +234,7 @@ class DeviceProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
-      debugPrint('❌ Refresh single device failed: $e');
+      debugPrint(''❌ Refresh single device failed: $e');
     }
   }
 
@@ -265,7 +265,7 @@ class DeviceProvider extends ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Error fetching devices list';
-      debugPrint('❌ Error in _loadCurrentPage: $e');
+      debugPrint(''❌ Error in _loadCurrentPage: $e');
       notifyListeners();
     }
   }
@@ -332,7 +332,7 @@ class DeviceProvider extends ChangeNotifier {
   Future<void> _silentRefresh() async {
     try {
       final skip = (_currentPage - 1) * _pageSize;
-      debugPrint('🔄 Auto-refresh: Page $_currentPage');
+      debugPrint(''🔄 Auto-refresh: Page $_currentPage');
 
       final result = await _deviceRepository.getDevices(
         skip: skip,
@@ -349,9 +349,9 @@ class DeviceProvider extends ChangeNotifier {
       fetchAppTypes();
 
       notifyListeners();
-      debugPrint('✅ Auto-refresh completed: ${_devices.length} devices');
+      debugPrint(''✅ Auto-refresh completed: ${_devices.length} devices');
     } catch (e) {
-      debugPrint('❌ Auto-refresh error: $e');
+      debugPrint(''❌ Auto-refresh error: $e');
     }
   }
 

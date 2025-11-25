@@ -495,10 +495,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             ),
             ElevatedButton(
               onPressed: () async {
-                // بستن دیالوگ
                 Navigator.pop(dialogContext);
 
-                // نمایش loading
                 showDialog(
                   context: context,
                   barrierDismissible: false,
@@ -508,15 +506,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 );
 
                 try {
-                  // logout
                   await authProvider.logout();
 
-                  // بستن loading
                   if (context.mounted) {
                     Navigator.pop(context);
                   }
-
-                  // رفتن به صفحه لاگین
                   if (context.mounted) {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (_) => const LoginScreen()),

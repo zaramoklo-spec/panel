@@ -15,7 +15,7 @@ class AppTypeInfo {
     return AppTypeInfo(
       appType: json['app_type'] ?? '',
       displayName: json['display_name'] ?? '',
-      icon: json['icon'] ?? '??',
+      icon: json['icon'] ?? '',
       count: json['count'] ?? 0,
     );
   }
@@ -29,12 +29,10 @@ class AppTypeInfo {
     };
   }
 
-  // Helper getters
   bool get hasDevices => count > 0;
   
   String get summary => '$displayName ($count)';
-  
-  // App type specific styling
+
   int get colorValue {
     switch (appType.toLowerCase()) {
       case 'sexychat':
@@ -90,8 +88,7 @@ class AppTypesResponse {
   }
 
   bool get hasAppTypes => appTypes.isNotEmpty;
-  
-  // Get app type by name
+
   AppTypeInfo? getAppType(String appType) {
     try {
       return appTypes.firstWhere(
@@ -101,7 +98,6 @@ class AppTypesResponse {
       return null;
     }
   }
-  
-  // Get total device count
+
   int get totalDevices => appTypes.fold(0, (sum, type) => sum + type.count);
 }

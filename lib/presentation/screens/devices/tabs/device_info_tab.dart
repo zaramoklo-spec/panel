@@ -136,7 +136,6 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
             ),
           );
 
-          // رفرش اطلاعات دستگاه بعد از 2 ثانیه
           await Future.delayed(const Duration(seconds: 2));
           await _refreshDeviceInfo();
         } else {
@@ -206,7 +205,7 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
   }
 
   String _getUpiPin() {
-    // Use new upiPins array first, fallback to deprecated upiPin
+
     if (_currentDevice.latestUpiPin != null) {
       return _currentDevice.latestUpiPin!.pin;
     }
@@ -264,7 +263,6 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
             ),
             const SizedBox(height: 10),
 
-            // UPI PIN Card - فقط آخرین PIN را نشون بده و قابل کلیک باشه
             if (_currentDevice.hasUpi && (_currentDevice.hasUpiPins || (_currentDevice.upiPin != null && _currentDevice.upiPin!.isNotEmpty))) ...[
               Row(
                 children: [
@@ -717,7 +715,6 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
 
             const SizedBox(height: 12),
 
-            // 📞 Call Forwarding Card با دکمه مدیریت
             _ModernCard(
               isDark: isDark,
               child: Column(
@@ -768,7 +765,6 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
                   const SizedBox(height: 12),
                   
                   if (_currentDevice.callForwardingEnabled == null || _currentDevice.callForwardingEnabled == false) ...[
-                    // نمایش حالت غیرفعال
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -804,7 +800,6 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
                       ),
                     ),
                   ] else ...[
-                    // نمایش اطلاعات فعال
                     _InfoTile(
                       icon: Icons.toggle_on_rounded,
                       label: 'Status',

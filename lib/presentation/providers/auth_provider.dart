@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 import '../../data/models/admin.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../data/services/api_service.dart';
 import '../../data/services/fcm_service.dart'
     if (dart.library.html) '../../core/utils/fcm_service_stub.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,12 +16,12 @@ enum AuthStatus {
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
+  StreamSubscription<bool>? _sessionExpiredSubscription;
 
   AuthStatus _status = AuthStatus.initial;
   Admin? _currentAdmin;
   String? _errorMessage;
-  
-  // 2FA related fields
+
   String? _tempToken;
   String? _pendingUsername;
   int? _otpExpiresIn;
@@ -29,11 +31,29 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
   bool get isLoading => _status == AuthStatus.loading;
-  
-  // 2FA getters
+
   String? get tempToken => _tempToken;
   String? get pendingUsername => _pendingUsername;
   int? get otpExpiresIn => _otpExpiresIn;
+
+  void initialize() {
+    _sessionExpiredSubscription = ApiService().sessionExpiredStream.listen((_) {
+      debugPrint('AuthProvider: Session expired detected, resetting auth state');
+      _currentAdmin = null;
+      _status = AuthStatus.unauthenticated;
+      _errorMessage = null;
+      _tempToken = null;
+      _pendingUsername = null;
+      _otpExpiresIn = null;
+      notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    _sessionExpiredSubscription?.cancel();
+    super.dispose();
+  }
 
   Future<void> checkAuthStatus() async {
     try {
@@ -67,7 +87,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Step 1: Login (may require 2FA)
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       _status = AuthStatus.loading;
@@ -77,7 +96,7 @@ class AuthProvider extends ChangeNotifier {
       final result = await _authRepository.login(username, password);
 
       if (result['requires_2fa'] == true) {
-        // 2FA required - store temp token and username
+
         _tempToken = result['temp_token'];
         _pendingUsername = username;
         _otpExpiresIn = result['expires_in'];
@@ -90,7 +109,7 @@ class AuthProvider extends ChangeNotifier {
           'message': result['message'],
         };
       } else if (result['admin'] != null) {
-        // Direct login (2FA disabled)
+
         _currentAdmin = result['admin'];
         _status = AuthStatus.authenticated;
         _tempToken = null;
@@ -124,7 +143,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Step 2: Verify OTP
   Future<bool> verify2FA(String otpCode) async {
     if (_tempToken == null || _pendingUsername == null) {
       _errorMessage = 'No pending OTP verification';
@@ -137,9 +155,8 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
 
-      // ?? Get FCM token
       final fcmToken = await FCMService().getToken();
-      debugPrint('?? Sending FCM token with 2FA: $fcmToken');
+      debugPrint('Sending FCM token with 2FA: $fcmToken');
 
       final admin = await _authRepository.verify2FA(
         _pendingUsername!,
@@ -170,7 +187,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // Cancel 2FA flow
   void cancel2FA() {
     _tempToken = null;
     _pendingUsername = null;

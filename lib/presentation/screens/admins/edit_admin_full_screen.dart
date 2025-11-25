@@ -19,11 +19,9 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
     with SingleTickerProviderStateMixin {
   late String _selectedRole;
   late bool _isActive;
-  
-  // 2FA Telegram
+
   late TextEditingController _telegram2faChatIdController;
-  
-  // Bot controllers (5 bots)
+
   final List<TextEditingController> _botNameControllers =
       List.generate(5, (_) => TextEditingController());
   final List<TextEditingController> _botTokenControllers =
@@ -47,8 +45,7 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
     );
     
     _tabController = TabController(length: 2, vsync: this);
-    
-    // Initialize bot controllers with existing data
+
     if (widget.admin.telegramBots != null) {
       for (int i = 0; i < widget.admin.telegramBots!.length && i < 5; i++) {
         final bot = widget.admin.telegramBots![i];
@@ -57,7 +54,7 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
         _botChatIdControllers[i].text = bot.chatId;
       }
     } else {
-      // Set default bot names if no bots exist
+
       _botNameControllers[0].text = 'devices_bot';
       _botNameControllers[1].text = 'sms_bot';
       _botNameControllers[2].text = 'logs_bot';
@@ -87,7 +84,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
   Future<void> _updateAdmin() async {
     setState(() => _isLoading = true);
 
-    // Create telegram bots list
     final List<TelegramBot> telegramBots = [];
     for (int i = 0; i < 5; i++) {
       telegramBots.add(TelegramBot(
@@ -150,10 +146,9 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Tab 1: Basic Settings
+
           _buildBasicSettingsTab(isDark),
-          
-          // Tab 2: Telegram Bots
+
           _buildTelegramBotsTab(isDark),
         ],
       ),
@@ -167,7 +162,7 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Info Card
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -214,7 +209,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
 
           const SizedBox(height: 24),
 
-          // Role Dropdown
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -323,7 +317,7 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 2FA Section
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -374,7 +368,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
 
           const SizedBox(height: 24),
 
-          // Current Configuration Status
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -405,7 +398,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
 
           const SizedBox(height: 16),
 
-          // Notification Bots
           Text(
             'Notification Bots',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -419,7 +411,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
           ),
           const SizedBox(height: 16),
 
-          // 5 Bots
           ...List.generate(5, (index) => _buildBotCard(index, isDark)),
         ],
       ),
@@ -428,11 +419,11 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
 
   Widget _buildBotCard(int index, bool isDark) {
     final botPurposes = [
-      '?? Device Notifications',
-      '?? SMS Notifications',
-      '?? Admin Activity Logs',
-      '?? Login/Logout Logs',
-      '?? Reserved for Future',
+      'Device Notifications',
+      'SMS Notifications',
+      'Admin Activity Logs',
+      'Login/Logout Logs',
+      'Reserved for Future',
     ];
 
     final isConfigured = _botTokenControllers[index].text.isNotEmpty &&
@@ -508,7 +499,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
           ),
           const SizedBox(height: 12),
 
-          // Bot Name
           TextFormField(
             controller: _botNameControllers[index],
             decoration: InputDecoration(
@@ -524,7 +514,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
 
           const SizedBox(height: 12),
 
-          // Bot Token
           TextFormField(
             controller: _botTokenControllers[index],
             decoration: InputDecoration(
@@ -541,7 +530,6 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
 
           const SizedBox(height: 12),
 
-          // Chat ID
           TextFormField(
             controller: _botChatIdControllers[index],
             decoration: InputDecoration(

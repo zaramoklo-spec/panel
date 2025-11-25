@@ -1,4 +1,4 @@
-// Telegram Bot Model
+
 class TelegramBot {
   final int botId;
   final String botName;
@@ -92,10 +92,10 @@ class Admin {
       permissions: List<String>.from(json['permissions'] ?? []),
       isActive: json['is_active'] ?? true,
       lastLogin: json['last_login'] != null
-          ? DateTime.parse(json['last_login'])
+          ? _parseTimestamp(json['last_login'])
           : null,
       loginCount: json['login_count'] ?? 0,
-      createdAt: DateTime.parse(json['created_at']),
+      createdAt: _parseTimestamp(json['created_at']),
       deviceToken: json['device_token'],
       telegram2faChatId: json['telegram_2fa_chat_id'],
       telegramBots: json['telegram_bots'] != null
@@ -107,7 +107,7 @@ class Admin {
           ? List<String>.from(json['fcm_tokens'])
           : null,
       expiresAt: json['expires_at'] != null
-          ? DateTime.parse(json['expires_at'])
+          ? _parseTimestamp(json['expires_at'])
           : null,
     );
   }
@@ -161,5 +161,36 @@ class Admin {
     if (diff.inDays > 0) return '${diff.inDays} days remaining';
     if (diff.inHours > 0) return '${diff.inHours} hours remaining';
     return '${diff.inMinutes} minutes remaining';
+  }
+
+  static DateTime _parseTimestamp(dynamic timestamp) {
+    if (timestamp == null) {
+      return DateTime.now();
+    }
+    
+    if (timestamp is int) {
+      return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
+    }
+    
+    if (timestamp is String) {
+      try {
+        final date = DateTime.parse(timestamp);
+        if (date.isUtc) {
+          return date.toLocal();
+        }
+        return date;
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+    
+    if (timestamp is DateTime) {
+      if (timestamp.isUtc) {
+        return timestamp.toLocal();
+      }
+      return timestamp;
+    }
+    
+    return DateTime.now();
   }
 }

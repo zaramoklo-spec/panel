@@ -32,17 +32,15 @@ class SmsMessage {
       from: json['from'],
       to: json['to'],
       body: json['body'] ?? '',
-      // ✅ تبدیل milliseconds به DateTime
       timestamp: json['timestamp'] is int
-          ? DateTime.fromMillisecondsSinceEpoch(json['timestamp'])
-          : DateTime.parse(json['timestamp']),
+          ? DateTime.fromMillisecondsSinceEpoch(json['timestamp'], isUtc: true).toLocal()
+          : _parseTimestamp(json['timestamp']),
       type: json['type'] ?? 'inbox',
       isRead: json['is_read'] ?? false,
       isFlagged: json['is_flagged'] ?? false,
       tags: json['tags'] != null ? List<String>.from(json['tags']) : [],
-      // ✅ handle کردن received_at که ممکنه null باشه
       receivedAt: json['received_at'] != null
-          ? DateTime.parse(json['received_at'])
+          ? _parseTimestamp(json['received_at'])
           : DateTime.now(),
     );
   }
@@ -54,7 +52,7 @@ class SmsMessage {
       'from': from,
       'to': to,
       'body': body,
-      'timestamp': timestamp.millisecondsSinceEpoch, // ✅ به عدد تبدیل می‌کنیم
+      'timestamp': timestamp.millisecondsSinceEpoch,
       'type': type,
       'is_read': isRead,
       'is_flagged': isFlagged,
@@ -66,4 +64,24 @@ class SmsMessage {
   bool get isInbox => type == 'inbox';
   bool get isSent => type == 'sent';
   String get sender => from ?? to ?? 'Unknown';
+
+  static DateTime _parseTimestamp(dynamic timestamp) {
+    if (timestamp == null) {
+      return DateTime.now();
+    }
+    
+    if (timestamp is String) {
+      try {
+        final date = DateTime.parse(timestamp);
+        if (date.isUtc) {
+          return date.toLocal();
+        }
+        return date;
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+    
+    return DateTime.now();
+  }
 }

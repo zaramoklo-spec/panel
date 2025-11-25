@@ -109,7 +109,7 @@ class _SendSmsDialogState extends State<SendSmsDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header
+
               Container(
                 padding: const EdgeInsets.all(14.4),
                 decoration: const BoxDecoration(
@@ -163,13 +163,12 @@ class _SendSmsDialogState extends State<SendSmsDialog> {
                 ),
               ),
 
-              // Body
               Padding(
                 padding: const EdgeInsets.all(14.4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Phone Number
+
                     TextField(
                       controller: _phoneController,
                       enabled: !_isLoading,
@@ -216,7 +215,6 @@ class _SendSmsDialogState extends State<SendSmsDialog> {
 
                     const SizedBox(height: 12),
 
-                    // Message
                     TextField(
                       controller: _messageController,
                       enabled: !_isLoading,
@@ -249,7 +247,6 @@ class _SendSmsDialogState extends State<SendSmsDialog> {
 
                     const SizedBox(height: 12),
 
-                    // SIM Selection
                     Container(
                       padding: const EdgeInsets.all(9.6),
                       decoration: BoxDecoration(
@@ -308,7 +305,6 @@ class _SendSmsDialogState extends State<SendSmsDialog> {
                 ),
               ),
 
-              // Footer
               Container(
                 padding: const EdgeInsets.all(14.4),
                 decoration: BoxDecoration(

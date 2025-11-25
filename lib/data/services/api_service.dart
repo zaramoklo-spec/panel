@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/constants/api_constants.dart';
 import 'storage_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,11 +14,9 @@ class ApiService {
   late Dio _dio;
   final StorageService _storage = StorageService();
   
-  // Stream ???? session expired events
   final _sessionExpiredController = StreamController<bool>.broadcast();
   Stream<bool> get sessionExpiredStream => _sessionExpiredController.stream;
   
-  // Callback for session expired (???? backward compatibility)
   Function()? onSessionExpired;
 
   void init() {
@@ -41,24 +40,34 @@ class ApiService {
           return handler.next(options);
         },
         onError: (error, handler) async {
-          // Handle 401 Unauthorized & 403 Forbidden (Session Expired)
           final statusCode = error.response?.statusCode;
           
           if (statusCode == 401 || statusCode == 403) {
-            // Check if it's not the login endpoint
             final isLoginEndpoint = error.requestOptions.path.contains('/auth/login') ||
                 error.requestOptions.path.contains('/auth/verify-2fa');
             
             if (!isLoginEndpoint) {
-              // Session expired due to single session control or token invalid
-              await _storage.clearAll();
+              final headers = error.response?.headers;
+              final data = error.response?.data;
               
-              // Notify via stream
-              _sessionExpiredController.add(true);
+              final sessionExpiredHeader = headers?.value('x-session-expired')?.toLowerCase() == 'true';
+              final sessionExpiredInBody = data is Map && (data['session_expired'] == true || data['redirect_to_login'] == true);
               
-              // Notify via callback (???? backward compatibility)
-              if (onSessionExpired != null) {
-                onSessionExpired!();
+              if (sessionExpiredHeader || sessionExpiredInBody) {
+                debugPrint('Session expired detected - Status: $statusCode, Header: $sessionExpiredHeader, Body: $sessionExpiredInBody');
+                debugPrint('Endpoint: ${error.requestOptions.path}');
+                debugPrint('Clearing storage and redirecting to login...');
+                
+                await _storage.clearAll();
+                
+                debugPrint('Storage cleared. Emitting session expired event...');
+                _sessionExpiredController.add(true);
+                
+                if (onSessionExpired != null) {
+                  onSessionExpired!();
+                }
+                
+                debugPrint('Session expired handled - user will be redirected to login');
               }
             }
           }

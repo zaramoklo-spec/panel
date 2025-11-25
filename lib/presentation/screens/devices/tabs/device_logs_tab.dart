@@ -38,7 +38,7 @@ class _DeviceLogsTabState extends State<DeviceLogsTab> {
   @override
   void didUpdateWidget(DeviceLogsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Refresh logs when device changes
+
     if (oldWidget.device.deviceId != widget.device.deviceId || 
         oldWidget.key != widget.key) {
       _fetchLogs();

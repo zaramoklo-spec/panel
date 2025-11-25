@@ -60,10 +60,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
     _animationController.forward();
 
-    // Start countdown
     _startCountdown();
 
-    // Auto-focus first field
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNodes[0].requestFocus();
     });
@@ -107,7 +105,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         ),
       );
 
-      // Go back to login
       context.read<AuthProvider>().cancel2FA();
       Navigator.of(context).pop();
     }
@@ -207,7 +204,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           ),
         );
 
-        // Clear all fields
         for (var controller in _controllers) {
           controller.clear();
         }
@@ -256,10 +252,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Header
+
                         Column(
                           children: [
-                            // Icon - Compact
+
                             Container(
                               width: 56,
                               height: 56,
@@ -289,7 +285,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                             const SizedBox(height: 20),
 
-                            // Title - Compact
                             ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
                                 colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
@@ -308,7 +303,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                             const SizedBox(height: 6),
 
-                            // Message
                             Text(
                               widget.message,
                               style: TextStyle(
@@ -323,7 +317,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                             const SizedBox(height: 16),
 
-                            // Timer - Compact
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
@@ -372,7 +365,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                         const SizedBox(height: 30),
 
-                        // OTP Input Card - Compact
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -396,7 +388,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                           ),
                           child: Column(
                             children: [
-                              // OTP Input Boxes
+
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
@@ -407,7 +399,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                               const SizedBox(height: 20),
 
-                              // Verify Button - Compact
                               Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
@@ -465,7 +456,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                               const SizedBox(height: 10),
 
-                              // Cancel Button - Compact
                               TextButton(
                                 onPressed: _isVerifying ? null : _handleCancel,
                                 style: TextButton.styleFrom(
@@ -489,7 +479,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
                         const SizedBox(height: 30),
 
-                        // Info
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -569,7 +558,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
             _focusNodes[index - 1].requestFocus();
           }
 
-          // Auto-submit when all 6 digits are entered
           if (index == 5 && value.isNotEmpty) {
             _handleVerify();
           }

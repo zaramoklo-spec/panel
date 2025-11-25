@@ -4,9 +4,6 @@ import '../../../data/models/admin.dart';
 import '../../providers/admin_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// ✏️ Edit Admin Dialog - Modern & Beautiful
-/// 
-/// Dialog زیبا و مدرن برای ویرایش ادمین
 class EditAdminDialog extends StatefulWidget {
   final Admin admin;
 
@@ -144,7 +141,6 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Admin Info Card
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -254,7 +250,6 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
             const SizedBox(height: 16),
 
-            // Role Selection
             Text(
               'Update Role',
               style: TextStyle(
@@ -299,7 +294,6 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
 
             const SizedBox(height: 16),
 
-            // Status Toggle
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -412,7 +406,6 @@ class _EditAdminDialogState extends State<EditAdminDialog> {
   }
 }
 
-/// Info Row Widget
 class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -465,7 +458,6 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-/// Role Selection Card Widget
 class _RoleCard extends StatelessWidget {
   final String role;
   final String label;

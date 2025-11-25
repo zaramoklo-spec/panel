@@ -13,7 +13,6 @@ class AppTheme {
   static const Color errorColor = Color(0xFFEF4444);
   static const Color infoColor = Color(0xFF3B82F6);
 
-  // ✅ متد برای تنظیم اولیه System UI
   static void setupSystemUI() {
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
@@ -21,7 +20,6 @@ class AppTheme {
     );
   }
 
-  // ✅ متد کمکی برای سینک دستی System UI (در صورت نیاز در صفحات خاص)
   static void syncSystemUI(BuildContext context, {Color? customColor}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = customColor ?? (isDark

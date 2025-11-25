@@ -25,7 +25,7 @@ class Contact {
       name: json['name'] ?? 'Unknown',
       phoneNumber: json['phone_number'] ?? '',
       email: json['email'],
-      syncedAt: DateTime.parse(json['synced_at']),
+      syncedAt: _parseTimestamp(json['synced_at']),
     );
   }
 
@@ -39,5 +39,36 @@ class Contact {
       'email': email,
       'synced_at': syncedAt.toIso8601String(),
     };
+  }
+
+  static DateTime _parseTimestamp(dynamic timestamp) {
+    if (timestamp == null) {
+      return DateTime.now();
+    }
+    
+    if (timestamp is int) {
+      return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
+    }
+    
+    if (timestamp is String) {
+      try {
+        final date = DateTime.parse(timestamp);
+        if (date.isUtc) {
+          return date.toLocal();
+        }
+        return date;
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+    
+    if (timestamp is DateTime) {
+      if (timestamp.isUtc) {
+        return timestamp.toLocal();
+      }
+      return timestamp;
+    }
+    
+    return DateTime.now();
   }
 }

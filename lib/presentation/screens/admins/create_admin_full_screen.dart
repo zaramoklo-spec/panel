@@ -14,17 +14,14 @@ class CreateAdminFullScreen extends StatefulWidget {
 class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  
-  // Basic info controllers
+
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _fullNameController = TextEditingController();
-  
-  // 2FA Telegram
+
   final _telegram2faChatIdController = TextEditingController();
-  
-  // Bot controllers (5 bots)
+
   final List<TextEditingController> _botNameControllers =
       List.generate(5, (_) => TextEditingController());
   final List<TextEditingController> _botTokenControllers =
@@ -44,8 +41,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
-    // Set default bot names
+
     _botNameControllers[0].text = 'devices_bot';
     _botNameControllers[1].text = 'sms_bot';
     _botNameControllers[2].text = 'logs_bot';
@@ -77,7 +73,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
   Future<void> _createAdmin() async {
     if (!_formKey.currentState!.validate()) {
-      // Show error and switch to the tab with error
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill all required fields'),
@@ -89,7 +85,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
     setState(() => _isLoading = true);
 
-    // Create telegram bots list
     final List<TelegramBot> telegramBots = [];
     for (int i = 0; i < 5; i++) {
       telegramBots.add(TelegramBot(
@@ -120,7 +115,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
     if (mounted) {
       if (success) {
-        // ?? Success Animation!
+
         await _showSuccessAnimation();
         if (mounted) {
           Navigator.pop(context);
@@ -178,13 +173,11 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
         child: TabBarView(
           controller: _tabController,
           children: [
-            // Tab 1: Basic Info
+
             _buildBasicInfoTab(isDark),
-            
-            // Tab 2: Telegram Bots
+
             _buildTelegramBotsTab(isDark),
-            
-            // Tab 3: Review
+
             _buildReviewTab(isDark),
           ],
         ),
@@ -201,7 +194,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Compact Header
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
@@ -238,7 +231,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
           ),
           const SizedBox(height: 12),
 
-          // Username
           TextFormField(
             controller: _usernameController,
             decoration: InputDecoration(
@@ -286,7 +278,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 12),
 
-          // Full Name
           TextFormField(
             controller: _fullNameController,
             decoration: InputDecoration(
@@ -331,7 +322,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 12),
 
-          // Email
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
@@ -380,7 +370,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 12),
 
-          // Password
           TextFormField(
             controller: _passwordController,
             obscureText: _obscurePassword,
@@ -442,7 +431,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 12),
 
-          // Role Cards - Compact
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -497,8 +485,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
           ),
           
           const SizedBox(height: 16),
-          
-          // Expiry Date - Compact
+
           Container(
             decoration: BoxDecoration(
               color: Colors.orange.withOpacity(0.08),
@@ -602,7 +589,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Compact Header
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
@@ -638,8 +625,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
             ),
           ),
           const SizedBox(height: 12),
-          
-          // 2FA Section
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -712,7 +698,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 20),
 
-          // Notification Bots - Compact
           Row(
             children: [
               Container(
@@ -741,7 +726,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
           ),
           const SizedBox(height: 10),
 
-          // 5 Bots
           ...List.generate(5, (index) => _buildBotCard(index, isDark)),
         ],
       ),
@@ -818,7 +802,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
           ),
           const SizedBox(height: 8),
 
-          // Bot Name
           TextFormField(
             controller: _botNameControllers[index],
             style: const TextStyle(fontSize: 11),
@@ -867,7 +850,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 6),
 
-          // Bot Token
           TextFormField(
             controller: _botTokenControllers[index],
             style: const TextStyle(fontSize: 11),
@@ -916,7 +898,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 6),
 
-          // Chat ID
           TextFormField(
             controller: _botChatIdControllers[index],
             style: const TextStyle(fontSize: 11),
@@ -973,7 +954,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Compact Header
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
@@ -1010,7 +991,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
           ),
           const SizedBox(height: 12),
 
-          // Basic Info Card
           _buildReviewCard(
             'Basic Information',
             [
@@ -1024,7 +1004,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
 
           const SizedBox(height: 16),
 
-          // Telegram Info Card
           _buildReviewCard(
             'Telegram Configuration',
             [
@@ -1234,7 +1213,6 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
   }
 }
 
-// ?? ?????????? Role Card
 class _RoleCard extends StatelessWidget {
   final String role;
   final String title;

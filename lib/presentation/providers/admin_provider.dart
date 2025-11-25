@@ -206,8 +206,7 @@ class AdminProvider extends ChangeNotifier {
     _totalActivities = 0;
     notifyListeners();
   }
-  
-  // Fetch devices for specific admin (Super Admin only)
+
   Future<void> fetchAdminDevices(
     String adminUsername, {
     int skip = 0,

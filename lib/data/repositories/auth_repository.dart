@@ -9,7 +9,6 @@ class AuthRepository {
   final ApiService _apiService = ApiService();
   final StorageService _storageService = StorageService();
 
-  // Step 1: Login - returns temp_token or access_token (if 2FA disabled)
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _apiService.post(
@@ -23,9 +22,8 @@ class AuthRepository {
       if (response.statusCode == 200) {
         final data = response.data;
 
-        // Check if 2FA is enabled
         if (data['temp_token'] != null) {
-          // 2FA enabled - return temp token and message
+
           return {
             'requires_2fa': true,
             'temp_token': data['temp_token'],
@@ -33,7 +31,7 @@ class AuthRepository {
             'message': data['message'],
           };
         } else {
-          // 2FA disabled - direct login
+
           await _storageService.saveToken(data['access_token']);
           await _storageService.saveAdminInfo(data['admin']);
 
@@ -54,7 +52,6 @@ class AuthRepository {
     }
   }
 
-  // Step 2: Verify OTP and get final access token
   Future<Admin?> verify2FA(
     String username,
     String otpCode,
@@ -80,7 +77,6 @@ class AuthRepository {
       if (response.statusCode == 200) {
         final data = response.data;
 
-        // Save final access token
         await _storageService.saveToken(data['access_token']);
         await _storageService.saveAdminInfo(data['admin']);
 

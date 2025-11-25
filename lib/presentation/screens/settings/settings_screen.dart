@@ -305,7 +305,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         await launchUrl(webUrl);
       }
     } catch (e) {
-      debugPrint('Error launching Telegram: $e');
+      debugPrint(''Error launching Telegram: $e');
     }
   }
 }

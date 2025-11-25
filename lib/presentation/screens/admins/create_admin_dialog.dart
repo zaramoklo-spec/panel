@@ -3,9 +3,6 @@ import 'package:provider/provider.dart';
 import '../../providers/admin_provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// 👤 Create Admin Dialog - Modern & Beautiful
-/// 
-/// Dialog زیبا و مدرن برای ساخت ادمین جدید
 class CreateAdminDialog extends StatefulWidget {
   const CreateAdminDialog({super.key});
 
@@ -153,7 +150,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Info Card
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -181,7 +177,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
 
               const SizedBox(height: 16),
 
-              // Username
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -221,7 +216,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
 
               const SizedBox(height: 12),
 
-              // Full Name
               TextFormField(
                 controller: _fullNameController,
                 decoration: InputDecoration(
@@ -258,7 +252,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
 
               const SizedBox(height: 12),
 
-              // Email
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -299,7 +292,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
 
               const SizedBox(height: 12),
 
-              // Password
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -351,7 +343,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
 
               const SizedBox(height: 16),
 
-              // Role Selection - Beautiful Cards
               Text(
                 'Select Role',
                 style: TextStyle(
@@ -428,7 +419,6 @@ class _CreateAdminDialogState extends State<CreateAdminDialog> {
   }
 }
 
-/// Role Selection Card Widget
 class _RoleCard extends StatelessWidget {
   final String role;
   final String label;

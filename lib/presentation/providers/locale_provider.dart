@@ -11,7 +11,6 @@ class LocaleProvider with ChangeNotifier {
   LocaleService get localeService => _localeService;
   bool get isLoading => _isLoading;
 
-  // Get translated string
   String t(String key) => _localeService.translate(key);
 
   LocaleProvider() {
@@ -29,7 +28,7 @@ class LocaleProvider with ChangeNotifier {
       await _localeService.load(languageCode);
       _locale = Locale(languageCode);
     } catch (e) {
-      // Fallback to English
+
       await _localeService.load('en');
       _locale = const Locale('en');
     }
@@ -51,7 +50,7 @@ class LocaleProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('language_code', locale.languageCode);
     } catch (e) {
-      debugPrint('Error setting locale: $e');
+      debugPrint(''Error setting locale: $e');
     }
 
     _isLoading = false;

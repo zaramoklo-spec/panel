@@ -23,10 +23,10 @@ class StorageService {
 
   Future<void> saveToken(String token) async {
     if (kIsWeb) {
-      // ??? Web ?? SharedPreferences ??????? ??
+
       await _prefs?.setString('access_token', token);
     } else {
-      // ??? ?????? ?? SecureStorage ??????? ??
+
       await _secureStorage.write(key: 'access_token', value: token);
     }
   }

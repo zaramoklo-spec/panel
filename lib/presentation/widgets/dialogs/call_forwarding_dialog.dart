@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../data/models/device.dart';
 
-/// 📞 Call Forwarding Dialog Widget
-/// 
-/// Dialog for managing Call Forwarding settings
-/// 
-/// Features:
-/// - Enable/Disable Call Forwarding
-/// - Select forwarding number
-/// - Select SIM Slot (0 or 1)
-/// - Phone number validation
+
+
+
+
+
+
+
+
 class CallForwardingDialog extends StatefulWidget {
   final Device device;
 
@@ -32,7 +31,7 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
   @override
   void initState() {
     super.initState();
-    // Initialize with current device information
+
     _numberController = TextEditingController(
       text: widget.device.callForwardingNumber ?? '',
     );
@@ -57,20 +56,16 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
       return 'Please enter a phone number';
     }
 
-    // Remove spaces and extra characters
     final cleanNumber = value.replaceAll(RegExp(r'[\s\-\(\)]'), '');
 
-    // Check international format (must start with +)
     if (!cleanNumber.startsWith('+')) {
       return 'Number must start with country code (e.g., +1...)';
     }
 
-    // Check that it only contains numbers and +
     if (!RegExp(r'^\+[0-9]+$').hasMatch(cleanNumber)) {
       return 'Invalid phone number format';
     }
 
-    // Minimum 10 digits (without +)
     if (cleanNumber.length < 11) {
       return 'Number is too short';
     }
@@ -128,7 +123,7 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Current status
+
               if (widget.device.callForwardingEnabled == true)
                 Container(
                   padding: const EdgeInsets.all(10),
@@ -156,7 +151,6 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
                 ),
               if (widget.device.callForwardingEnabled == true) const SizedBox(height: 16),
 
-              // Enable/Disable Toggle
               Text(
                 'Action',
                 style: TextStyle(
@@ -193,7 +187,6 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
               if (_isEnabled) ...[
                 const SizedBox(height: 16),
 
-                // Phone Number Input
                 Text(
                   'Forward to Number',
                   style: TextStyle(
@@ -254,7 +247,6 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
                 ),
                 const SizedBox(height: 12),
 
-                // Important note
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -284,7 +276,6 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
 
               const SizedBox(height: 16),
 
-              // SIM Slot Selection
               Text(
                 'SIM Slot',
                 style: TextStyle(
@@ -294,8 +285,7 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
                 ),
               ),
               const SizedBox(height: 8),
-              
-              // Display available SIM card information
+
               if (widget.device.simInfo != null && widget.device.simInfo!.isNotEmpty) ...[
                 ...widget.device.simInfo!.map((sim) {
                   final isSelected = _selectedSimSlot == sim.simSlot;
@@ -383,7 +373,7 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
                   );
                 }).toList(),
               ] else ...[
-                // If no SIM info available, show simple buttons
+
                 Row(
                   children: [
                     Expanded(
@@ -447,7 +437,6 @@ class _CallForwardingDialogState extends State<CallForwardingDialog> {
   }
 }
 
-/// Action Chip Widget (Enable/Disable)
 class _ActionChip extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -516,7 +505,6 @@ class _ActionChip extends StatelessWidget {
   }
 }
 
-/// SIM Slot Chip Widget (Simple version when no SIM info)
 class _SimSlotChip extends StatelessWidget {
   final String label;
   final int slot;

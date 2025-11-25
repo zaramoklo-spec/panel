@@ -1,8 +1,3 @@
-// ============================================
-// Stats Model
-// در پوشه models بساز: models/stats.dart
-// ============================================
-
 class Stats {
   final int totalDevices;
   final int activeDevices;

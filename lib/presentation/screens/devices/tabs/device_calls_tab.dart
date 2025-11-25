@@ -26,7 +26,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
 
   late TabController _tabController;
 
-  // 🎯 Pagination Variables
   int _currentPage = 1;
   int _pageSize = 100;
   int _totalCalls = 0;
@@ -44,7 +43,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
   @override
   void didUpdateWidget(DeviceCallsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Refresh calls when device changes
     if (oldWidget.device.deviceId != widget.device.deviceId || 
         oldWidget.key != widget.key) {
       _currentPage = 1;
@@ -84,7 +82,7 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
               try {
                 parsedCalls.add(CallLog.fromJson(item as Map<String, dynamic>));
               } catch (e) {
-                debugPrint('Error parsing call: $e');
+                debugPrint(''Error parsing call: $e');
               }
             }
           }
@@ -145,7 +143,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
             children: [
               const SizedBox(height: 12),
 
-              // Tab Bar - Compact Version
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
@@ -235,7 +232,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
                 ),
               ),
 
-              // Content
               Expanded(
                 child: _isLoading
                     ? Center(
@@ -291,7 +287,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
             ],
           ),
 
-          // Floating Pagination with Page Size Menu (WhatsApp style)
           if (!_isLoading && _calls.isNotEmpty && _totalPages > 1)
             Positioned(
               bottom: MediaQuery.of(context).padding.bottom + 16,
@@ -299,7 +294,7 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Page Size Menu Button
+
                   Material(
                     elevation: 8,
                     borderRadius: BorderRadius.circular(25),
@@ -410,7 +405,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
                   ),
                   const SizedBox(width: 8),
 
-                  // Pagination Controls
                   Material(
                     elevation: 8,
                     borderRadius: BorderRadius.circular(30),
@@ -434,7 +428,7 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Previous Button
+
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -459,7 +453,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
                             ),
                           ),
 
-                          // Page Info
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Text(
@@ -473,7 +466,6 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
                             ),
                           ),
 
-                          // Next Button
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -718,7 +710,7 @@ class _CallLogCardState extends State<_CallLogCard> {
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                // Icon
+
                 Container(
                   width: 38,
                   height: 38,
@@ -739,7 +731,6 @@ class _CallLogCardState extends State<_CallLogCard> {
                 ),
                 const SizedBox(width: 10),
 
-                // Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -880,7 +871,6 @@ class _CallLogCardState extends State<_CallLogCard> {
                   ),
                 ),
 
-                // Chevron
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
@@ -1058,7 +1048,6 @@ class _DetailRow extends StatelessWidget {
   }
 }
 
-// Extension for string capitalization
 extension StringExtension on String {
   String capitalize() {
     if (isEmpty) return this;

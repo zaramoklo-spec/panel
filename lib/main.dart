@@ -13,7 +13,6 @@ import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'core/theme/app_theme.dart';
 
-// Conditionally import Firebase only for mobile platforms (Android/iOS)
 import 'package:firebase_core/firebase_core.dart'
     if (dart.library.html) 'core/utils/firebase_stub.dart' as firebase_import;
 import 'package:firebase_messaging/firebase_messaging.dart'
@@ -21,17 +20,14 @@ import 'package:firebase_messaging/firebase_messaging.dart'
 import 'data/services/fcm_service.dart'
     if (dart.library.html) 'core/utils/fcm_service_stub.dart' as fcm_import;
 
-// Helper function to check if platform is mobile (Android or iOS)
 bool get _isMobilePlatform {
   if (kIsWeb) return false;
   return defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS;
 }
 
-// Global navigator key برای navigate از هر جایی
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// Handle background messages - only for mobile platforms (Android/iOS)
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(dynamic message) async {
   if (_isMobilePlatform) {
@@ -42,14 +38,12 @@ Future<void> _firebaseMessagingBackgroundHandler(dynamic message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ تنظیم System UI برای edge-to-edge (only for mobile platforms)
   if (_isMobilePlatform) {
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
       overlays: [SystemUiOverlay.top],
     );
 
-    // تنظیم orientation
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -57,22 +51,16 @@ void main() async {
 
   await StorageService().init();
 
-  // Initialize Firebase - only on mobile platforms (Android/iOS)
-  // Skip Firebase initialization for Windows, Linux, macOS, and Web
   if (_isMobilePlatform) {
     try {
       await firebase_import.Firebase.initializeApp();
-      
-      // Setup Firebase Messaging background handler
       messaging_import.FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-      
-      // Initialize FCM Service (handles everything!)
       await fcm_import.FCMService().initialize();
     } catch (e) {
-      debugPrint('Firebase initialization failed: $e');
+      debugPrint(''Firebase initialization failed: $e');
     }
   } else {
-    debugPrint('Firebase skipped for platform: $defaultTargetPlatform');
+    debugPrint(''Firebase skipped for platform: $defaultTargetPlatform');
   }
 
   runApp(const MyApp());
@@ -92,14 +80,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     
-    // Listen به session expired events
     _sessionExpiredSubscription = ApiService().sessionExpiredStream.listen((_) {
       _handleSessionExpired();
     });
   }
 
   void _handleSessionExpired() {
-    // نمایش snackbar
+    debugPrint('Handling session expired - showing notification and redirecting to login');
+    
     final context = navigatorKey.currentContext;
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -127,11 +115,12 @@ class _MyAppState extends State<MyApp> {
       );
     }
     
-    // Navigate به Login و حذف تمام stack
+    debugPrint('Navigating to login screen...');
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
     );
+    debugPrint('Redirected to login screen');
   }
 
   @override
@@ -152,29 +141,25 @@ class _MyAppState extends State<MyApp> {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp(
-            navigatorKey: navigatorKey, // اضافه کردن navigator key
+            navigatorKey: navigatorKey,
             title: 'Admin Panel',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
 
-            // ✅✅✅ کل سحر اینجاست! همه صفحات خودکار سینک میشن
             builder: (context, child) {
               final isDark = Theme.of(context).brightness == Brightness.dark;
 
-              // تنظیم خودکار System UI با تم
               SystemChrome.setSystemUIOverlayStyle(
                 SystemUiOverlayStyle(
-                  // Status Bar (بالای صفحه)
                   statusBarColor: Colors.transparent,
                   statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
                   statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
 
-                  // Navigation Bar (دکمه‌های پایین صفحه - Home, Back, Recent)
                   systemNavigationBarColor: isDark
-                      ? const Color(0xFF0B0F19)  // dark background از تم
-                      : const Color(0xFFF8FAFC), // light background از تم
+                      ? const Color(0xFF0B0F19)
+                      : const Color(0xFFF8FAFC),
                   systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
                   systemNavigationBarDividerColor: isDark
                       ? const Color(0xFF0B0F19)

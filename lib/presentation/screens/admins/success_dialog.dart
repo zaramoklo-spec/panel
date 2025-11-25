@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-// ?? ???????? Success Dialog!
 class SuccessDialog extends StatefulWidget {
   final String title;
   final String message;
   
   const SuccessDialog({
     super.key,
-    this.title = 'Success! ??',
+    this.title = 'Success!',
     this.message = 'Admin created successfully',
   });
 
@@ -41,7 +40,6 @@ class _SuccessDialogState extends State<SuccessDialog>
 
     _controller.forward();
 
-    // Auto close after 2 seconds
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (mounted) {
         Navigator.of(context).pop();
@@ -83,7 +81,7 @@ class _SuccessDialogState extends State<SuccessDialog>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Checkmark Icon
+
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(

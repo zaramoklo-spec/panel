@@ -29,7 +29,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   final DeviceRepository _repository = DeviceRepository();
   bool _isRefreshing = false;
   bool _isPinging = false;
-  int _refreshKey = 0; // Used to force tabs refresh
+  int _refreshKey = 0;
 
   @override
   void initState() {
@@ -49,10 +49,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         setState(() {
           _currentDevice = updatedDevice;
           _isRefreshing = false;
-          _refreshKey++; // Increment to force tabs refresh
+          _refreshKey++;
         });
         
-        // Show success message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -125,11 +124,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
       if (mounted) {
         setState(() => _isPinging = false);
-        
-        // Refresh device info after ping
         await _refreshDevice();
-        
-        // Show result message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -203,7 +198,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
-            // SliverAppBar with device header
             SliverAppBar(
               floating: false,
               pinned: false,
@@ -232,7 +226,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                 ),
               ),
               actions: [
-                // Ping Button
                 Container(
                   margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
                   child: Material(
@@ -280,7 +273,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     ),
                   ),
                 ),
-                // Refresh Button
                 Container(
                   margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
                   child: Material(
@@ -321,7 +313,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     ),
                   ),
                 ),
-                // Online/Offline Status Badge
                 Container(
                   margin: const EdgeInsets.only(right: 9.6, top: 6.4, bottom: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12.8, vertical: 6.4),
@@ -524,7 +515,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
               ),
             ),
 
-            // Sticky TabBar
             SliverPersistentHeader(
               pinned: true,
               delegate: _StickyTabBarDelegate(
@@ -637,7 +627,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   }
 }
 
-// Sticky TabBar Delegate
 class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
   final bool isDark;

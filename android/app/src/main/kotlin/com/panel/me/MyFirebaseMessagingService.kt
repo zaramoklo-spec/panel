@@ -20,49 +20,47 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "?? ===== NEW FCM TOKEN =====")
-        Log.d(TAG, "?? Token: $token")
+        Log.d(TAG, "===== NEW FCM TOKEN =====")
+        Log.d(TAG, "Token: $token")
         saveTokenToPreferences(token)
-        Log.d(TAG, "? Token saved")
+        Log.d(TAG, "Token saved")
     }
     
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         
-        Log.d(TAG, "?? ===== MESSAGE RECEIVED =====")
-        Log.d(TAG, "?? From: ${remoteMessage.from}")
-        Log.d(TAG, "?? Message ID: ${remoteMessage.messageId}")
-        Log.d(TAG, "?? Data: ${remoteMessage.data}")
-        Log.d(TAG, "?? Notification: ${remoteMessage.notification?.title}")
+        Log.d(TAG, "===== MESSAGE RECEIVED =====")
+        Log.d(TAG, "From: ${remoteMessage.from}")
+        Log.d(TAG, "Message ID: ${remoteMessage.messageId}")
+        Log.d(TAG, "Data: ${remoteMessage.data}")
+        Log.d(TAG, "Notification: ${remoteMessage.notification?.title}")
         
         try {
-            // Handle notification payload
             remoteMessage.notification?.let {
-                Log.d(TAG, "?? Has notification payload")
+                Log.d(TAG, "Has notification payload")
                 showNotification(
                     it.title ?: "New Notification",
                     it.body ?: "",
                     remoteMessage.data
                 )
             } ?: run {
-                // ??? notification ?????? ????? ??? data ????? ?????
                 if (remoteMessage.data.isNotEmpty()) {
-                    Log.d(TAG, "?? Data-only message, creating notification...")
+                    Log.d(TAG, "Data-only message, creating notification...")
                     handleDataMessage(remoteMessage.data)
                 } else {
-                    Log.w(TAG, "?? Empty message received")
+                    Log.w(TAG, "Empty message received")
                 }
             }
             
-            Log.d(TAG, "? Message processing complete")
+            Log.d(TAG, "Message processing complete")
         } catch (e: Exception) {
-            Log.e(TAG, "? Error processing message", e)
+            Log.e(TAG, "Error processing message", e)
         }
     }
     
     private fun handleDataMessage(data: Map<String, String>) {
         val type = data["type"]
-        Log.d(TAG, "?? Handling data message type: $type")
+        Log.d(TAG, "Handling data message type: $type")
         
         when (type) {
             "device_registered" -> {
@@ -100,7 +98,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 )
             }
             else -> {
-                // Generic notification
                 showNotification(
                     data["title"] ?: "New Notification",
                     data["body"] ?: "You have a new notification",
@@ -111,7 +108,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
     
     private fun showNotification(title: String, body: String, data: Map<String, String>) {
-        Log.d(TAG, "?? Showing notification: $title - $body")
+        Log.d(TAG, "Showing notification: $title - $body")
         
         try {
             createNotificationChannel()
@@ -146,9 +143,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val notificationId = System.currentTimeMillis().toInt()
             
             notificationManager.notify(notificationId, notificationBuilder.build())
-            Log.d(TAG, "? Notification shown with ID: $notificationId")
+            Log.d(TAG, "Notification shown with ID: $notificationId")
         } catch (e: Exception) {
-            Log.e(TAG, "? Error showing notification", e)
+            Log.e(TAG, "Error showing notification", e)
         }
     }
     
@@ -167,9 +164,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.createNotificationChannel(channel)
-                Log.d(TAG, "? Notification channel created")
+                Log.d(TAG, "Notification channel created")
             } catch (e: Exception) {
-                Log.e(TAG, "? Error creating notification channel", e)
+                Log.e(TAG, "Error creating notification channel", e)
             }
         }
     }
@@ -181,7 +178,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .putString("token", token)
                 .apply()
         } catch (e: Exception) {
-            Log.e(TAG, "? Error saving token", e)
+            Log.e(TAG, "Error saving token", e)
         }
     }
 }

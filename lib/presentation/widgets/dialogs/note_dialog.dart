@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// 🔥 Note Dialog Widget
 class NoteDialog extends StatefulWidget {
   final String? initialMessage;
   final String? initialPriority;
@@ -25,7 +24,7 @@ class _NoteDialogState extends State<NoteDialog> {
     _messageController = TextEditingController(text: widget.initialMessage ?? '');
     _selectedPriority = widget.initialPriority ?? 'none';
     _messageController.addListener(() {
-      setState(() {}); // این باعث میشه دکمه Send فعال/غیرفعال بشه
+      setState(() {});
     });
   }
 
@@ -62,7 +61,6 @@ class _NoteDialogState extends State<NoteDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Priority Selection
             Text(
               'Priority',
               style: TextStyle(
@@ -108,7 +106,6 @@ class _NoteDialogState extends State<NoteDialog> {
             ),
             const SizedBox(height: 16),
 
-            // Message Input
             Text(
               'Message',
               style: TextStyle(
@@ -190,7 +187,6 @@ class _NoteDialogState extends State<NoteDialog> {
   }
 }
 
-// 🔥 Priority Chip Widget
 class _PriorityChip extends StatelessWidget {
   final String label;
   final String value;

@@ -41,7 +41,7 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
   @override
   void didUpdateWidget(DeviceContactsTab oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Refresh contacts when device changes
+
     if (oldWidget.device.deviceId != widget.device.deviceId || 
         oldWidget.key != widget.key) {
       _fetchContacts();

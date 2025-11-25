@@ -133,7 +133,7 @@ class UPIPinsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Summary Card
+
             Container(
               padding: const EdgeInsets.all(12.8),
               decoration: BoxDecoration(
@@ -194,7 +194,6 @@ class UPIPinsScreen extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // Latest PIN Card
             if (device.latestUpiPin != null) ...[
               Container(
                 padding: const EdgeInsets.all(12.8),
@@ -335,7 +334,6 @@ class UPIPinsScreen extends StatelessWidget {
               const SizedBox(height: 12),
             ],
 
-            // All PINs List
             Text(
               'All PINs',
               style: TextStyle(

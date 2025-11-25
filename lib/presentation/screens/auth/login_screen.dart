@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (mounted) {
       if (result['success'] == true) {
         if (result['requires_2fa'] == true) {
-          // Navigate to OTP screen
+
           Navigator.of(context).push(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           );
         } else {
-          // Direct login (2FA disabled)
+
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>

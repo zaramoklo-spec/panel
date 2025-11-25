@@ -16,7 +16,6 @@ pluginManagement {
     }
 }
 
-// Firebase plugin
 buildscript {
     repositories {
         google()

@@ -6,8 +6,7 @@ import '../../core/constants/api_constants.dart';
 
 class AdminRepository {
   final ApiService _apiService = ApiService();
-  
-  // Get devices for specific admin (Super Admin only)
+
   Future<Map<String, dynamic>> getAdminDevices(
     String adminUsername, {
     int skip = 0,
@@ -68,7 +67,6 @@ class AdminRepository {
         'role': role,
       };
 
-      // Add optional telegram fields
       if (telegram2faChatId != null && telegram2faChatId.isNotEmpty) {
         data['telegram_2fa_chat_id'] = telegram2faChatId;
       }
@@ -76,8 +74,7 @@ class AdminRepository {
       if (telegramBots != null && telegramBots.isNotEmpty) {
         data['telegram_bots'] = telegramBots.map((bot) => bot.toJson()).toList();
       }
-      
-      // Add expiry date if provided
+
       if (expiresAt != null) {
         data['expires_at'] = expiresAt.toIso8601String();
       }
@@ -124,8 +121,7 @@ class AdminRepository {
       if (fullName != null) data['full_name'] = fullName;
       if (role != null) data['role'] = role;
       if (isActive != null) data['is_active'] = isActive;
-      
-      // Add telegram fields only if provided
+
       if (telegram2faChatId != null) {
         data['telegram_2fa_chat_id'] = telegram2faChatId;
       }
@@ -133,8 +129,7 @@ class AdminRepository {
       if (telegramBots != null) {
         data['telegram_bots'] = telegramBots.map((bot) => bot.toJson()).toList();
       }
-      
-      // Add expiry date if provided (can be null to remove expiry)
+
       if (expiresAt != null) {
         data['expires_at'] = expiresAt.toIso8601String();
       }

