@@ -1,3 +1,5 @@
+import '../../core/utils/date_utils.dart' as utils;
+
 class DeviceLog {
   final String id;
   final String deviceId;
@@ -25,7 +27,7 @@ class DeviceLog {
       message: json['message'] ?? '',
       level: json['level'] ?? 'info',
       metadata: json['metadata'] ?? {},
-      timestamp: _parseTimestamp(json['timestamp']),
+      timestamp: utils.DateUtils.parseTimestamp(json['timestamp']),
     );
   }
 
@@ -44,35 +46,4 @@ class DeviceLog {
   bool get isError => level == 'error';
   bool get isWarning => level == 'warning';
   bool get isInfo => level == 'info';
-
-  static DateTime _parseTimestamp(dynamic timestamp) {
-    if (timestamp == null) {
-      return DateTime.now();
-    }
-    
-    if (timestamp is int) {
-      return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
-    }
-    
-    if (timestamp is String) {
-      try {
-        final date = DateTime.parse(timestamp);
-        if (date.isUtc) {
-          return date.toLocal();
-        }
-        return date;
-      } catch (e) {
-        return DateTime.now();
-      }
-    }
-    
-    if (timestamp is DateTime) {
-      if (timestamp.isUtc) {
-        return timestamp.toLocal();
-      }
-      return timestamp;
-    }
-    
-    return DateTime.now();
-  }
 }

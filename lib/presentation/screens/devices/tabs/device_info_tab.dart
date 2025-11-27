@@ -664,7 +664,7 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
                               _InfoTile(
                                 icon: Icons.sim_card_rounded,
                                 label: 'SIM Slot',
-                                value: 'Slot ${sim.simSlot}',
+                                value: 'SIM Card ${sim.simSlot + 1}',
                                 isDark: isDark,
                               ),
                               _InfoTile(

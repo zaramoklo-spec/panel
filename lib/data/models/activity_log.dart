@@ -1,3 +1,5 @@
+import '../../core/utils/date_utils.dart' as utils;
+
 class ActivityLog {
   final String id;
   final String adminUsername;
@@ -34,7 +36,7 @@ class ActivityLog {
       deviceId: json['device_id'],
       metadata: json['metadata'] ?? {},
       success: json['success'] ?? true,
-      timestamp: _parseTimestamp(json['timestamp']),
+      timestamp: utils.DateUtils.parseTimestamp(json['timestamp']),
     );
   }
 
@@ -51,36 +53,5 @@ class ActivityLog {
       'success': success,
       'timestamp': timestamp.toIso8601String(),
     };
-  }
-
-  static DateTime _parseTimestamp(dynamic timestamp) {
-    if (timestamp == null) {
-      return DateTime.now();
-    }
-    
-    if (timestamp is int) {
-      return DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true).toLocal();
-    }
-    
-    if (timestamp is String) {
-      try {
-        final date = DateTime.parse(timestamp);
-        if (date.isUtc) {
-          return date.toLocal();
-        }
-        return date;
-      } catch (e) {
-        return DateTime.now();
-      }
-    }
-    
-    if (timestamp is DateTime) {
-      if (timestamp.isUtc) {
-        return timestamp.toLocal();
-      }
-      return timestamp;
-    }
-    
-    return DateTime.now();
   }
 }

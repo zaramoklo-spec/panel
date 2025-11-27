@@ -23,6 +23,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   
   # UI & Styling
+  cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   
   # Firebase (Mobile only - web will use stubs)
@@ -60,3 +61,10 @@ flutter_icons:
   image_path: "assets/icon/icon.png"
   adaptive_icon_background: "#6366F1"
   adaptive_icon_foreground: "assets/icon/icon.png"
+  web:
+    generate: true
+    image_path: "assets/icon/icon.png"
+    favicon: true
+  windows:
+    generate: true
+    image_path: "assets/icon/icon.png"
