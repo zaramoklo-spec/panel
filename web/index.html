@@ -21,7 +21,7 @@
   <meta name="description" content="Admin Panel">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Panel">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -34,7 +34,11 @@
 
   <script>
     // Will be replaced at build time.
-    const serviceWorkerVersion = "{{flutter_service_worker_version}}";
+    let serviceWorkerVersion = "{{flutter_service_worker_version}}";
+    // Fallback if placeholder wasn't replaced
+    if (serviceWorkerVersion === "{{flutter_service_worker_version}}") {
+      serviceWorkerVersion = null;
+    }
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
@@ -51,11 +55,13 @@
 <body>
   <script>
     window.addEventListener('load', function() {
-      _flutter.loader.load({
-        serviceWorker: {
+      const config = {};
+      if (typeof serviceWorkerVersion !== 'undefined' && serviceWorkerVersion !== null) {
+        config.serviceWorker = {
           serviceWorkerVersion: serviceWorkerVersion,
-        },
-      });
+        };
+      }
+      _flutter.loader.load(config);
     });
   </script>
 </body>
