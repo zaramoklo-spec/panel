@@ -219,13 +219,13 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     return isDark
         ? [
             const Color(0xFF0F172A),
-            const Color(0xFF1E1B4B),
-            const Color(0xFF312E81),
+            const Color(0xFF111827),
+            const Color(0xFF1F2937),
           ]
         : [
-            const Color(0xFFF0F9FF),
-            const Color(0xFFE0E7FF),
-            const Color(0xFFDDD6FE),
+            const Color(0xFFF9FAFB),
+            const Color(0xFFF3F4F6),
+            Colors.white,
           ];
   }
 
@@ -234,60 +234,73 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
       margin: const EdgeInsets.all(6),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF6366F1).withOpacity(0.9),
-            const Color(0xFF8B5CF6).withOpacity(0.9),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: isDark ? const Color(0xFF1F2937) : Colors.white,
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.1),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6366F1).withOpacity(0.4),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          _buildAppBarIcon(),
-          const SizedBox(width: 6),
-          _buildAppBarTitle(),
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: isDark ? Colors.white : Colors.black87,
+              size: 20,
+            ),
+            tooltip: 'Back',
+            onPressed: () => Navigator.of(context).pop(),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          _buildAppBarIcon(isDark),
+          const SizedBox(width: 8),
+          _buildAppBarTitle(isDark),
+          const Spacer(),
+          IconButton(
+            icon: Icon(
+              Icons.refresh_rounded,
+              color: isDark ? Colors.white70 : Colors.black54,
+              size: 18,
+            ),
             tooltip: 'Reset',
             onPressed: _isLoading ? null : _resetForm,
-          ),
-          IconButton(
-            icon: const Icon(Icons.close_rounded, color: Colors.white),
-            tooltip: 'Close',
-            onPressed: () => Navigator.of(context).pop(),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildAppBarIcon() {
+  Widget _buildAppBarIcon(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: const Color(0xFF10B981).withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: const Icon(
         Icons.shield_outlined,
-        color: Colors.white,
-        size: 16,
+        color: Color(0xFF10B981),
+        size: 18,
       ),
     );
   }
 
-  Widget _buildAppBarTitle() {
-    return const Expanded(
+  Widget _buildAppBarTitle(bool isDark) {
+    return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -295,18 +308,18 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
           Text(
             'Leak Lookup',
             style: TextStyle(
-              color: Colors.white,
+              color: isDark ? Colors.white : Colors.black87,
               fontSize: 14,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.3,
             ),
           ),
-          SizedBox(height: 1),
+          const SizedBox(height: 2),
           Text(
             'Security Intelligence Search',
             style: TextStyle(
-              color: Colors.white70,
-              fontSize: 9,
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 10,
               letterSpacing: 0.2,
             ),
           ),
@@ -358,22 +371,22 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            color: const Color(0xFF10B981).withOpacity(0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: const Icon(
             Icons.search_rounded,
-            color: Color(0xFF6366F1),
-            size: 14,
+            color: Color(0xFF10B981),
+            size: 16,
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 8),
         Text(
           'Search Parameters',
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black87,
           ),
@@ -386,9 +399,9 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     return _buildTextField(
       controller: _queryController,
       label: 'Query',
-      hint: '+989123456789',
+      hint: '+919876543210',
       icon: Icons.phone_android_rounded,
-      iconColor: const Color(0xFF6366F1),
+      iconColor: const Color(0xFF10B981),
       isDark: isDark,
       onPaste: _pasteFromClipboard,
     );
@@ -410,7 +423,7 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
       label: 'Limit',
       hint: '100',
       icon: Icons.filter_list_rounded,
-      iconColor: const Color(0xFF3B82F6),
+      iconColor: const Color(0xFF14B8A6),
       isDark: isDark,
       keyboardType: TextInputType.number,
     );
@@ -526,23 +539,23 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      height: 36,
+      height: 40,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: _isLoading
               ? [Colors.grey.shade400, Colors.grey.shade500]
-              : [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
+              : [const Color(0xFF10B981), const Color(0xFF059669)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: _isLoading
             ? []
             : [
                 BoxShadow(
-                  color: const Color(0xFF6366F1).withOpacity(0.5),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
+                  color: const Color(0xFF10B981).withOpacity(0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ],
       ),
@@ -550,28 +563,28 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
         color: Colors.transparent,
         child: InkWell(
           onTap: _isLoading ? null : _runLookup,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (_isLoading)
                   const SizedBox(
-                    width: 16,
-                    height: 16,
+                    width: 18,
+                    height: 18,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
+                      strokeWidth: 2.5,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
                 else
-                  const Icon(Icons.search_rounded, color: Colors.white, size: 16),
-                const SizedBox(width: 6),
+                  const Icon(Icons.search_rounded, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
                 Text(
                   _isLoading ? 'Searching...' : 'Start Search',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.3,
                   ),
@@ -728,20 +741,27 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
   Widget _buildResultHeader(bool isDark) {
     return Row(
       children: [
-        const Icon(Icons.dataset_rounded, color: Color(0xFF6366F1), size: 16),
-        const SizedBox(width: 6),
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: const Color(0xFF10B981).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: const Icon(Icons.dataset_rounded, color: Color(0xFF10B981), size: 16),
+        ),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             'Results',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
             ),
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.copy_all_rounded, size: 16),
+          icon: Icon(Icons.copy_all_rounded, size: 18, color: isDark ? Colors.white70 : Colors.black54),
           tooltip: 'Copy JSON',
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
@@ -840,13 +860,13 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFF6366F1).withOpacity(0.1),
+        color: const Color(0xFF10B981).withOpacity(0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         '#${index + 1}',
         style: const TextStyle(
-          color: Color(0xFF6366F1),
+          color: Color(0xFF10B981),
           fontSize: 10,
           fontWeight: FontWeight.bold,
         ),
@@ -896,13 +916,13 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF6366F1)
+        color: const Color(0xFF10B981)
             .withOpacity(0.1 + (_pulseController.value * 0.1)),
         shape: BoxShape.circle,
       ),
       child: const Icon(
         Icons.search_off_rounded,
-        color: Color(0xFF6366F1),
+        color: Color(0xFF10B981),
         size: 32,
       ),
     );

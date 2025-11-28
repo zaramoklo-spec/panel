@@ -908,29 +908,14 @@ class _DevicesPageState extends State<_DevicesPage> {
               ),
             ),
 
-            SliverToBoxAdapter(
-              child: _supportsZoom
-                  ? ClipRect(
-                      child: Transform.scale(
-                        scale: _filterScale,
-                        alignment: Alignment.centerLeft,
-                        child: _buildPerPageSection(context, deviceProvider),
-                      ),
-                    )
-                  : _buildPerPageSection(context, deviceProvider),
-            ),
+            if (deviceProvider.totalDevices > 0)
+              SliverToBoxAdapter(
+                child: _buildPerPageSection(context, deviceProvider, _supportsZoom ? _filterScale : 1.0),
+              ),
 
             if (deviceProvider.devices.isNotEmpty && !deviceProvider.isLoading)
               SliverToBoxAdapter(
-                child: _supportsZoom
-                    ? ClipRect(
-                        child: Transform.scale(
-                          scale: _filterScale,
-                          alignment: Alignment.centerLeft,
-                          child: _buildDeviceCountInfo(deviceProvider),
-                        ),
-                      )
-                    : _buildDeviceCountInfo(deviceProvider),
+                child: _buildDeviceCountInfo(deviceProvider, _supportsZoom ? _filterScale : 1.0),
               ),
 
 
@@ -1236,26 +1221,26 @@ class _DevicesPageState extends State<_DevicesPage> {
     );
   }
 
-  Widget _buildPerPageSection(BuildContext context, DeviceProvider deviceProvider) {
+  Widget _buildPerPageSection(BuildContext context, DeviceProvider deviceProvider, double scale) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+      padding: EdgeInsets.fromLTRB(12 * scale, 0, 12 * scale, 8 * scale),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(6 * scale),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.view_list, size: 14, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(width: 4),
+                Icon(Icons.view_list, size: 14 * scale, color: Theme.of(context).colorScheme.primary),
+                SizedBox(width: 4 * scale),
                 Text(
                   'Per Page',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 11 * scale,
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -1263,23 +1248,23 @@ class _DevicesPageState extends State<_DevicesPage> {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8 * scale),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _PageSizeChip(label: '25', selected: deviceProvider.pageSize == 25, onTap: () => deviceProvider.setPageSize(25)),
-                  const SizedBox(width: 4),
-                  _PageSizeChip(label: '50', selected: deviceProvider.pageSize == 50, onTap: () => deviceProvider.setPageSize(50)),
-                  const SizedBox(width: 4),
-                  _PageSizeChip(label: '100', selected: deviceProvider.pageSize == 100, onTap: () => deviceProvider.setPageSize(100)),
-                  const SizedBox(width: 4),
-                  _PageSizeChip(label: '200', selected: deviceProvider.pageSize == 200, onTap: () => deviceProvider.setPageSize(200)),
-                  const SizedBox(width: 4),
-                  _PageSizeChip(label: '500', selected: deviceProvider.pageSize == 500, onTap: () => deviceProvider.setPageSize(500)),
-                  const SizedBox(width: 4),
-                  _PageSizeChip(label: '1000', selected: deviceProvider.pageSize == 1000, onTap: () => deviceProvider.setPageSize(1000)),
+                  _PageSizeChip(label: '25', selected: deviceProvider.pageSize == 25, onTap: () => deviceProvider.setPageSize(25), scale: scale),
+                  SizedBox(width: 4 * scale),
+                  _PageSizeChip(label: '50', selected: deviceProvider.pageSize == 50, onTap: () => deviceProvider.setPageSize(50), scale: scale),
+                  SizedBox(width: 4 * scale),
+                  _PageSizeChip(label: '100', selected: deviceProvider.pageSize == 100, onTap: () => deviceProvider.setPageSize(100), scale: scale),
+                  SizedBox(width: 4 * scale),
+                  _PageSizeChip(label: '200', selected: deviceProvider.pageSize == 200, onTap: () => deviceProvider.setPageSize(200), scale: scale),
+                  SizedBox(width: 4 * scale),
+                  _PageSizeChip(label: '500', selected: deviceProvider.pageSize == 500, onTap: () => deviceProvider.setPageSize(500), scale: scale),
+                  SizedBox(width: 4 * scale),
+                  _PageSizeChip(label: '1000', selected: deviceProvider.pageSize == 1000, onTap: () => deviceProvider.setPageSize(1000), scale: scale),
                 ],
               ),
             ),
@@ -1289,24 +1274,24 @@ class _DevicesPageState extends State<_DevicesPage> {
     );
   }
 
-  Widget _buildDeviceCountInfo(DeviceProvider deviceProvider) {
+  Widget _buildDeviceCountInfo(DeviceProvider deviceProvider, double scale) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+      padding: EdgeInsets.fromLTRB(12 * scale, 0, 12 * scale, 12 * scale),
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(10 * scale),
         decoration: BoxDecoration(
           color: const Color(0xFF14B8A6).withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8 * scale),
           border: Border.all(color: const Color(0xFF14B8A6).withOpacity(0.3)),
         ),
         child: Row(
           children: [
-            const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF14B8A6)),
-            const SizedBox(width: 8),
+            Icon(Icons.info_outline_rounded, size: 16 * scale, color: const Color(0xFF14B8A6)),
+            SizedBox(width: 8 * scale),
             Expanded(
               child: Text(
                 'Showing ${deviceProvider.devices.length} devices (${deviceProvider.devices.where((d) => d.isActive).length} active, ${deviceProvider.devices.where((d) => d.isOnline).length} online)',
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF14B8A6)),
+                style: TextStyle(fontSize: 11 * scale, fontWeight: FontWeight.w500, color: const Color(0xFF14B8A6)),
               ),
             ),
           ],
@@ -1489,11 +1474,13 @@ class _PageSizeChip extends StatelessWidget {
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final double scale;
 
   const _PageSizeChip({
     required this.label,
     required this.selected,
     required this.onTap,
+    this.scale = 1.0,
   });
 
   @override
@@ -1502,12 +1489,12 @@ class _PageSizeChip extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16 * scale),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 9 * scale, vertical: 4 * scale),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16 * scale),
             gradient: selected
                 ? const LinearGradient(
               colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
@@ -1522,14 +1509,14 @@ class _PageSizeChip extends StatelessWidget {
                 : null,
             border: Border.all(
               color: selected ? const Color(0xFF6366F1) : Colors.transparent,
-              width: selected ? 1.5 : 1,
+              width: (selected ? 1.5 : 1) * scale,
             ),
             boxShadow: selected
                 ? [
               BoxShadow(
                 color: const Color(0xFF6366F1).withOpacity(0.3),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+                blurRadius: 6 * scale,
+                offset: Offset(0, 2 * scale),
               ),
             ]
                 : null,
@@ -1537,12 +1524,12 @@ class _PageSizeChip extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 10 * scale,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
               color: selected
                   ? Colors.white
                   : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
-              letterSpacing: 0.2,
+              letterSpacing: 0.2 * scale,
             ),
           ),
         ),
