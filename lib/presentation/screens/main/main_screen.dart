@@ -1016,7 +1016,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(12 * _filterScale, 0, 12 * _filterScale, 8 * _filterScale),
                       child: Row(
-                      children: [
+                        children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
@@ -1061,10 +1061,12 @@ class _DevicesPageState extends State<_DevicesPage> {
                           ),
                         ),
                       ],
+                      ),
                     ),
                   ),
                 ),
               ),
+            ),
 
             if (deviceProvider.devices.isNotEmpty && !deviceProvider.isLoading)
               SliverToBoxAdapter(
