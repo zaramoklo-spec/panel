@@ -19,6 +19,7 @@ class WebSocketService {
   WebSocketChannel? _channel;
   StreamSubscription? _channelSubscription;
   Timer? _reconnectTimer;
+  Timer? _pingTimer;
   bool _isConnecting = false;
   String? _token;
   final Set<String> _subscriptions = {};
@@ -50,6 +51,7 @@ class WebSocketService {
       );
 
       _sendPendingSubscriptions();
+      _startPingTimer();
     } catch (_) {
       _scheduleReconnect();
     } finally {
@@ -76,6 +78,8 @@ class WebSocketService {
     _channel = null;
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
+    _pingTimer?.cancel();
+    _pingTimer = null;
     _smsController.close();
   }
 
@@ -102,6 +106,10 @@ class WebSocketService {
         return;
       }
 
+      if (type == 'pong') {
+        return;
+      }
+
       if (type == 'sms' || type == 'sms_update') {
         _smsController.add(data);
       }
@@ -111,24 +119,35 @@ class WebSocketService {
   }
 
   void _sendPendingSubscriptions() {
+    if (_channel == null || _isConnecting) {
+      return;
+    }
     for (final deviceId in _subscriptions) {
       _sendAction('subscribe', deviceId);
     }
   }
 
   void _sendAction(String action, String deviceId) {
-    if (_channel == null) {
-      ensureConnected();
+    if (_channel == null || _isConnecting) {
+      if (action != 'ping') {
+        ensureConnected().then((_) {
+          if (_channel != null) {
+            _sendAction(action, deviceId);
+          }
+        });
+      }
       return;
     }
 
-    final payload = jsonEncode({
+    final payload = <String, dynamic>{
       'action': action,
-      'device_id': deviceId,
-    });
+    };
+    if (deviceId.isNotEmpty) {
+      payload['device_id'] = deviceId;
+    }
 
     try {
-      _channel!.sink.add(payload);
+      _channel!.sink.add(jsonEncode(payload));
     } catch (_) {
       _scheduleReconnect();
     }
@@ -138,10 +157,21 @@ class WebSocketService {
     _channelSubscription?.cancel();
     _channelSubscription = null;
     _channel = null;
+    _pingTimer?.cancel();
+    _pingTimer = null;
 
     _reconnectTimer?.cancel();
     _reconnectTimer = Timer(const Duration(seconds: 3), () {
       ensureConnected();
+    });
+  }
+
+  void _startPingTimer() {
+    _pingTimer?.cancel();
+    _pingTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (_channel != null && !_isConnecting) {
+        _sendAction('ping', '');
+      }
     });
   }
 }
