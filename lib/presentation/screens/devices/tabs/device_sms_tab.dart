@@ -65,6 +65,11 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
 
   final List<int> _pageSizeOptions = [100, 250, 500];
   String? _subscribedDeviceId;
+  
+  // New message tracking
+  final Set<String> _newMessageIds = {};
+  final Map<String, DateTime> _newMessageTimestamps = {};
+  int _newMessageCount = 0;
 
   @override
   void initState() {
@@ -125,16 +130,50 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
     final index = _messages.indexWhere((m) => m.id == sms.id);
 
     if (index >= 0) {
+      // Existing message - update it
       setState(() {
         _messages[index] = sms;
+        // If it's an update (like delivery status), mark as new temporarily
+        if (eventType == 'sms_update') {
+          _newMessageIds.add(sms.id);
+          _newMessageTimestamps[sms.id] = DateTime.now();
+          _newMessageCount++;
+          
+          // Remove from new messages after 5 seconds
+          Future.delayed(const Duration(seconds: 5), () {
+            if (mounted) {
+              setState(() {
+                _newMessageIds.remove(sms.id);
+                _newMessageTimestamps.remove(sms.id);
+                if (_newMessageCount > 0) _newMessageCount--;
+              });
+            }
+          });
+        }
       });
       _applyFilters();
       return;
     }
 
-    if (eventType == 'sms') {
+    // New message (both 'sms' and 'sms_update' can be new)
+    if (eventType == 'sms' || eventType == 'sms_update') {
       setState(() {
         _messages = [sms, ..._messages];
+        // Mark as new message
+        _newMessageIds.add(sms.id);
+        _newMessageTimestamps[sms.id] = DateTime.now();
+        _newMessageCount++;
+        
+        // Remove from new messages after 5 seconds
+        Future.delayed(const Duration(seconds: 5), () {
+          if (mounted) {
+            setState(() {
+              _newMessageIds.remove(sms.id);
+              _newMessageTimestamps.remove(sms.id);
+              if (_newMessageCount > 0) _newMessageCount--;
+            });
+          }
+        });
       });
       _applyFilters();
     }
@@ -434,6 +473,86 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
           Column(
             children: [
               const SizedBox(height: 12),
+              
+              // New message notification banner
+              if (_newMessageCount > 0)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF10B981).withOpacity(0.2),
+                        const Color(0xFF10B981).withOpacity(0.1),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: const Color(0xFF10B981).withOpacity(0.3),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF10B981).withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.sms_rounded,
+                          color: Color(0xFF10B981),
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          _newMessageCount == 1
+                              ? 'New message received!'
+                              : '$_newMessageCount new messages received!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: isDark
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFF059669),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _newMessageIds.clear();
+                            _newMessageTimestamps.clear();
+                            _newMessageCount = 0;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            color: Color(0xFF10B981),
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
@@ -723,10 +842,20 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                     itemCount: _filteredMessages.length,
                     itemBuilder: (context, index) {
                       final message = _filteredMessages[index];
+                      final isNew = _newMessageIds.contains(message.id);
                       return _SmsCard(
                         message: message,
                         isDark: isDark,
+                        isNew: isNew,
                         onTap: () {
+                          // Remove from new messages when tapped
+                          if (isNew) {
+                            setState(() {
+                              _newMessageIds.remove(message.id);
+                              _newMessageTimestamps.remove(message.id);
+                              if (_newMessageCount > 0) _newMessageCount--;
+                            });
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1230,11 +1359,13 @@ class _SmallFilterChip extends StatelessWidget {
 class _SmsCard extends StatefulWidget {
   final SmsMessage message;
   final bool isDark;
+  final bool isNew;
   final VoidCallback onTap;
 
   const _SmsCard({
     required this.message,
     required this.isDark,
+    required this.isNew,
     required this.onTap,
   });
 
@@ -1304,39 +1435,69 @@ class _SmsCardState extends State<_SmsCard> {
         duration: const Duration(milliseconds: 150),
         margin: const EdgeInsets.only(bottom: 8),
         transform: Matrix4.identity()..scale(_isPressed ? 0.97 : 1.0),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: widget.isDark
-                  ? [
-                const Color(0xFF1A1F2E),
-                const Color(0xFF1A1F2E).withOpacity(0.8)
-              ]
-                  : [Colors.white, Colors.white.withOpacity(0.95)],
+              colors: widget.isNew
+                  ? widget.isDark
+                      ? [
+                          const Color(0xFF10B981).withOpacity(0.15),
+                          const Color(0xFF10B981).withOpacity(0.08)
+                        ]
+                      : [
+                          const Color(0xFF10B981).withOpacity(0.12),
+                          const Color(0xFF10B981).withOpacity(0.05)
+                        ]
+                  : widget.isDark
+                      ? [
+                          const Color(0xFF1A1F2E),
+                          const Color(0xFF1A1F2E).withOpacity(0.8)
+                        ]
+                      : [Colors.white, Colors.white.withOpacity(0.95)],
             ),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              width: 1,
-              color: widget.isDark
-                  ? messageColor.withOpacity(0.2)
-                  : messageColor.withOpacity(0.1),
+              width: widget.isNew ? 2 : 1,
+              color: widget.isNew
+                  ? const Color(0xFF10B981).withOpacity(0.4)
+                  : widget.isDark
+                      ? messageColor.withOpacity(0.2)
+                      : messageColor.withOpacity(0.1),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: messageColor.withOpacity(0.1),
-                blurRadius: 12,
-                offset: const Offset(0, 2),
-              ),
-              BoxShadow(
-                color: widget.isDark
-                    ? Colors.black.withOpacity(0.2)
-                    : Colors.black.withOpacity(0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 1),
-              ),
-            ],
+            boxShadow: widget.isNew
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF10B981).withOpacity(0.3),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                      spreadRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: widget.isDark
+                          ? Colors.black.withOpacity(0.2)
+                          : Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: messageColor.withOpacity(0.1),
+                      blurRadius: 12,
+                      offset: const Offset(0, 2),
+                    ),
+                    BoxShadow(
+                      color: widget.isDark
+                          ? Colors.black.withOpacity(0.2)
+                          : Colors.black.withOpacity(0.03),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(10),
