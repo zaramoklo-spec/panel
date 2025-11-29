@@ -25,11 +25,13 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
   int _selectedIndex = 0;
   bool _isSidebarCollapsed = false;
   late AnimationController _navAnimController;
   late Animation<double> _navAnimation;
+  bool _hasInitialized = false;
+  DateTime? _lastRefreshTime;
 
   bool get _supportsCollapsibleNav =>
       kIsWeb || defaultTargetPlatform == TargetPlatform.windows;
@@ -37,6 +39,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _navAnimController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -48,21 +51,60 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     _navAnimController.forward();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final deviceProvider = context.read<DeviceProvider>();
-      deviceProvider.fetchDevices();
-      
-      // Initialize WebSocket connection when admin enters the panel
+      _refreshDevices();
+    });
+  }
+
+  void _refreshDevices({bool force = false}) {
+    // Prevent too frequent refreshes (debounce: max once per 500ms)
+    final now = DateTime.now();
+    if (!force && _lastRefreshTime != null) {
+      final timeSinceLastRefresh = now.difference(_lastRefreshTime!);
+      if (timeSinceLastRefresh.inMilliseconds < 500) {
+        return;
+      }
+    }
+    _lastRefreshTime = now;
+
+    final deviceProvider = context.read<DeviceProvider>();
+    deviceProvider.fetchDevices();
+    
+    // Initialize WebSocket connection when admin enters the panel
+    if (!_hasInitialized) {
       final webSocketService = WebSocketService();
       webSocketService.ensureConnected().then((_) {
         debugPrint('✅ WebSocket initialized in MainScreen');
       }).catchError((error) {
         debugPrint('❌ Failed to initialize WebSocket: $error');
       });
+      _hasInitialized = true;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Refresh when app comes to foreground
+    if (state == AppLifecycleState.resumed && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _refreshDevices(force: true);
+      });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh whenever dependencies change (e.g., returning from another screen)
+    // This ensures refresh when returning from device detail or any other screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshDevices();
     });
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _navAnimController.dispose();
     super.dispose();
   }
@@ -1003,7 +1045,11 @@ class _DevicesPageState extends State<_DevicesPage> {
                                     MaterialPageRoute(
                                       builder: (_) => DeviceDetailScreen(device: device),
                                     ),
-                                  );
+                                  ).then((_) {
+                                    // Auto refresh when returning from device detail screen
+                                    final deviceProvider = context.read<DeviceProvider>();
+                                    deviceProvider.fetchDevices();
+                                  });
                                 } else {
                                   Navigator.push(
                                     context,

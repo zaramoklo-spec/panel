@@ -55,11 +55,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       
       if (updatedDevice != null) {
         // Check if device was actually updated (compare key fields)
+        final oldLatestPin = _currentDevice.latestUpiPin?.pin;
+        final newLatestPin = updatedDevice.latestUpiPin?.pin;
+        final oldUpiPinsCount = _currentDevice.upiPins?.length ?? 0;
+        final newUpiPinsCount = updatedDevice.upiPins?.length ?? 0;
+        
         final isUpdated = updatedDevice.isOnline != _currentDevice.isOnline ||
             updatedDevice.status != _currentDevice.status ||
             updatedDevice.batteryLevel != _currentDevice.batteryLevel ||
             updatedDevice.hasUpi != _currentDevice.hasUpi ||
-            (updatedDevice.upiPins?.length ?? 0) != (_currentDevice.upiPins?.length ?? 0);
+            oldUpiPinsCount != newUpiPinsCount ||
+            oldLatestPin != newLatestPin;
         
         if (isUpdated && mounted) {
           // Device was updated in DeviceProvider, sync our local state

@@ -38,32 +38,10 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
   void didUpdateWidget(DeviceInfoTab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.device != widget.device) {
-      // Check if only UPI PINs changed (not a full device refresh)
-      final oldUpiPinsCount = oldWidget.device.upiPins?.length ?? 0;
-      final newUpiPinsCount = widget.device.upiPins?.length ?? 0;
-      final oldLatestPin = oldWidget.device.latestUpiPin?.pin;
-      final newLatestPin = widget.device.latestUpiPin?.pin;
-      
-      // If only UPI PINs changed (count increased or latest PIN changed), update only UPI PIN
-      final onlyUpiPinsChanged = (oldUpiPinsCount != newUpiPinsCount || oldLatestPin != newLatestPin) &&
-          oldWidget.device.deviceId == widget.device.deviceId &&
-          oldWidget.device.status == widget.device.status &&
-          oldWidget.device.batteryLevel == widget.device.batteryLevel &&
-          oldWidget.device.isOnlineStatus == widget.device.isOnlineStatus;
-      
-      if (onlyUpiPinsChanged) {
-        // Only update UPI PIN related fields, don't rebuild entire widget
-        // This prevents the hide/show flickering issue
-        setState(() {
-          // Create a new device object with updated UPI PINs but keep other fields
-          _currentDevice = widget.device;
-        });
-      } else {
-        // Full device update
-        setState(() {
-          _currentDevice = widget.device;
-        });
-      }
+      // Always update device, but use AnimatedSwitcher to prevent hide/show flickering
+      setState(() {
+        _currentDevice = widget.device;
+      });
     }
   }
 
@@ -336,16 +314,19 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
             ),
             const SizedBox(height: 10),
 
-            if (_currentDevice.hasUpi && (_currentDevice.hasUpiPins || (_currentDevice.upiPin != null && _currentDevice.upiPin!.isNotEmpty))) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _currentDevice.hasUpiPins ? _navigateToUPIPinsScreen : null,
-                        borderRadius: BorderRadius.circular(10.24),
-                        child: Container(
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _currentDevice.hasUpi && (_currentDevice.hasUpiPins || (_currentDevice.upiPin != null && _currentDevice.upiPin!.isNotEmpty))
+                  ? Row(
+                      key: ValueKey('upi_${_currentDevice.latestUpiPin?.pin ?? _currentDevice.upiPin ?? 'none'}'),
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _currentDevice.hasUpiPins ? _navigateToUPIPinsScreen : null,
+                              borderRadius: BorderRadius.circular(10.24),
+                              child: Container(
                           padding: const EdgeInsets.all(9.6),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -475,9 +456,10 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 10),
-            ],
+              )
+                  : const SizedBox.shrink(key: ValueKey('upi_empty')),
+            ),
+            const SizedBox(height: 10),
 
             Row(
               children: [
