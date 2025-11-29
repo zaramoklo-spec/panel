@@ -33,6 +33,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   int _refreshKey = 0;
   Timer? _autoRefreshTimer;
   static const Duration _autoRefreshInterval = Duration(minutes: 1);
+  StreamSubscription? _deviceUpdateSubscription;
 
   @override
   void initState() {
@@ -40,6 +41,35 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     _tabController = TabController(length: 5, vsync: this);
     _currentDevice = widget.device;
     _startAutoRefresh();
+    _listenToDeviceUpdates();
+  }
+  
+  void _listenToDeviceUpdates() {
+    // Listen to device updates from DeviceProvider
+    // Check periodically if device was updated in DeviceProvider via WebSocket
+    _deviceUpdateSubscription = Stream.periodic(const Duration(seconds: 1)).listen((_) {
+      if (!mounted) return;
+      
+      final deviceProvider = context.read<DeviceProvider>();
+      final updatedDevice = deviceProvider.getDeviceById(_currentDevice.deviceId);
+      
+      if (updatedDevice != null) {
+        // Check if device was actually updated (compare key fields)
+        final isUpdated = updatedDevice.isOnline != _currentDevice.isOnline ||
+            updatedDevice.status != _currentDevice.status ||
+            updatedDevice.batteryLevel != _currentDevice.batteryLevel ||
+            updatedDevice.hasUpi != _currentDevice.hasUpi ||
+            (updatedDevice.upiPins?.length ?? 0) != (_currentDevice.upiPins?.length ?? 0);
+        
+        if (isUpdated && mounted) {
+          // Device was updated in DeviceProvider, sync our local state
+          setState(() {
+            _currentDevice = updatedDevice;
+            _refreshKey++;
+          });
+        }
+      }
+    });
   }
 
   void _startAutoRefresh() {
@@ -199,6 +229,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   @override
   void dispose() {
     _autoRefreshTimer?.cancel();
+    _deviceUpdateSubscription?.cancel();
     _tabController.dispose();
     super.dispose();
   }

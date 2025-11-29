@@ -77,7 +77,17 @@ class SmsMessage {
 
   bool get isInbox => type == 'inbox';
   bool get isSent => type == 'sent';
-  String get sender => from ?? to ?? 'Unknown';
+  // For inbox: sender is from (the person who sent us the SMS)
+  // For sent: sender is from (our phone number) or simPhoneNumber as fallback
+  String get sender {
+    if (isSent) {
+      // For sent SMS, show from (our phone number) or simPhoneNumber as fallback
+      return from ?? simPhoneNumber ?? to ?? 'Unknown';
+    } else {
+      // For inbox SMS, show from (the sender)
+      return from ?? to ?? 'Unknown';
+    }
+  }
   bool get hasDeliveryStatus =>
       deliveryStatus != null && deliveryStatus!.isNotEmpty;
 }

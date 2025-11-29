@@ -83,8 +83,32 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.device.deviceId != widget.device.deviceId) {
       _fetchMessages();
-      _subscribeToDevice(widget.device.deviceId);
+      // Reinitialize realtime when device changes
+      _initializeRealtime();
     }
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh WebSocket subscription when screen becomes visible again
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _refreshWebSocketSubscription();
+      }
+    });
+  }
+  
+  void _refreshWebSocketSubscription() {
+    // Ensure connection and refresh subscription
+    _webSocketService.ensureConnected().then((_) {
+      if (mounted) {
+        _subscribeToDevice(widget.device.deviceId);
+        debugPrint('🔄 WebSocket subscription refreshed for device: ${widget.device.deviceId}');
+      }
+    }).catchError((error) {
+      debugPrint('❌ Failed to refresh WebSocket subscription: $error');
+    });
   }
 
   @override
@@ -130,6 +154,8 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted) {
               _subscribeToDevice(widget.device.deviceId);
+              // Refresh messages to ensure we have latest data
+              _fetchMessages();
             }
           });
         } else if (!isConnected && mounted) {

@@ -16,6 +16,7 @@ import '../settings/settings_screen.dart';
 import '../admins/admin_management_screen.dart';
 import '../tools/leak_lookup_screen.dart';
 import '../../widgets/dialogs/note_dialog.dart';
+import '../../../data/services/websocket_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -49,6 +50,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final deviceProvider = context.read<DeviceProvider>();
       deviceProvider.fetchDevices();
+      
+      // Initialize WebSocket connection when admin enters the panel
+      final webSocketService = WebSocketService();
+      webSocketService.ensureConnected().then((_) {
+        debugPrint('✅ WebSocket initialized in MainScreen');
+      }).catchError((error) {
+        debugPrint('❌ Failed to initialize WebSocket: $error');
+      });
     });
   }
 
