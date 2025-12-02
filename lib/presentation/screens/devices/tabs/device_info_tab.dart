@@ -38,23 +38,28 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
   void didUpdateWidget(DeviceInfoTab oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.device != widget.device) {
-      // Update device, but preserve UPI PIN if it exists in current device
-      // This prevents UPI PIN from disappearing when device updates from WebSocket
-      // UPI PIN should only update via manual refresh (_refreshDeviceInfo), not WebSocket
+      // Update device logic:
+      // - If new device has UPI PIN, always accept it (could be from refresh or new data)
+      // - If new device doesn't have UPI PIN but current has it, preserve current UPI PIN
+      //   (this prevents losing UPI PIN data from WebSocket updates that don't include UPI PIN)
       final hasCurrentUpi = _currentDevice.hasUpi && 
           (_currentDevice.hasUpiPins || (_currentDevice.upiPin != null && _currentDevice.upiPin!.isNotEmpty));
       final hasNewUpi = widget.device.hasUpi && 
           (widget.device.hasUpiPins || (widget.device.upiPin != null && widget.device.upiPin!.isNotEmpty));
       
       setState(() {
-        // If current device has UPI PIN and new device doesn't (from WebSocket), preserve it
-        // UPI PIN should only update via manual refresh, not WebSocket
-        if (hasCurrentUpi && !hasNewUpi) {
+        // If new device has UPI PIN, always update (could be from refresh with new UPI PIN)
+        if (hasNewUpi) {
+          _currentDevice = widget.device;
+        } 
+        // If current has UPI PIN but new doesn't, preserve current (likely WebSocket update without UPI PIN)
+        else if (hasCurrentUpi && !hasNewUpi) {
           // Don't update device if UPI PIN would be lost
           // This preserves UPI PIN data until manual refresh
           return;
-        } else {
-          // Normal update (either both have UPI or neither has it, or new has it from refresh)
+        } 
+        // Neither has UPI PIN, normal update
+        else {
           _currentDevice = widget.device;
         }
       });

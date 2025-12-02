@@ -50,8 +50,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
     );
     _navAnimController.forward();
 
+    // Force refresh when app opens to get fresh data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshDevices();
+      _refreshDevices(force: true);
     });
   }
 
@@ -95,11 +96,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Refresh whenever dependencies change (e.g., returning from another screen)
-    // This ensures refresh when returning from device detail or any other screen
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshDevices();
-    });
+    // Note: Removed auto-refresh here to prevent excessive refreshes
+    // Refresh is handled in initState (on app open) and didChangeAppLifecycleState (on resume)
   }
 
   @override

@@ -227,6 +227,10 @@ class DeviceProvider extends ChangeNotifier {
 
   Future<void> fetchDevices() async {
     _currentPage = 1;
+    // Clear old data before fetching new data to prevent showing stale cache
+    _devices = [];
+    _errorMessage = null;
+    notifyListeners();
     fetchAppTypes();
     await _loadCurrentPage();
     _initializeDeviceUpdates();

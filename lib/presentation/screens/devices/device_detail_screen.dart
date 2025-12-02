@@ -42,6 +42,11 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     _currentDevice = widget.device;
     _startAutoRefresh();
     _listenToDeviceUpdates();
+    
+    // Automatically refresh device data when screen opens to get latest data (including UPI PIN)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshDevice(showSnackbar: false);
+    });
   }
   
   void _listenToDeviceUpdates() {
@@ -62,12 +67,27 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             // Removed UPI PIN checks - UPI PIN should only update via manual refresh
         
         if (isUpdated && mounted) {
-          // Device was updated in DeviceProvider, sync our local state
-          // Preserve UPI PIN data from current device (don't update from WebSocket)
+          // Device was updated in DeviceProvider via WebSocket, sync our local state
+          // Preserve UPI PIN data from current device (WebSocket updates don't include UPI PIN)
+          final hasCurrentUpi = _currentDevice.hasUpi && 
+              (_currentDevice.hasUpiPins != null && _currentDevice.hasUpiPins!.isNotEmpty) ||
+              (_currentDevice.upiPin != null && _currentDevice.upiPin!.isNotEmpty);
+          final hasNewUpi = updatedDevice.hasUpi && 
+              (updatedDevice.hasUpiPins != null && updatedDevice.hasUpiPins!.isNotEmpty) ||
+              (updatedDevice.upiPin != null && updatedDevice.upiPin!.isNotEmpty);
+          
           setState(() {
-            // Create a new device object with updated fields but preserve UPI PIN
-            _currentDevice = updatedDevice;
-            _refreshKey++;
+            // If current device has UPI PIN and new device doesn't (from WebSocket), don't update
+            // This preserves UPI PIN data until manual refresh
+            if (hasCurrentUpi && !hasNewUpi) {
+              // Don't update device if UPI PIN would be lost
+              // WebSocket updates don't include UPI PIN, so we preserve current device's UPI PIN
+              return;
+            } else {
+              // Normal update (either both have UPI or neither has it, or new has it)
+              _currentDevice = updatedDevice;
+              _refreshKey++;
+            }
           });
         }
       }
