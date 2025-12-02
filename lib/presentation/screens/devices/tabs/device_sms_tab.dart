@@ -70,6 +70,10 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   final Set<String> _newMessageIds = {};
   final Map<String, DateTime> _newMessageTimestamps = {};
   int _newMessageCount = 0;
+  
+  // Font size control
+  double _fontSize = 11.0; // Default font size
+  bool _showFontSizeControl = false;
 
   @override
   void initState() {
@@ -748,9 +752,176 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                       },
                       isDark: isDark,
                     ),
+                    const SizedBox(width: 6),
+                    _ActionButton(
+                      icon: _showFontSizeControl
+                          ? Icons.text_fields_rounded
+                          : Icons.text_fields_outlined,
+                      color: const Color(0xFFF59E0B),
+                      onTap: () {
+                        setState(() {
+                          _showFontSizeControl = !_showFontSizeControl;
+                        });
+                      },
+                      isDark: isDark,
+                    ),
                   ],
                 ),
               ),
+
+              if (_showFontSizeControl) ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [
+                                const Color(0xFF1A1F2E).withOpacity(0.8),
+                                const Color(0xFF252B3D).withOpacity(0.8)
+                              ]
+                            : [
+                                Colors.white.withOpacity(0.9),
+                                Colors.white.withOpacity(0.7)
+                              ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.black.withOpacity(0.08),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFF59E0B), Color(0xFFEF4444)],
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Icon(
+                                Icons.text_fields_rounded,
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Font Size',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: isDark
+                                    ? Colors.white70
+                                    : const Color(0xFF64748B),
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                '${_fontSize.toInt()}px',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.text_decrease_rounded,
+                              size: 16,
+                              color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                            ),
+                            Expanded(
+                              child: Slider(
+                                value: _fontSize,
+                                min: 8.0,
+                                max: 20.0,
+                                divisions: 24,
+                                activeColor: const Color(0xFFF59E0B),
+                                inactiveColor: isDark
+                                    ? Colors.white.withOpacity(0.1)
+                                    : Colors.black.withOpacity(0.1),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _fontSize = value;
+                                  });
+                                },
+                              ),
+                            ),
+                            Icon(
+                              Icons.text_increase_rounded,
+                              size: 16,
+                              color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _FontSizePreset(
+                              label: 'Small',
+                              size: 9.0,
+                              currentSize: _fontSize,
+                              onTap: () => setState(() => _fontSize = 9.0),
+                              isDark: isDark,
+                            ),
+                            _FontSizePreset(
+                              label: 'Normal',
+                              size: 11.0,
+                              currentSize: _fontSize,
+                              onTap: () => setState(() => _fontSize = 11.0),
+                              isDark: isDark,
+                            ),
+                            _FontSizePreset(
+                              label: 'Large',
+                              size: 14.0,
+                              currentSize: _fontSize,
+                              onTap: () => setState(() => _fontSize = 14.0),
+                              isDark: isDark,
+                            ),
+                            _FontSizePreset(
+                              label: 'XL',
+                              size: 18.0,
+                              currentSize: _fontSize,
+                              onTap: () => setState(() => _fontSize = 18.0),
+                              isDark: isDark,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
 
               if (_showAdvancedFilters) ...[
 
@@ -926,6 +1097,7 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                         message: message,
                         isDark: isDark,
                         isNew: isNew,
+                        fontSize: _fontSize,
                         onTap: () {
                           // Remove from new messages when tapped
                           if (isNew) {
@@ -1439,12 +1611,14 @@ class _SmsCard extends StatefulWidget {
   final SmsMessage message;
   final bool isDark;
   final bool isNew;
+  final double fontSize;
   final VoidCallback onTap;
 
   const _SmsCard({
     required this.message,
     required this.isDark,
     required this.isNew,
+    required this.fontSize,
     required this.onTap,
   });
 
@@ -2059,13 +2233,13 @@ class _SmsCardState extends State<_SmsCard> {
                 Text(
                   widget.message.body,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: widget.fontSize,
                     height: 1.4,
                     color: widget.isDark
                         ? Colors.white70
                         : const Color(0xFF475569),
                   ),
-                  maxLines: 2,
+                  maxLines: widget.fontSize > 14 ? 3 : 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (widget.message.deliveryDetails != null &&
@@ -2145,5 +2319,65 @@ class _SmsCardState extends State<_SmsCard> {
     return (body.toLowerCase().contains('balance') ||
         body.toLowerCase().contains('bal')) &&
         !body.toLowerCase().contains('low balance');
+  }
+}
+
+class _FontSizePreset extends StatelessWidget {
+  final String label;
+  final double size;
+  final double currentSize;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _FontSizePreset({
+    required this.label,
+    required this.size,
+    required this.currentSize,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = (currentSize - size).abs() < 0.5;
+    
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [Color(0xFFF59E0B), Color(0xFFEF4444)],
+                )
+              : null,
+          color: !isSelected
+              ? (isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.black.withOpacity(0.03))
+              : null,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFF59E0B)
+                : (isDark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.black.withOpacity(0.08)),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+            color: isSelected
+                ? Colors.white
+                : (isDark ? Colors.white60 : const Color(0xFF64748B)),
+          ),
+        ),
+      ),
+    );
   }
 }
