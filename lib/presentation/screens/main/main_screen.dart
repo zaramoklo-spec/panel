@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/device_provider.dart';
 import '../../providers/admin_provider.dart';
+import '../../../main.dart';
 import '../../widgets/common/stats_card.dart';
 import '../../../data/models/stats.dart';
 import '../../widgets/common/device_card.dart';
@@ -27,7 +28,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, WidgetsBindingObserver {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, WidgetsBindingObserver, RouteAware {
   int _selectedIndex = 0;
   bool _isSidebarCollapsed = false;
   late AnimationController _navAnimController;
@@ -35,7 +36,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   bool _hasInitialized = false;
   bool _hasRefreshedOnOpen = false;
   DateTime? _lastRefreshTime;
-  DateTime? _lastWindowBlurTime;
 
   bool get _supportsCollapsibleNav =>
       kIsWeb || defaultTargetPlatform == TargetPlatform.windows;
@@ -58,12 +58,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   void _refreshDevices({bool force = false}) {
     if (!mounted) return;
     
-    // Prevent too frequent refreshes (debounce: max once per 500ms)
     final now = DateTime.now();
     if (!force && _lastRefreshTime != null) {
       final timeSinceLastRefresh = now.difference(_lastRefreshTime!);
-      if (timeSinceLastRefresh.inMilliseconds < 500) {
-        return;
+      if (kIsWeb) {
+        if (timeSinceLastRefresh.inSeconds < 5) {
+          return;
+        }
+      } else {
+        if (timeSinceLastRefresh.inMilliseconds < 500) {
+          return;
+        }
       }
     }
     _lastRefreshTime = now;
@@ -71,7 +76,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
     final deviceProvider = context.read<DeviceProvider>();
     deviceProvider.fetchDevices();
     
-    // Initialize WebSocket connection when admin enters the panel
     if (!_hasInitialized) {
       final webSocketService = WebSocketService();
       webSocketService.ensureConnected().then((_) {
@@ -87,36 +91,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     
-    if (!kIsWeb) {
-      if (state == AppLifecycleState.resumed && mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _refreshDevices(force: true);
-        });
-      }
+    if (kIsWeb) {
       return;
     }
     
-    if (kIsWeb && state == AppLifecycleState.resumed && mounted) {
-      final now = DateTime.now();
-      if (_lastWindowBlurTime != null) {
-        final timeSinceBlur = now.difference(_lastWindowBlurTime!);
-        if (timeSinceBlur.inSeconds < 2) {
-          return;
-        }
-      }
+    if (state == AppLifecycleState.resumed && mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _refreshDevices(force: true);
       });
-    } else if (kIsWeb && state == AppLifecycleState.paused) {
-      _lastWindowBlurTime = DateTime.now();
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Force refresh when MainScreen is first built to get fresh data from server
-    // This ensures refresh happens after context is available
+    final route = ModalRoute.of(context);
+    if (route != null && route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+    
     if (!_hasRefreshedOnOpen && mounted) {
       _hasRefreshedOnOpen = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -128,7 +121,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   }
 
   @override
+  void didPopNext() {
+    final now = DateTime.now();
+    if (_lastRefreshTime != null) {
+      final timeSinceLastRefresh = now.difference(_lastRefreshTime!);
+      if (timeSinceLastRefresh.inSeconds < 20) {
+        return;
+      }
+    }
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _refreshDevices(force: false);
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
     _navAnimController.dispose();
     super.dispose();
@@ -198,6 +209,35 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
                             return const MultiDeviceView();
                           },
                         ),
+                      ),
+                    if (defaultTargetPlatform == TargetPlatform.windows)
+                      Consumer<MultiDeviceProvider>(
+                        builder: (context, provider, _) {
+                          if (!provider.hasOpenDevices) {
+                            return const SizedBox.shrink();
+                          }
+                          return Positioned(
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            width: 600,
+                            child: Container(
+                              margin: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: const MultiDeviceView(),
+                            ),
+                          );
+                        },
                       ),
                   ],
                 ),

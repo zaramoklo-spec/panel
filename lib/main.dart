@@ -30,6 +30,7 @@ bool get _isMobilePlatform {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(dynamic message) async {
@@ -146,6 +147,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, themeProvider, _) {
           return MaterialApp(
             navigatorKey: navigatorKey,
+            navigatorObservers: [routeObserver],
             title: 'Admin Panel',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,

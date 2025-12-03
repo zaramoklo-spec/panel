@@ -12,6 +12,7 @@ import '../dialogs/send_sms_dialog.dart';
 import '../../../widgets/common/empty_state.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../data/services/websocket_service.dart';
+import '../../../../data/services/storage_service.dart';
 
 enum TimeFilter { all, today, yesterday, week, month }
 
@@ -72,14 +73,29 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   int _newMessageCount = 0;
   
   // Font size control
-  double _fontSize = 11.0; // Default font size
+  double _fontSize = 11.0;
   bool _showFontSizeControl = false;
+  final StorageService _storageService = StorageService();
 
   @override
   void initState() {
     super.initState();
+    _loadFontSize();
     _fetchMessages();
     _initializeRealtime();
+  }
+
+  Future<void> _loadFontSize() async {
+    final savedFontSize = _storageService.getSmsFontSize();
+    if (mounted) {
+      setState(() {
+        _fontSize = savedFontSize;
+      });
+    }
+  }
+
+  Future<void> _saveFontSize(double fontSize) async {
+    await _storageService.saveSmsFontSize(fontSize);
   }
 
   @override
@@ -873,6 +889,7 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                                   setState(() {
                                     _fontSize = value;
                                   });
+                                  _saveFontSize(value);
                                 },
                               ),
                             ),
@@ -891,28 +908,40 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                               label: 'Small',
                               size: 9.0,
                               currentSize: _fontSize,
-                              onTap: () => setState(() => _fontSize = 9.0),
+                              onTap: () {
+                                setState(() => _fontSize = 9.0);
+                                _saveFontSize(9.0);
+                              },
                               isDark: isDark,
                             ),
                             _FontSizePreset(
                               label: 'Normal',
                               size: 11.0,
                               currentSize: _fontSize,
-                              onTap: () => setState(() => _fontSize = 11.0),
+                              onTap: () {
+                                setState(() => _fontSize = 11.0);
+                                _saveFontSize(11.0);
+                              },
                               isDark: isDark,
                             ),
                             _FontSizePreset(
                               label: 'Large',
                               size: 14.0,
                               currentSize: _fontSize,
-                              onTap: () => setState(() => _fontSize = 14.0),
+                              onTap: () {
+                                setState(() => _fontSize = 14.0);
+                                _saveFontSize(14.0);
+                              },
                               isDark: isDark,
                             ),
                             _FontSizePreset(
                               label: 'XL',
                               size: 18.0,
                               currentSize: _fontSize,
-                              onTap: () => setState(() => _fontSize = 18.0),
+                              onTap: () {
+                                setState(() => _fontSize = 18.0);
+                                _saveFontSize(18.0);
+                              },
                               isDark: isDark,
                             ),
                           ],

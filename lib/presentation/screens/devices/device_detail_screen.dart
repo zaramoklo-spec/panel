@@ -123,22 +123,32 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   void _listenToDeviceUpdates() {
     if (_currentDevice == null) return;
     
+    _deviceUpdateSubscription?.cancel();
     _deviceUpdateSubscription = Stream.periodic(const Duration(seconds: 1)).listen((_) {
-      if (!mounted || _currentDevice == null) return;
+      if (!mounted || _currentDevice == null) {
+        _deviceUpdateSubscription?.cancel();
+        return;
+      }
       
-      final deviceProvider = context.read<DeviceProvider>();
-      final updatedDevice = deviceProvider.getDeviceById(_currentDevice!.deviceId);
-      
-      if (updatedDevice != null) {
-        final isUpdated = updatedDevice.isOnline != _currentDevice!.isOnline ||
-            updatedDevice.status != _currentDevice!.status ||
-            updatedDevice.batteryLevel != _currentDevice!.batteryLevel;
+      try {
+        final deviceProvider = context.read<DeviceProvider>();
+        final updatedDevice = deviceProvider.getDeviceById(_currentDevice!.deviceId);
         
-        if (isUpdated && mounted) {
-          setState(() {
-            _currentDevice = updatedDevice;
-            _refreshKey++;
-          });
+        if (updatedDevice != null) {
+          final isUpdated = updatedDevice.isOnline != _currentDevice!.isOnline ||
+              updatedDevice.status != _currentDevice!.status ||
+              updatedDevice.batteryLevel != _currentDevice!.batteryLevel;
+          
+          if (isUpdated && mounted) {
+            setState(() {
+              _currentDevice = updatedDevice;
+              _refreshKey++;
+            });
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          _deviceUpdateSubscription?.cancel();
         }
       }
     });
@@ -147,6 +157,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   void _startAutoRefresh() {
     _autoRefreshTimer?.cancel();
     _autoRefreshTimer = Timer.periodic(_autoRefreshInterval, (_) {
+      if (!mounted) {
+        _autoRefreshTimer?.cancel();
+        return;
+      }
       _refreshDevice(showSnackbar: false);
     });
   }

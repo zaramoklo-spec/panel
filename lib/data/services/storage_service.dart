@@ -94,6 +94,14 @@ class StorageService {
     return _prefs?.getString('language') ?? 'en';
   }
 
+  Future<void> saveSmsFontSize(double fontSize) async {
+    await _prefs?.setDouble('sms_font_size', fontSize);
+  }
+
+  double getSmsFontSize() {
+    return _prefs?.getDouble('sms_font_size') ?? 11.0;
+  }
+
   Future<void> clearAll() async {
     if (kIsWeb) {
       await _prefs?.clear();

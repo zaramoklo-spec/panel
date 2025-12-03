@@ -5,6 +5,8 @@ import '../../../data/models/device.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/date_utils.dart' as utils;
 import '../../../core/utils/popup_helper.dart';
+import 'package:provider/provider.dart';
+import '../../providers/multi_device_provider.dart';
 
 class DeviceCard extends StatefulWidget {
   final Device device;
@@ -349,7 +351,7 @@ class _DeviceCardState extends State<DeviceCard> {
                         ),
                       ),
 
-                    if (kIsWeb)
+                    if (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
                       Container(
                         margin: const EdgeInsets.only(left: 4),
                         decoration: BoxDecoration(
@@ -369,7 +371,14 @@ class _DeviceCardState extends State<DeviceCard> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              openDevicePopup(widget.device.deviceId);
+                              if (kIsWeb) {
+                                openDevicePopup(widget.device.deviceId);
+                              } else if (defaultTargetPlatform == TargetPlatform.windows) {
+                                final multiDeviceProvider = Provider.of<MultiDeviceProvider>(context, listen: false);
+                                multiDeviceProvider.openDevice(widget.device);
+                              } else {
+                                openDevicePopup(widget.device.deviceId);
+                              }
                             },
                             borderRadius: BorderRadius.circular(6.4),
                             child: const Padding(

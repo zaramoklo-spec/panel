@@ -394,14 +394,16 @@ class WebSocketService {
     _pingTimer = null;
     _healthCheckTimer?.cancel();
     _healthCheckTimer = null;
-    _smsController.close();
-    _deviceController.close();
-    _connectionStatusController.close();
-    _healthCheckTimer?.cancel();
-    _healthCheckTimer = null;
     _closeConnection();
-    _smsController.close();
-    _connectionStatusController.close();
+    if (!_smsController.isClosed) {
+      _smsController.close();
+    }
+    if (!_deviceController.isClosed) {
+      _deviceController.close();
+    }
+    if (!_connectionStatusController.isClosed) {
+      _connectionStatusController.close();
+    }
   }
 }
 

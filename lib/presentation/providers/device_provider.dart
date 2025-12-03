@@ -41,6 +41,7 @@ class DeviceProvider extends ChangeNotifier {
   Timer? _autoRefreshTimer;
   bool _autoRefreshEnabled = false;
   int _autoRefreshInterval = 30;
+  final Map<String, DateTime> _deviceRefreshTimestamps = {};
 
   List<Device> get devices => _filteredDevices;
   Stats? get stats => _stats;
@@ -227,11 +228,13 @@ class DeviceProvider extends ChangeNotifier {
 
   Future<void> fetchDevices() async {
     _currentPage = 1;
-    // Clear old data before fetching new data to prevent showing stale cache
+    _errorMessage = null;
+    _isLoading = true;
+    notifyListeners();
+    
     _devices = [];
     _totalDevicesCount = 0;
-    _errorMessage = null;
-    notifyListeners();
+    
     fetchAppTypes();
     await _loadCurrentPage();
     _initializeDeviceUpdates();
@@ -345,12 +348,30 @@ class DeviceProvider extends ChangeNotifier {
 
   Future<void> refreshSingleDevice(String deviceId) async {
     try {
+      final now = DateTime.now();
+      final lastRefresh = _deviceRefreshTimestamps[deviceId];
+      
+      if (lastRefresh != null) {
+        final timeSinceRefresh = now.difference(lastRefresh);
+        if (timeSinceRefresh.inMilliseconds < 1000) {
+          return;
+        }
+      }
+      
+      _deviceRefreshTimestamps[deviceId] = now;
+      
       final updatedDevice = await _deviceRepository.getDevice(deviceId);
       if (updatedDevice != null) {
         final index = _devices.indexWhere((d) => d.deviceId == deviceId);
         if (index != -1) {
+          final oldDevice = _devices[index];
           _devices[index] = updatedDevice;
-          notifyListeners();
+          
+          if (oldDevice.isOnline != updatedDevice.isOnline || 
+              oldDevice.status != updatedDevice.status ||
+              oldDevice.isActive != updatedDevice.isActive) {
+            notifyListeners();
+          }
         }
       }
     } catch (e) {
