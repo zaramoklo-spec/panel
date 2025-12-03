@@ -1,6 +1,9 @@
 import 'dart:js_interop';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+@JS('window')
+external JSObject get _window;
+
 @JS('window.open')
 external JSObject? _windowOpen(String url, String target, String features);
 
@@ -13,14 +16,9 @@ void openDevicePopup(String deviceId) {
   const width = 414;
   const height = 896;
   
-  @JS('window.screen.width')
-  external int get _screenWidth;
-  
-  @JS('window.screen.height')
-  external int get _screenHeight;
-  
-  final screenWidth = _screenWidth;
-  final screenHeight = _screenHeight;
+  final screen = _window['screen'] as JSObject?;
+  final screenWidth = (screen?['width'] as JSNumber?)?.toDartInt ?? 1920;
+  final screenHeight = (screen?['height'] as JSNumber?)?.toDartInt ?? 1080;
   
   final left = ((screenWidth - width) / 2).round();
   final top = ((screenHeight - height) / 2).round();
