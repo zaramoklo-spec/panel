@@ -38,6 +38,7 @@ dependencies:
   url_launcher: ^6.3.0
   flutter_screenutil: ^5.9.0
   flutter_launcher_icons: ^0.14.1
+  js: ^0.7.1
 
 
 
