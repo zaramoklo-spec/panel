@@ -853,8 +853,7 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
                       const SizedBox(height: 12),
                     ],
                   ],
-                  if (!_currentDevice.hasAdminNote &&
-                      (_currentDevice.simInfo == null || _currentDevice.simInfo!.isEmpty)) ...[
+                  if (!_currentDevice.hasAdminNote && (_currentDevice.simInfo == null || _currentDevice.simInfo!.isEmpty)) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
