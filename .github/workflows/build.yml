@@ -57,7 +57,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      - name: Install dependencies
+      - name: Install adependencies
         run: flutter pub get
 
       - name: Build APK Release
