@@ -958,8 +958,9 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
                       );
                     }).toList(),
                   ],
-                ),
+                ],
               ),
+            ),
 
             const SizedBox(height: 12),
 
