@@ -102,6 +102,14 @@ class StorageService {
     return _prefs?.getDouble('sms_font_size') ?? 11.0;
   }
 
+  Future<void> setDeviceOpenMode(String mode) async {
+    await _prefs?.setString('device_open_mode', mode);
+  }
+
+  String getDeviceOpenMode() {
+    return _prefs?.getString('device_open_mode') ?? 'tab';
+  }
+
   Future<void> clearAll() async {
     if (kIsWeb) {
       await _prefs?.clear();

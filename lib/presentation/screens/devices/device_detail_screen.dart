@@ -43,6 +43,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   int _refreshKey = 0;
   Timer? _autoRefreshTimer;
   static const Duration _autoRefreshInterval = Duration(minutes: 1);
+  static const Duration _popupRefreshInterval = Duration(seconds: 5);
   StreamSubscription? _deviceUpdateSubscription;
 
   @override
@@ -157,7 +158,13 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
   void _startAutoRefresh() {
     _autoRefreshTimer?.cancel();
-    _autoRefreshTimer = Timer.periodic(_autoRefreshInterval, (_) {
+    
+    // If in popup window, refresh every 5 seconds, otherwise every minute
+    final refreshInterval = (kIsWeb && isInPopupWindow()) 
+        ? _popupRefreshInterval 
+        : _autoRefreshInterval;
+    
+    _autoRefreshTimer = Timer.periodic(refreshInterval, (_) {
       if (!mounted) {
         _autoRefreshTimer?.cancel();
         return;

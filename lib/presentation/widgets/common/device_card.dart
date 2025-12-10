@@ -7,6 +7,7 @@ import '../../../core/utils/date_utils.dart' as utils;
 import '../../../core/utils/popup_helper.dart';
 import 'package:provider/provider.dart';
 import '../../providers/multi_device_provider.dart';
+import '../../../data/services/storage_service.dart';
 
 class DeviceCard extends StatefulWidget {
   final Device device;
@@ -370,9 +371,15 @@ class _DeviceCardState extends State<DeviceCard> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            onTap: () {
+                            onTap: () async {
                               if (kIsWeb) {
-                                openDevicePopup(widget.device.deviceId);
+                                final storageService = StorageService();
+                                final openMode = storageService.getDeviceOpenMode();
+                                if (openMode == 'tab') {
+                                  openDeviceInNewTab(widget.device.deviceId);
+                                } else {
+                                  openDevicePopup(widget.device.deviceId);
+                                }
                               } else if (defaultTargetPlatform == TargetPlatform.windows) {
                                 final multiDeviceProvider = Provider.of<MultiDeviceProvider>(context, listen: false);
                                 multiDeviceProvider.openDevice(widget.device);

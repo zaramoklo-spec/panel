@@ -39,6 +39,15 @@ void openDevicePopup(String deviceId) {
   _windowOpen(deviceUrl, '_blank', features);
 }
 
+void openDeviceInNewTab(String deviceId) {
+  if (!kIsWeb) return;
+  
+  final currentUrl = Uri.base.toString().split('#')[0];
+  final deviceUrl = '$currentUrl#/device/$deviceId';
+  
+  _windowOpen(deviceUrl, '_blank', '');
+}
+
 void closePopupWindow() {
   if (!kIsWeb) return;
   _windowClose();

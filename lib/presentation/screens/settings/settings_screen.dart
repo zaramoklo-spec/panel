@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,11 +16,13 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
+  String _deviceOpenMode = 'tab';
 
   @override
   void initState() {
     super.initState();
     _loadNotificationSettings();
+    _loadDeviceOpenMode();
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -27,6 +30,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
     });
+  }
+
+  Future<void> _loadDeviceOpenMode() async {
+    if (!kIsWeb) return;
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _deviceOpenMode = prefs.getString('device_open_mode') ?? 'tab';
+    });
+  }
+
+  Future<void> _setDeviceOpenMode(String mode) async {
+    if (!kIsWeb) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('device_open_mode', mode);
+    setState(() {
+      _deviceOpenMode = mode;
+    });
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            mode == 'popup' 
+                ? 'Devices will open in popup window' 
+                : 'Devices will open in new tab',
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   Future<void> _toggleNotifications(bool value) async {
@@ -86,6 +121,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           const SizedBox(height: 16),
+
+          if (kIsWeb) ...[
+            const _SectionHeader(title: 'Device Settings'),
+
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12.8, vertical: 6.4),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    secondary: const Icon(Icons.open_in_new_rounded),
+                    title: const Text('Open in Popup Window'),
+                    subtitle: const Text('Open device in a popup window (414x896)'),
+                    value: 'popup',
+                    groupValue: _deviceOpenMode,
+                    onChanged: (value) => _setDeviceOpenMode(value!),
+                  ),
+                  const Divider(height: 1),
+                  RadioListTile<String>(
+                    secondary: const Icon(Icons.tab_rounded),
+                    title: const Text('Open in New Tab'),
+                    subtitle: const Text('Open device in a new browser tab'),
+                    value: 'tab',
+                    groupValue: _deviceOpenMode,
+                    onChanged: (value) => _setDeviceOpenMode(value!),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+          ],
 
           const _SectionHeader(title: 'Appearance'),
 
