@@ -355,49 +355,6 @@ class _DeviceCardState extends State<DeviceCard> {
                           ),
                         ),
                       ),
-
-                    if (widget.onDelete != null)
-                      Container(
-                        margin: const EdgeInsets.only(left: 4),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-                          ),
-                          borderRadius: BorderRadius.circular(6.4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFEF4444).withOpacity(0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: widget.isDeleting ? null : () => widget.onDelete?.call(),
-                            borderRadius: BorderRadius.circular(6.4),
-                            child: Padding(
-                              padding: const EdgeInsets.all(6.4),
-                              child: widget.isDeleting
-                                  ? const SizedBox(
-                                      width: 12,
-                                      height: 12,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 1.5,
-                                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                                      ),
-                                    )
-                                  : const Icon(
-                                      Icons.delete_forever_rounded,
-                                      color: Colors.white,
-                                      size: 12,
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ),
-
                     if (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
                       Container(
                         margin: const EdgeInsets.only(left: 4),
@@ -447,6 +404,48 @@ class _DeviceCardState extends State<DeviceCard> {
                       ),
 
                   ],
+
+                  if (widget.onDelete != null)
+                    Container(
+                      margin: const EdgeInsets.only(left: 4),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                        ),
+                        borderRadius: BorderRadius.circular(6.4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFEF4444).withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: widget.isDeleting ? null : () => widget.onDelete?.call(),
+                          borderRadius: BorderRadius.circular(6.4),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.4),
+                            child: widget.isDeleting
+                                ? const SizedBox(
+                                    width: 12,
+                                    height: 12,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1.5,
+                                      valueColor: AlwaysStoppedAnimation(Colors.white),
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: Colors.white,
+                                    size: 12,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
 
                   const SizedBox(width: 6),
 

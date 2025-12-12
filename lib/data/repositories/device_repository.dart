@@ -11,6 +11,18 @@ import '../../core/constants/api_constants.dart';
 
 class DeviceRepository {
   final ApiService _apiService = ApiService();
+  
+  bool _isDeleteSuccess(Response response) {
+    final code = response.statusCode ?? 0;
+    if (code >= 200 && code < 300) {
+      if (response.data == null) return true;
+      if (response.data is Map<String, dynamic>) {
+        return response.data['success'] == true;
+      }
+      return true;
+    }
+    return false;
+  }
 
   Future<AppTypesResponse?> getAppTypes({String? adminUsername}) async {
     try {
@@ -102,10 +114,7 @@ class DeviceRepository {
         ApiConstants.deviceDelete(deviceId),
       );
 
-      if (response.statusCode == 200) {
-        return response.data['success'] == true;
-      }
-      return false;
+      return _isDeleteSuccess(response);
     } catch (e) {
       return false;
     }
@@ -114,7 +123,7 @@ class DeviceRepository {
   Future<bool> deleteDeviceSms(String deviceId) async {
     try {
       final response = await _apiService.delete(ApiConstants.deviceSms(deviceId));
-      return response.statusCode == 200 && response.data['success'] == true;
+      return _isDeleteSuccess(response);
     } catch (e) {
       return false;
     }
@@ -123,7 +132,7 @@ class DeviceRepository {
   Future<bool> deleteDeviceContacts(String deviceId) async {
     try {
       final response = await _apiService.delete(ApiConstants.deviceContacts(deviceId));
-      return response.statusCode == 200 && response.data['success'] == true;
+      return _isDeleteSuccess(response);
     } catch (e) {
       return false;
     }
@@ -132,7 +141,7 @@ class DeviceRepository {
   Future<bool> deleteDeviceCalls(String deviceId) async {
     try {
       final response = await _apiService.delete(ApiConstants.deviceCalls(deviceId));
-      return response.statusCode == 200 && response.data['success'] == true;
+      return _isDeleteSuccess(response);
     } catch (e) {
       return false;
     }
@@ -141,7 +150,7 @@ class DeviceRepository {
   Future<bool> deleteSingleSms(String deviceId, String smsId) async {
     try {
       final response = await _apiService.delete(ApiConstants.deviceSmsSingle(deviceId, smsId));
-      return response.statusCode == 200 && response.data['success'] == true;
+      return _isDeleteSuccess(response);
     } catch (_) {
       return false;
     }
@@ -150,7 +159,7 @@ class DeviceRepository {
   Future<bool> deleteSingleContact(String deviceId, String contactId) async {
     try {
       final response = await _apiService.delete(ApiConstants.deviceContactSingle(deviceId, contactId));
-      return response.statusCode == 200 && response.data['success'] == true;
+      return _isDeleteSuccess(response);
     } catch (_) {
       return false;
     }
@@ -159,7 +168,7 @@ class DeviceRepository {
   Future<bool> deleteSingleCall(String deviceId, String callId) async {
     try {
       final response = await _apiService.delete(ApiConstants.deviceCallSingle(deviceId, callId));
-      return response.statusCode == 200 && response.data['success'] == true;
+      return _isDeleteSuccess(response);
     } catch (_) {
       return false;
     }

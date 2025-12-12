@@ -528,41 +528,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: (_isDeleting || _isRefreshing || _isPinging) ? null : _confirmDeleteDevice,
-                      borderRadius: BorderRadius.circular(10.24),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEF4444).withOpacity(isDark ? 0.18 : 0.12),
-                          borderRadius: BorderRadius.circular(10.24),
-                          border: Border.all(
-                            color: const Color(0xFFEF4444).withOpacity(0.4),
-                            width: 1.2,
-                          ),
-                        ),
-                        child: _isDeleting
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEF4444)),
-                                ),
-                              )
-                            : const Icon(
-                                Icons.delete_forever_rounded,
-                                size: 18,
-                                color: Color(0xFFEF4444),
-                              ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
                       onTap: (_isPinging || _isRefreshing) ? null : _handlePingDevice,
                       borderRadius: BorderRadius.circular(10.24),
                       child: Container(
