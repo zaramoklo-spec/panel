@@ -729,46 +729,44 @@ class _CallLogCardState extends State<_CallLogCard> {
         duration: const Duration(milliseconds: 150),
         margin: const EdgeInsets.only(bottom: 8),
         transform: Matrix4.identity()..scale(_isPressed ? 0.97 : 1.0),
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: widget.isDark
-                      ? [
-                          const Color(0xFF1A1F2E),
-                          const Color(0xFF1A1F2E).withOpacity(0.8)
-                        ]
-                      : [Colors.white, Colors.white.withOpacity(0.95)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  width: 1,
-                  color: widget.isDark
-                      ? callColor.withOpacity(0.2)
-                      : callColor.withOpacity(0.1),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: callColor.withOpacity(0.1),
-                    blurRadius: 12,
-                    offset: const Offset(0, 2),
-                  ),
-                  BoxShadow(
-                    color: widget.isDark
-                        ? Colors.black.withOpacity(0.2)
-                        : Colors.black.withOpacity(0.03),
-                    blurRadius: 6,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: widget.isDark
+                  ? [
+                      const Color(0xFF1A1F2E),
+                      const Color(0xFF1A1F2E).withOpacity(0.8)
+                    ]
+                  : [Colors.white, Colors.white.withOpacity(0.95)],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              width: 1,
+              color: widget.isDark
+                  ? callColor.withOpacity(0.2)
+                  : callColor.withOpacity(0.1),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: callColor.withOpacity(0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 2),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
+              BoxShadow(
+                color: widget.isDark
+                    ? Colors.black.withOpacity(0.2)
+                    : Colors.black.withOpacity(0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
 
                 Container(
                   width: 38,
@@ -930,46 +928,25 @@ class _CallLogCardState extends State<_CallLogCard> {
                   ),
                 ),
 
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: widget.isDeleting ? null : widget.onDelete,
-                      icon: widget.isDeleting
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation(Color(0xFFEF4444)),
-                              ),
-                            )
-                          : const Icon(
-                              Icons.delete_forever_rounded,
-                              size: 18,
-                              color: Color(0xFFEF4444),
-                            ),
-                      splashRadius: 18,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: widget.isDark
-                            ? const Color(0xFF252B3D)
-                            : const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Icon(
-                        Icons.chevron_right_rounded,
-                        size: 16,
-                        color: widget.isDark
-                            ? const Color(0xFF6B7280)
-                            : const Color(0xFF94A3B8),
-                      ),
-                    ),
-                  ],
+                IconButton(
+                  onPressed: widget.isDeleting ? null : widget.onDelete,
+                  icon: widget.isDeleting
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(Color(0xFFEF4444)),
+                          ),
+                        )
+                      : const Icon(
+                          Icons.delete_forever_rounded,
+                          size: 18,
+                          color: Color(0xFFEF4444),
+                        ),
+                  splashRadius: 18,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
