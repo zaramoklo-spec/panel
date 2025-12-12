@@ -152,7 +152,7 @@ class _DeviceCallsTabState extends State<DeviceCallsTab>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Call log deleted'),
-          backgroundColor: Color(0xFFEF4444),
+          backgroundColor: Color(0xFF10B981),
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 2),
         ),

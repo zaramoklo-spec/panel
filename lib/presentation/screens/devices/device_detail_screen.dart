@@ -386,7 +386,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
               ),
             ],
           ),
-          backgroundColor: const Color(0xFFEF4444),
+          backgroundColor: const Color(0xFF10B981),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
           shape: RoundedRectangleBorder(

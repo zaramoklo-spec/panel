@@ -772,7 +772,7 @@ class _DevicesPageState extends State<_DevicesPage> {
             ),
           ],
         ),
-        backgroundColor: success ? const Color(0xFFEF4444) : const Color(0xFFEF4444),
+        backgroundColor: success ? const Color(0xFF10B981) : const Color(0xFFEF4444),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

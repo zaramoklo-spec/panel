@@ -355,7 +355,7 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('SMS deleted'),
-          backgroundColor: Color(0xFFEF4444),
+          backgroundColor: Color(0xFF10B981),
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 2),
         ),
