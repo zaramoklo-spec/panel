@@ -78,6 +78,7 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   final StorageService _storageService = StorageService();
   bool _isDeleting = false;
   bool _isBulkDeleting = false;
+  final Set<String> _deletingMessageIds = {};
 
   @override
   void initState() {
@@ -383,6 +384,62 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteSingleSms(SmsMessage message) async {
+    if (_deletingMessageIds.contains(message.id)) return;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete this SMS?'),
+          content: const Text('The selected SMS will be removed from the panel.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _deletingMessageIds.add(message.id));
+    final deviceProvider = context.read<DeviceProvider>();
+    final success = await deviceProvider.deleteSingleSms(widget.device.deviceId, message.id);
+    if (!mounted) return;
+    setState(() => _deletingMessageIds.remove(message.id));
+
+    if (success) {
+      setState(() {
+        _messages.removeWhere((m) => m.id == message.id);
+        _filteredMessages.removeWhere((m) => m.id == message.id);
+        _newMessageIds.remove(message.id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('SMS deleted'),
+          backgroundColor: Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to delete SMS'),
+          backgroundColor: Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
@@ -1234,6 +1291,8 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                             ),
                           );
                         },
+                        onDelete: () => _deleteSingleSms(message),
+                        isDeleting: _deletingMessageIds.contains(message.id),
                       );
                     },
                   ),
@@ -1731,6 +1790,8 @@ class _SmsCard extends StatefulWidget {
   final bool isNew;
   final double fontSize;
   final VoidCallback onTap;
+  final VoidCallback onDelete;
+  final bool isDeleting;
 
   const _SmsCard({
     required this.message,
@@ -1738,6 +1799,8 @@ class _SmsCard extends StatefulWidget {
     required this.isNew,
     required this.fontSize,
     required this.onTap,
+    required this.onDelete,
+    required this.isDeleting,
   });
 
   @override

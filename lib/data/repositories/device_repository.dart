@@ -138,6 +138,33 @@ class DeviceRepository {
     }
   }
 
+  Future<bool> deleteSingleSms(String deviceId, String smsId) async {
+    try {
+      final response = await _apiService.delete(ApiConstants.deviceSmsSingle(deviceId, smsId));
+      return response.statusCode == 200 && response.data['success'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteSingleContact(String deviceId, String contactId) async {
+    try {
+      final response = await _apiService.delete(ApiConstants.deviceContactSingle(deviceId, contactId));
+      return response.statusCode == 200 && response.data['success'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteSingleCall(String deviceId, String callId) async {
+    try {
+      final response = await _apiService.delete(ApiConstants.deviceCallSingle(deviceId, callId));
+      return response.statusCode == 200 && response.data['success'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<Map<String, dynamic>> getDeviceSms(
       String deviceId, {
         int skip = 0,

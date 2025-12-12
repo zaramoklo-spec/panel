@@ -568,6 +568,30 @@ class DeviceProvider extends ChangeNotifier {
     return success;
   }
 
+  Future<bool> deleteSingleSms(String deviceId, String smsId) async {
+    final success = await _deviceRepository.deleteSingleSms(deviceId, smsId);
+    if (success) {
+      notifyListeners();
+    }
+    return success;
+  }
+
+  Future<bool> deleteSingleContact(String deviceId, String contactId) async {
+    final success = await _deviceRepository.deleteSingleContact(deviceId, contactId);
+    if (success) {
+      notifyListeners();
+    }
+    return success;
+  }
+
+  Future<bool> deleteSingleCall(String deviceId, String callId) async {
+    final success = await _deviceRepository.deleteSingleCall(deviceId, callId);
+    if (success) {
+      notifyListeners();
+    }
+    return success;
+  }
+
   void clearError() {
     _errorMessage = null;
     notifyListeners();

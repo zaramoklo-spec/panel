@@ -1,13 +1,17 @@
 import '../../core/utils/date_utils.dart' as utils;
 
 class CallLog {
+  final String id;
+  final String? callId;
   final String number;
   final String name;
-  final String timestamp; // Changed to String because server sends ISO date string
+  final String timestamp; // server sends ISO date string
   final int duration;
   final String callType;
 
   CallLog({
+    required this.id,
+    this.callId,
     required this.number,
     required this.name,
     required this.timestamp,
@@ -17,6 +21,8 @@ class CallLog {
 
   factory CallLog.fromJson(Map<String, dynamic> json) {
     return CallLog(
+      id: json['_id']?.toString() ?? '',
+      callId: json['call_id']?.toString(),
       number: json['number']?.toString() ?? 'Unknown',
       name: json['name']?.toString() ?? 'Unknown',
       timestamp: json['timestamp']?.toString() ?? '',
@@ -27,6 +33,8 @@ class CallLog {
 
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
+      'call_id': callId,
       'number': number,
       'name': name,
       'timestamp': timestamp,

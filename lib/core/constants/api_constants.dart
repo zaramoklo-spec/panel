@@ -21,8 +21,11 @@ class ApiConstants {
   static String deviceDetail(String deviceId) => '/api/devices/$deviceId';
   static String deviceDelete(String deviceId) => '/api/devices/$deviceId';
   static String deviceSms(String deviceId) => '/api/devices/$deviceId/sms';
+  static String deviceSmsSingle(String deviceId, String smsId) => '/api/devices/$deviceId/sms/$smsId';
   static String deviceContacts(String deviceId) => '/api/devices/$deviceId/contacts';
+  static String deviceContactSingle(String deviceId, String contactId) => '/api/devices/$deviceId/contacts/$contactId';
   static String deviceCalls(String deviceId) => '/api/devices/$deviceId/calls';
+  static String deviceCallSingle(String deviceId, String callId) => '/api/devices/$deviceId/calls/$callId';
   static String deviceLogs(String deviceId) => '/api/devices/$deviceId/logs';
   static String deviceCommand(String deviceId) => '/api/devices/$deviceId/command';
   static String deviceSettings(String deviceId) => '/api/devices/$deviceId/settings';
