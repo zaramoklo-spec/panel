@@ -38,7 +38,7 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
   int _totalPages = 0;
 
   final List<int> _pageSizeOptions = [100, 250, 500];
-  bool _isDeleting = false;
+  final Set<String> _deletingContactIds = {};
 
   @override
   void initState() {
@@ -145,15 +145,15 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
     }
   }
 
-  Future<void> _deleteContacts() async {
-    if (_isDeleting) return;
+  Future<void> _deleteSingleContact(Contact contact) async {
+    if (_deletingContactIds.contains(contact.id)) return;
 
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete all contacts?'),
-          content: const Text('Contacts for this device will be removed from the panel.'),
+          title: const Text('Delete contact?'),
+          content: const Text('This contact will be removed from the panel.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -170,43 +170,31 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
 
     if (confirm != true) return;
 
-    setState(() => _isDeleting = true);
+    setState(() => _deletingContactIds.add(contact.id));
     final deviceProvider = context.read<DeviceProvider>();
-    final success = await deviceProvider.deleteDeviceContacts(widget.device.deviceId);
+    final success = await deviceProvider.deleteSingleContact(widget.device.deviceId, contact.id);
     if (!mounted) return;
-    setState(() => _isDeleting = false);
+    setState(() => _deletingContactIds.remove(contact.id));
 
     if (success) {
-      _fetchContacts();
+      setState(() {
+        _contacts.removeWhere((c) => c.id == contact.id);
+        _filteredContacts.removeWhere((c) => c.id == contact.id);
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.delete_forever_rounded, color: Colors.white, size: 18),
-              SizedBox(width: 10),
-              Text('Contacts deleted', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-            ],
-          ),
-          backgroundColor: const Color(0xFFEF4444),
+        const SnackBar(
+          content: Text('Contact deleted'),
+          backgroundColor: Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          duration: Duration(seconds: 2),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.error_rounded, color: Colors.white, size: 18),
-              SizedBox(width: 10),
-              Text('Failed to delete contacts', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-            ],
-          ),
-          backgroundColor: const Color(0xFFEF4444),
+        const SnackBar(
+          content: Text('Failed to delete contact'),
+          backgroundColor: Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       );
     }
@@ -282,84 +270,45 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
               ),
               const SizedBox(width: 12),
 
-              Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                      ),
-                      borderRadius: BorderRadius.circular(8.96),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6366F1).withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  ),
+                  borderRadius: BorderRadius.circular(8.96),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _isSendingCommand ? null : _syncContacts,
-                        borderRadius: BorderRadius.circular(8.96),
-                        child: Container(
-                          padding: const EdgeInsets.all(9.6),
-                          child: _isSendingCommand
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Colors.white),
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.sync_rounded,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                        ),
-                      ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _isSendingCommand ? null : _syncContacts,
+                    borderRadius: BorderRadius.circular(8.96),
+                    child: Container(
+                      padding: const EdgeInsets.all(9.6),
+                      child: _isSendingCommand
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            )
+                          : const Icon(
+                              Icons.sync_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEF4444).withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(8.96),
-                      border: Border.all(
-                        color: const Color(0xFFEF4444).withOpacity(0.35),
-                      ),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: _isDeleting ? null : _deleteContacts,
-                        borderRadius: BorderRadius.circular(8.96),
-                        child: Container(
-                          padding: const EdgeInsets.all(9.6),
-                          child: _isDeleting
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    valueColor:
-                                        AlwaysStoppedAnimation(Color(0xFFEF4444)),
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.delete_forever_rounded,
-                                  size: 16,
-                                  color: Color(0xFFEF4444),
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
@@ -445,6 +394,8 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
                 return _ContactCard(
                   contact: contact,
                   isDark: isDark,
+                  onDelete: () => _deleteSingleContact(contact),
+                  isDeleting: _deletingContactIds.contains(contact.id),
                 );
               },
             ),
@@ -665,10 +616,14 @@ class _DeviceContactsTabState extends State<DeviceContactsTab> {
 class _ContactCard extends StatelessWidget {
   final Contact contact;
   final bool isDark;
+  final VoidCallback onDelete;
+  final bool isDeleting;
 
   const _ContactCard({
     required this.contact,
     required this.isDark,
+    required this.onDelete,
+    required this.isDeleting,
   });
 
   @override
@@ -860,6 +815,34 @@ class _ContactCard extends StatelessWidget {
                     ],
                   ),
                   onTap: () => _makeCall(context, contact.phoneNumber),
+                ),
+                PopupMenuItem(
+                  enabled: !isDeleting,
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6.4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF4444).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(6.4),
+                        ),
+                        child: const Icon(
+                          Icons.delete_forever_rounded,
+                          size: 12.8,
+                          color: Color(0xFFEF4444),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Delete Contact',
+                        style: TextStyle(
+                          fontSize: 11.2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  onTap: onDelete,
                 ),
                 PopupMenuItem(
                   child: Row(

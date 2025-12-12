@@ -76,8 +76,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   double _fontSize = 11.0;
   bool _showFontSizeControl = false;
   final StorageService _storageService = StorageService();
-  bool _isDeleting = false;
-  bool _isBulkDeleting = false;
   final Set<String> _deletingMessageIds = {};
 
   @override
@@ -316,78 +314,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
     }
   }
 
-  Future<void> _deleteAllSms() async {
-    if (_isDeleting || _isBulkDeleting) return;
-
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete all SMS?'),
-          content: const Text('All SMS for this device will be removed from panel.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirm != true) return;
-
-    setState(() {
-      _isDeleting = true;
-      _isBulkDeleting = true;
-    });
-    final deviceProvider = context.read<DeviceProvider>();
-    final success = await deviceProvider.deleteDeviceSms(widget.device.deviceId);
-    if (!mounted) return;
-    setState(() {
-      _isDeleting = false;
-      _isBulkDeleting = false;
-    });
-
-    if (success) {
-      _fetchMessages(silent: true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.delete_forever_rounded, color: Colors.white, size: 18),
-              SizedBox(width: 10),
-              Text('SMS deleted', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-            ],
-          ),
-          backgroundColor: const Color(0xFFEF4444),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(Icons.error_rounded, color: Colors.white, size: 18),
-              SizedBox(width: 10),
-              Text('Failed to delete SMS', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-            ],
-          ),
-          backgroundColor: const Color(0xFFEF4444),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
-    }
-  }
 
   Future<void> _deleteSingleSms(SmsMessage message) async {
     if (_deletingMessageIds.contains(message.id)) return;
@@ -878,15 +804,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
                       isLoading: _isLoading,
                       isDark: isDark,
                     ),
-                    const SizedBox(width: 6),
-                    _ActionButton(
-                      icon: Icons.delete_forever_rounded,
-                      color: const Color(0xFFEF4444),
-                      onTap: _deleteAllSms,
-                      isLoading: _isDeleting,
-                      isDark: isDark,
-                    ),
-                    const SizedBox(width: 6),
                     _ActionButton(
                       icon: Icons.sync_rounded,
                       color: const Color(0xFF3B82F6),
@@ -2010,6 +1927,23 @@ class _SmsCardState extends State<_SmsCard> {
                                     letterSpacing: 0.4,
                                   ),
                                 ),
+                              ),
+                              const SizedBox(width: 6),
+                              IconButton(
+                                onPressed: widget.isDeleting ? null : widget.onDelete,
+                                icon: widget.isDeleting
+                                    ? const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation(Color(0xFFEF4444)),
+                                        ),
+                                      )
+                                    : const Icon(Icons.delete_forever_rounded, color: Color(0xFFEF4444), size: 18),
+                                splashRadius: 16,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
                               ),
                             ],
                           ),

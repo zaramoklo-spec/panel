@@ -652,6 +652,7 @@ class _DevicesPageState extends State<_DevicesPage> {
   final Map<String, String?> _devicePingResults = {};
   final Map<String, bool> _deviceNotingStatus = {};
   final Map<String, String?> _deviceNoteResults = {};
+  final Map<String, bool> _deviceDeletingStatus = {};
   double _filterScale = 1.0;
   final Map<String, bool> _devicePingTracking = {};
   static const Duration _pingStatusPollInterval = Duration(seconds: 6);
@@ -735,6 +736,48 @@ class _DevicesPageState extends State<_DevicesPage> {
         });
       }
     }
+  }
+
+  Future<void> _handleDeleteDevice(String deviceId) async {
+    if (_deviceDeletingStatus[deviceId] == true) return;
+
+    setState(() {
+      _deviceDeletingStatus[deviceId] = true;
+    });
+
+    final deviceProvider = context.read<DeviceProvider>();
+    final success = await deviceProvider.deleteDevice(deviceId);
+
+    if (!mounted) return;
+
+    setState(() {
+      _deviceDeletingStatus.remove(deviceId);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              success ? Icons.delete_forever_rounded : Icons.error_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                success ? 'Device deleted' : 'Failed to delete device',
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: success ? const Color(0xFFEF4444) : const Color(0xFFEF4444),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
   }
 
   void _startDeviceStatusWatcher(String deviceId) {
@@ -1171,6 +1214,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                             final pingResult = _devicePingResults[device.deviceId];
                             final isNoting = _deviceNotingStatus[device.deviceId] ?? false;
                             final noteResult = _deviceNoteResults[device.deviceId];
+                            final isDeleting = _deviceDeletingStatus[device.deviceId] ?? false;
 
                             return Column(
                               children: [
@@ -1202,6 +1246,8 @@ class _DevicesPageState extends State<_DevicesPage> {
                                   isPinging: isPinging,
                                   onNote: device.isActive ? () => _handleNoteDevice(device.deviceId) : null,
                                   isNoting: isNoting,
+                                  onDelete: () => _handleDeleteDevice(device.deviceId),
+                                  isDeleting: isDeleting,
                                 ),
                                 if (pingResult != null)
                                   Padding(
