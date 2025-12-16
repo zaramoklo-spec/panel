@@ -36,6 +36,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   late Animation<double> _navAnimation;
   bool _hasInitialized = false;
   bool _hasRefreshedOnOpen = false;
+  bool _hasInitialLoadCompleted = false; // Track if first load is done
   DateTime? _lastRefreshTime;
 
   bool get _supportsCollapsibleNav =>
@@ -82,14 +83,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
 
     final deviceProvider = context.read<DeviceProvider>();
     
-    // Use headless refresh for automatic updates (no UI blocking)
-    // Only use full fetchDevices() on initial load or when forced
-    if (force || deviceProvider.totalDevicesCount == 0) {
-      // First time or forced refresh - use full fetch
-      deviceProvider.fetchDevices();
+    // Use headless refresh for ALL automatic updates (no UI blocking)
+    // Only use full fetchDevices() on the very first load when device list is empty
+    if (!_hasInitialLoadCompleted && deviceProvider.totalDevicesCount == 0) {
+      // Very first time - use full fetch to get initial data (with loading indicator)
+      deviceProvider.fetchDevices().then((_) {
+        if (mounted) {
+          setState(() {
+            _hasInitialLoadCompleted = true;
+          });
+        }
+      });
     } else {
-      // Automatic refresh - use headless mode (no loading, only updates changes)
+      // All subsequent refreshes (including force=true) - use headless mode
+      // This prevents UI blocking and provides smooth user experience
       deviceProvider.headlessRefresh();
+      // Mark as completed after first headless refresh if not already marked
+      if (!_hasInitialLoadCompleted) {
+        _hasInitialLoadCompleted = true;
+      }
     }
     
     if (!_hasInitialized) {
