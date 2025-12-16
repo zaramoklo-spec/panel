@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/device_provider.dart';
@@ -179,7 +180,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
       if (admin?.isSuperAdmin == true) const AdminManagementScreen(),
     ];
 
-    return Scaffold(
+    // Prevent back button from navigating to login screen
+    // Wrap Scaffold with WillPopScope to handle back button press
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevent navigation back to login screen
+        // On mobile, exit the app when back button is pressed
+        if (!kIsWeb) {
+          SystemNavigator.pop();
+        }
+        // Return false to prevent default pop behavior
+        return false;
+      },
+      child: Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
@@ -261,6 +274,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
         ],
       ),
       bottomNavigationBar: isWide ? null : _buildBottomNav(context, admin),
+    ),
     );
   }
 
