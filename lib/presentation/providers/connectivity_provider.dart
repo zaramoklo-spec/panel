@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' if (dart.library.html) 'dart:html';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import '../../data/services/api_service.dart';
 
 class ConnectivityProvider extends ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
@@ -56,21 +57,41 @@ class ConnectivityProvider extends ChangeNotifier {
         return;
       }
 
-      // Then verify actual internet access with a quick HTTP request
-      final result = await InternetAddress.lookup('google.com')
-          .timeout(
-            const Duration(seconds: 5),
-            onTimeout: () => throw TimeoutException('Connection timeout'),
-          );
+      // Verify actual internet access
+      // For web: use HTTP request (checkHealth)
+      // For mobile/desktop: use DNS lookup
+      bool isConnected = false;
+      
+      if (kIsWeb) {
+        // Web: Use HTTP request to check server health
+        try {
+          isConnected = await ApiService().checkHealth();
+        } catch (e) {
+          // If health check fails, we're offline
+          isConnected = false;
+        }
+      } else {
+        // Mobile/Desktop: Use DNS lookup (faster and doesn't require server)
+        try {
+          final result = await InternetAddress.lookup('google.com')
+              .timeout(
+                const Duration(seconds: 5),
+                onTimeout: () => throw TimeoutException('Connection timeout'),
+              );
+          isConnected = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+        } catch (e) {
+          isConnected = false;
+        }
+      }
 
       final wasOnline = _isOnline;
-      _isOnline = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      _isOnline = isConnected;
       
       if (wasOnline != _isOnline) {
         notifyListeners();
       }
     } catch (e) {
-      // If lookup fails, we're offline
+      // If check fails, assume offline
       final wasOnline = _isOnline;
       _isOnline = false;
       if (wasOnline != _isOnline) {
