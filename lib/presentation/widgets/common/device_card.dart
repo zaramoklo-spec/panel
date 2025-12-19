@@ -178,19 +178,19 @@ class _DeviceCardState extends State<DeviceCard> {
                           : (isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.2))),
                   width: widget.isNew ? 2 : 1,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.isNew
+                        ? const Color(0xFF10B981).withOpacity(0.3)
+                        : (widget.device.isPending
+                            ? Colors.orange.withOpacity(0.1)
+                            : Colors.black.withOpacity(isDark ? 0.2 : 0.05)),
+                    blurRadius: widget.isNew ? 12 : 8,
+                    offset: const Offset(0, 2),
+                    spreadRadius: widget.isNew ? 2 : 0,
+                  ),
+                ],
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: widget.isNew
-                      ? const Color(0xFF10B981).withOpacity(0.3)
-                      : (widget.device.isPending
-                          ? Colors.orange.withOpacity(0.1)
-                          : Colors.black.withOpacity(isDark ? 0.2 : 0.05)),
-                  blurRadius: widget.isNew ? 12 : 8,
-                  offset: const Offset(0, 2),
-                  spreadRadius: widget.isNew ? 2 : 0,
-                ),
-              ],
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -495,9 +495,6 @@ class _DeviceCardState extends State<DeviceCard> {
                       ],
                     ),
                   ),
-                ],
-              ),
-
                   const SizedBox(height: 10),
                   Divider(height: 0.8, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                   const SizedBox(height: 10),
@@ -566,6 +563,7 @@ class _DeviceCardState extends State<DeviceCard> {
                       ],
                     ),
                 ],
+              ),
             ),
             if (_getNoteColor() != Colors.transparent)
               Positioned(
