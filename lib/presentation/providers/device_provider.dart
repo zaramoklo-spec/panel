@@ -389,7 +389,8 @@ class DeviceProvider extends ChangeNotifier {
         oldDevice.stats.totalSms != newDevice.stats.totalSms ||
         oldDevice.stats.totalContacts != newDevice.stats.totalContacts ||
         oldDevice.noteMessage != newDevice.noteMessage ||
-        oldDevice.notePriority != newDevice.notePriority;
+        oldDevice.notePriority != newDevice.notePriority ||
+        oldDevice.appUninstalled != newDevice.appUninstalled; // Check app_uninstalled flag
   }
 
   Future<void> refreshSingleDevice(String deviceId) async {
