@@ -410,7 +410,7 @@ class Device {
     this.adminNotePriority,
     this.adminNoteMessage,
     this.adminNoteCreatedAt,
-    this.appUninstalled,
+    this.appUninstalled = false,
     this.appUninstalledAt,
   });
 
