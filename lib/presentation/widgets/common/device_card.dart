@@ -41,6 +41,15 @@ class DeviceCard extends StatefulWidget {
 class _DeviceCardState extends State<DeviceCard> {
   bool _isPressed = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Debug: Log appUninstalled status
+    if (widget.device.appUninstalled) {
+      debugPrint('🔴 [DeviceCard] Device ${widget.device.deviceId} is marked as uninstalled');
+    }
+  }
+
   Color _getNoteColor() {
     if (widget.device.notePriority == null || widget.device.notePriority == 'none') {
       return Colors.transparent;

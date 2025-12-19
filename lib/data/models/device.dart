@@ -504,7 +504,7 @@ class Device {
       adminNoteCreatedAt: json['admin_note_created_at'] != null
           ? _parseTimestamp(json['admin_note_created_at'])
           : null,
-      appUninstalled: (json['app_uninstalled'] ?? false) == true,
+      appUninstalled: json['app_uninstalled'] == true || json['app_uninstalled'] == 1,
       appUninstalledAt: json['app_uninstalled_at'] != null
           ? _parseTimestamp(json['app_uninstalled_at'])
           : null,
