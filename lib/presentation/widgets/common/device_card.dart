@@ -146,7 +146,7 @@ class _DeviceCardState extends State<DeviceCard> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(11.2),
               decoration: BoxDecoration(
-                gradient: (widget.device.appUninstalled == true)
+                gradient: (widget.device.appUninstalled)
                     ? LinearGradient(
                         colors: isDark
                             ? [
@@ -171,7 +171,7 @@ class _DeviceCardState extends State<DeviceCard> {
                                   ],
                           )
                         : null),
-                color: (widget.device.appUninstalled == true)
+                color: (widget.device.appUninstalled)
                     ? null
                     : (widget.isNew
                         ? null
@@ -180,18 +180,18 @@ class _DeviceCardState extends State<DeviceCard> {
                             : (isDark ? const Color(0xFF252B3D) : Colors.white))),
                 borderRadius: BorderRadius.circular(10.24),
                 border: Border.all(
-                  color: (widget.device.appUninstalled == true)
+                  color: (widget.device.appUninstalled)
                       ? Colors.red.shade600.withOpacity(0.6)
                       : (widget.isNew
                           ? const Color(0xFF10B981).withOpacity(0.4)
                           : (widget.device.isPending
                               ? Colors.orange.withOpacity(0.3)
                               : (isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.2)))),
-                  width: (widget.device.appUninstalled == true) ? 2 : (widget.isNew ? 2 : 1),
+                  width: (widget.device.appUninstalled) ? 2 : (widget.isNew ? 2 : 1),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: (widget.device.appUninstalled == true)
+                    color: (widget.device.appUninstalled)
                         ? Colors.red.shade600.withOpacity(0.4)
                         : (widget.isNew
                             ? const Color(0xFF10B981).withOpacity(0.3)
@@ -213,7 +213,7 @@ class _DeviceCardState extends State<DeviceCard> {
                     padding: const EdgeInsets.all(6.4),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: (widget.device.appUninstalled == true)
+                        colors: (widget.device.appUninstalled)
                             ? [Colors.red.shade600, Colors.red.shade800]  // قرمز برای حذف شده
                             : (widget.device.isOnline
                                 ? [Colors.green.shade400, Colors.teal.shade400]
@@ -221,8 +221,8 @@ class _DeviceCardState extends State<DeviceCard> {
                       ),
                       borderRadius: BorderRadius.circular(6.4),
                     ),
-                    child: Icon(
-                      (widget.device.appUninstalled == true)
+                      child: Icon(
+                      (widget.device.appUninstalled)
                           ? Icons.delete_outline_rounded
                           : (widget.device.isOnline
                               ? Icons.smartphone_rounded
@@ -275,7 +275,7 @@ class _DeviceCardState extends State<DeviceCard> {
                                   style: TextStyle(fontSize: 6.4, color: Colors.white),
                                 ),
                               ),
-                            if (widget.device.appUninstalled == true)
+                            if (widget.device.appUninstalled)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 4.8, vertical: 1.6),
                                 decoration: BoxDecoration(
