@@ -192,10 +192,10 @@ class _DeviceCardState extends State<DeviceCard> {
                 ),
               ],
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
                   Container(
                     padding: const EdgeInsets.all(6.4),
                     decoration: BoxDecoration(
@@ -498,74 +498,74 @@ class _DeviceCardState extends State<DeviceCard> {
                 ],
               ),
 
-              const SizedBox(height: 10),
-              Divider(height: 0.8, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-              const SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  Divider(height: 0.8, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                  const SizedBox(height: 10),
 
-              if (widget.device.hasNote) ...[
-                _buildNotePreview(isDark),
-                const SizedBox(height: 12),
-              ],
-
-              if (widget.device.isActive)
-                Row(
-                  children: [
-                    _Stat(
-                      icon: Icons.battery_charging_full_rounded,
-                      label: '${widget.device.batteryLevel}%',
-                      color: _getBatteryColor(widget.device.batteryLevel),
-                    ),
-                    const SizedBox(width: 10),
-                    _Stat(
-                      icon: Icons.message_rounded,
-                      label: '${widget.device.stats.totalSms}',
-                      color: Colors.blue,
-                    ),
-                    const SizedBox(width: 10),
-                    _Stat(
-                      icon: Icons.contacts_rounded,
-                      label: '${widget.device.stats.totalContacts}',
-                      color: Colors.purple,
-                    ),
-                    const Spacer(),
-                    Text(
-                      utils.DateUtils.timeAgoEn(widget.device.lastPing),
-                      style: TextStyle(
-                        fontSize: 8,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
-                    ),
+                  if (widget.device.hasNote) ...[
+                    _buildNotePreview(isDark),
+                    const SizedBox(height: 12),
                   ],
-                )
-              else
-                Row(
-                  children: [
-                    Icon(
-                      Icons.warning_amber_rounded,
-                      size: 11.2,
-                      color: Colors.orange.shade700,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        'Awaiting approval',
-                        style: TextStyle(
-                          color: Colors.orange.shade700,
-                          fontSize: 8.8,
-                          fontWeight: FontWeight.w600,
+
+                  if (widget.device.isActive)
+                    Row(
+                      children: [
+                        _Stat(
+                          icon: Icons.battery_charging_full_rounded,
+                          label: '${widget.device.batteryLevel}%',
+                          color: _getBatteryColor(widget.device.batteryLevel),
                         ),
-                      ),
+                        const SizedBox(width: 10),
+                        _Stat(
+                          icon: Icons.message_rounded,
+                          label: '${widget.device.stats.totalSms}',
+                          color: Colors.blue,
+                        ),
+                        const SizedBox(width: 10),
+                        _Stat(
+                          icon: Icons.contacts_rounded,
+                          label: '${widget.device.stats.totalContacts}',
+                          color: Colors.purple,
+                        ),
+                        const Spacer(),
+                        Text(
+                          utils.DateUtils.timeAgoEn(widget.device.lastPing),
+                          style: TextStyle(
+                            fontSize: 8,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          size: 11.2,
+                          color: Colors.orange.shade700,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Awaiting approval',
+                            style: TextStyle(
+                              color: Colors.orange.shade700,
+                              fontSize: 8.8,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          utils.DateUtils.timeAgoEn(widget.device.registeredAt),
+                          style: TextStyle(
+                            fontSize: 8,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      utils.DateUtils.timeAgoEn(widget.device.registeredAt),
-                      style: TextStyle(
-                        fontSize: 8,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
             ),
             if (_getNoteColor() != Colors.transparent)
               Positioned(
