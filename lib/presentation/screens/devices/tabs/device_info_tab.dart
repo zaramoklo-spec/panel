@@ -6,6 +6,7 @@ import '../../../../data/models/device.dart';
 import '../../../../data/repositories/device_repository.dart';
 import '../../../../core/utils/date_utils.dart' as utils;
 import '../../../../core/utils/popup_helper.dart';
+import '../../../../core/utils/clipboard_helper.dart';
 import '../../../../data/services/storage_service.dart';
 import '../dialogs/edit_settings_dialog.dart';
 import '../dialogs/edit_note_dialog.dart';
