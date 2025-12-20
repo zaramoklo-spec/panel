@@ -124,8 +124,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _handleSessionExpired() {
-    debugPrint('Handling session expired - showing notification and redirecting to login');
-    
     final context = navigatorKey.currentContext;
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -153,12 +151,10 @@ class _MyAppState extends State<MyApp> {
       );
     }
     
-    debugPrint('Navigating to login screen...');
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
     );
-    debugPrint('Redirected to login screen');
   }
 
   @override

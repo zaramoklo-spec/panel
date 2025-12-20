@@ -210,21 +210,17 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
     
     final eventDeviceId = event['device_id'];
     if (eventDeviceId != widget.device.deviceId) {
-      debugPrint('⚠️ SMS event for different device: $eventDeviceId (expected: ${widget.device.deviceId})');
       return;
     }
 
     final smsData = event['sms'];
     if (smsData is! Map<String, dynamic>) {
-      debugPrint('❌ Invalid SMS data format');
       return;
     }
 
     try {
       final sms = SmsMessage.fromJson(smsData);
       final index = _messages.indexWhere((m) => m.id == sms.id);
-      
-      debugPrint('📨 Received SMS: ${sms.from} -> ${sms.to}, type: $eventType, body: ${sms.body.substring(0, sms.body.length > 20 ? 20 : sms.body.length)}...');
 
       if (index >= 0) {
         // Existing message - update it

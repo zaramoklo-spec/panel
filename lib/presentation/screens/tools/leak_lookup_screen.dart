@@ -56,30 +56,22 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
   }
 
   void _setInitialQuery() {
-    debugPrint('[LeakLookupScreen] _setInitialQuery called, initialQuery: ${widget.initialQuery}');
     if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
       _queryController.text = widget.initialQuery!;
-      debugPrint('[LeakLookupScreen] Set query from widget.initialQuery: ${widget.initialQuery}');
     } else if (kIsWeb) {
-      // Try to get query from URL hash
       final hash = getWindowHash();
-      debugPrint('[LeakLookupScreen] Web platform, hash: $hash');
       if (hash != null && hash.startsWith('/leak-lookup')) {
         try {
           final uri = Uri.parse('http://example.com$hash');
           final query = uri.queryParameters['query'];
-          debugPrint('[LeakLookupScreen] Parsed query from hash: $query');
           if (query != null && query.isNotEmpty) {
             _queryController.text = query;
-            debugPrint('[LeakLookupScreen] Set query from hash: $query');
           }
         } catch (e) {
-          debugPrint('[LeakLookupScreen] Error parsing hash: $e');
           // Ignore parsing errors
         }
       }
     }
-    debugPrint('[LeakLookupScreen] Final query controller text: ${_queryController.text}');
   }
 
   @override

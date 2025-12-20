@@ -130,39 +130,24 @@ class _SplashScreenState extends State<SplashScreen>
                 return;
               }
             }
-            // Handle leak lookup route (in popup or new tab)
             if (hash.startsWith('#/leak-lookup')) {
-              debugPrint('[SplashScreen] Leak lookup route detected: $hash');
-              
-              // Extract query parameter from hash
               String? query;
               if (hash.contains('?')) {
                 try {
                   final parts = hash.split('?');
-                  debugPrint('[SplashScreen] Hash parts: $parts');
                   if (parts.length > 1) {
                     final params = Uri.splitQueryString(parts[1]);
                     query = params['query'];
-                    debugPrint('[SplashScreen] Extracted query parameter: $query');
                   }
                 } catch (e) {
-                  debugPrint('[SplashScreen] Error parsing query parameter: $e');
                   // Ignore parsing errors
                 }
-              } else {
-                debugPrint('[SplashScreen] No query parameter found in hash');
               }
               
-              // For leak lookup, always navigate even if not authenticated
-              // (authentication will be checked inside the screen if needed)
-              // Skip delay for direct navigation
-              debugPrint('[SplashScreen] Navigating to LeakLookupScreen with query: $query');
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) {
-                    debugPrint('[SplashScreen] Building LeakLookupScreen');
-                    return LeakLookupScreen(initialQuery: query);
-                  },
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      LeakLookupScreen(initialQuery: query),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(opacity: animation, child: child);
@@ -170,7 +155,6 @@ class _SplashScreenState extends State<SplashScreen>
                   transitionDuration: const Duration(milliseconds: 500),
                 ),
               );
-              debugPrint('[SplashScreen] Navigation completed');
               return;
             }
           }

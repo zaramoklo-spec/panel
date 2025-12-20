@@ -123,22 +123,15 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
   }
 
   void _openLookupActivity(String query) {
-    debugPrint('[DeviceInfoTab] _openLookupActivity called with query: $query');
     if (kIsWeb) {
-      // On web, open in new tab or popup based on settings
       final storageService = StorageService();
       final openMode = storageService.getLeakLookupOpenMode();
-      debugPrint('[DeviceInfoTab] Web platform detected, openMode: $openMode');
       if (openMode == 'tab') {
-        debugPrint('[DeviceInfoTab] Opening leak lookup in new tab with query: $query');
         openLeakLookupInNewTab(query: query);
       } else {
-        debugPrint('[DeviceInfoTab] Opening leak lookup in popup with query: $query');
         openLeakLookupPopup(query: query);
       }
     } else {
-      // On mobile, open as full screen page
-      debugPrint('[DeviceInfoTab] Mobile platform, navigating with Navigator.push');
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => LeakLookupScreen(initialQuery: query),

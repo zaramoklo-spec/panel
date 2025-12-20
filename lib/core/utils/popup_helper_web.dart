@@ -71,7 +71,6 @@ void openLeakLookupPopup({String? query}) {
   
   final features = 'width=$width,height=$height,left=$left,top=$top,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,status=no';
   
-  print('[PopupHelper] Opening leak lookup in popup: $leakLookupUrl');
   _windowOpen(leakLookupUrl, '_blank', features);
 }
 
@@ -84,7 +83,6 @@ void openLeakLookupInNewTab({String? query}) {
     leakLookupUrl += '?query=${Uri.encodeComponent(query)}';
   }
   
-  print('[PopupHelper] Opening leak lookup in new tab: $leakLookupUrl');
   _windowOpen(leakLookupUrl, '_blank', '');
 }
 

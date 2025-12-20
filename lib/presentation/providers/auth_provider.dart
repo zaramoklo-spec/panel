@@ -38,7 +38,6 @@ class AuthProvider extends ChangeNotifier {
 
   void initialize() {
     _sessionExpiredSubscription = ApiService().sessionExpiredStream.listen((_) {
-      debugPrint('AuthProvider: Session expired detected, resetting auth state');
       _currentAdmin = null;
       _status = AuthStatus.unauthenticated;
       _errorMessage = null;
