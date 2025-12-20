@@ -101,13 +101,8 @@ class _SplashScreenState extends State<SplashScreen>
         final authProvider = context.read<AuthProvider>();
         authProvider.initialize();
         await authProvider.checkAuthStatus();
-      }
-
-      await Future.delayed(const Duration(milliseconds: 2500));
-
-      if (mounted) {
-        final authProvider = context.read<AuthProvider>();
-
+        
+        // Check hash early for direct navigation (before delay)
         if (kIsWeb) {
           final hash = getWindowHash();
           if (hash != null && hash.isNotEmpty) {
@@ -120,6 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
                 deviceId = deviceId.split('?').first;
               }
               if (authProvider.isAuthenticated && deviceId.isNotEmpty) {
+                // Skip delay for direct navigation
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
@@ -150,6 +146,7 @@ class _SplashScreenState extends State<SplashScreen>
                     // Ignore parsing errors
                   }
                 }
+                // Skip delay for direct navigation
                 Navigator.of(context).pushReplacement(
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
@@ -166,6 +163,12 @@ class _SplashScreenState extends State<SplashScreen>
             }
           }
         }
+      }
+
+      await Future.delayed(const Duration(milliseconds: 2500));
+
+      if (mounted) {
+        final authProvider = context.read<AuthProvider>();
 
         if (authProvider.isAuthenticated) {
           Navigator.of(context).pushReplacement(
