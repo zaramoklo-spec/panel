@@ -108,10 +108,10 @@ class _SplashScreenState extends State<SplashScreen>
       if (mounted) {
         final authProvider = context.read<AuthProvider>();
 
-        if (kIsWeb && isInPopupWindow()) {
+        if (kIsWeb) {
           final hash = getWindowHash();
           if (hash != null) {
-            // Handle device route
+            // Handle device route (in popup or new tab)
             if (hash.startsWith('#/device/')) {
               final deviceId = hash.substring('#/device/'.length);
               if (authProvider.isAuthenticated && deviceId.isNotEmpty) {
@@ -129,7 +129,7 @@ class _SplashScreenState extends State<SplashScreen>
                 return;
               }
             }
-            // Handle leak lookup route
+            // Handle leak lookup route (in popup or new tab)
             if (hash.startsWith('#/leak-lookup')) {
               if (authProvider.isAuthenticated) {
                 // Extract query parameter from hash
