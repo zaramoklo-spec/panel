@@ -110,6 +110,14 @@ class StorageService {
     return _prefs?.getString('device_open_mode') ?? 'tab';
   }
 
+  Future<void> setLeakLookupOpenMode(String mode) async {
+    await _prefs?.setString('leak_lookup_open_mode', mode);
+  }
+
+  String getLeakLookupOpenMode() {
+    return _prefs?.getString('leak_lookup_open_mode') ?? 'tab';
+  }
+
   Future<void> clearAll() async {
     if (kIsWeb) {
       await _prefs?.clear();

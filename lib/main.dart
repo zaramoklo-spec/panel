@@ -18,6 +18,7 @@ import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/main/main_screen.dart';
 import 'presentation/screens/devices/device_detail_screen.dart';
+import 'presentation/screens/tools/leak_lookup_screen.dart';
 import 'core/theme/app_theme.dart';
 
 import 'package:firebase_core/firebase_core.dart'
@@ -193,6 +194,12 @@ class _MyAppState extends State<MyApp> {
                 final deviceId = settings.name!.substring('/device/'.length);
                 return MaterialPageRoute(
                   builder: (_) => DeviceDetailScreen.fromDeviceId(deviceId),
+                  settings: settings,
+                );
+              }
+              if (settings.name == '/leak-lookup') {
+                return MaterialPageRoute(
+                  builder: (_) => const LeakLookupScreen(),
                   settings: settings,
                 );
               }

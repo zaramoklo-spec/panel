@@ -23,6 +23,8 @@ import '../../widgets/multi_device_view.dart';
 import '../../providers/multi_device_provider.dart';
 import '../../widgets/leak_lookup_view.dart';
 import '../../providers/leak_lookup_provider.dart';
+import '../../../core/utils/popup_helper_web.dart';
+import '../../../data/services/storage_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -183,9 +185,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final admin = authProvider.currentAdmin;
-    final isWide = MediaQuery.of(context).size.width > 768;
+    final mediaQuery = MediaQuery.of(context);
+    final isWide = mediaQuery.size.width > 768;
     final bool collapsedNav =
         (_supportsCollapsibleNav && isWide) ? _isSidebarCollapsed : false;
+    // Check if mobile web (small screen on web)
+    final isMobileWeb = kIsWeb && !isWide;
 
     final List<Widget> pages = [
       _DevicesPage(),
@@ -245,33 +250,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
                     if (kIsWeb)
                       Consumer<MultiDeviceProvider>(
                         builder: (context, multiProvider, _) {
-                          return Consumer<LeakLookupProvider>(
-                            builder: (context, leakProvider, _) {
-                              double multiHeight = multiProvider.hasOpenDevices ? 400 : 0;
-                              double leakHeight = leakProvider.isOpen ? 400 : 0;
-                              
-                              return Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    if (leakProvider.isOpen)
-                                      SizedBox(
-                                        height: leakHeight,
-                                        child: const LeakLookupView(),
-                                      ),
-                                    if (multiProvider.hasOpenDevices)
-                                      SizedBox(
-                                        height: multiHeight,
-                                        child: const MultiDeviceView(),
-                                      ),
-                                  ],
-                                ),
-                              );
-                            },
+                          double multiHeight = multiProvider.hasOpenDevices ? 400 : 0;
+                          
+                          return Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                if (multiProvider.hasOpenDevices)
+                                  SizedBox(
+                                    height: multiHeight,
+                                    child: const MultiDeviceView(),
+                                  ),
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -334,7 +329,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
           ),
         ],
       ),
-      bottomNavigationBar: isWide ? null : _buildBottomNav(context, admin),
+      bottomNavigationBar: isWide ? null : _buildBottomNav(context, admin, isMobileWeb: isMobileWeb),
     ),
     );
   }
@@ -516,8 +511,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
     );
   }
 
-  Widget _buildBottomNav(BuildContext context, admin) {
-    return Container(
+  Widget _buildBottomNav(BuildContext context, admin, {bool isMobileWeb = false}) {
+    Widget bottomNav = Container(
       margin: const EdgeInsets.all(9.6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.8),
@@ -585,6 +580,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin, 
         ),
       ),
     );
+
+    // For mobile web, wrap with SafeArea and add padding to handle viewport insets
+    // This prevents the navigation bar from moving up when address bar appears
+    if (isMobileWeb) {
+      final mediaQuery = MediaQuery.of(context);
+      final bottomPadding = mediaQuery.viewPadding.bottom;
+      
+      return Container(
+        padding: EdgeInsets.only(bottom: bottomPadding > 0 ? bottomPadding : 0),
+        child: SafeArea(
+          top: false,
+          bottom: true,
+          minimum: EdgeInsets.zero,
+          child: bottomNav,
+        ),
+      );
+    }
+
+    return bottomNav;
   }
 
   void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
@@ -1017,7 +1031,26 @@ class _DevicesPageState extends State<_DevicesPage> {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  context.read<LeakLookupProvider>().toggle();
+                  // On mobile, open as full screen page
+                  if (!kIsWeb && defaultTargetPlatform != TargetPlatform.windows) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const LeakLookupScreen(),
+                      ),
+                    );
+                  } else if (kIsWeb) {
+                    // On web, open in popup or new tab based on settings
+                    final storageService = StorageService();
+                    final openMode = storageService.getLeakLookupOpenMode();
+                    if (openMode == 'tab') {
+                      openLeakLookupInNewTab();
+                    } else {
+                      openLeakLookupPopup();
+                    }
+                  } else if (defaultTargetPlatform == TargetPlatform.windows) {
+                    // On Windows, toggle the provider (shows in sidebar)
+                    context.read<LeakLookupProvider>().toggle();
+                  }
                 },
                 borderRadius: BorderRadius.circular(10),
                 child: Container(

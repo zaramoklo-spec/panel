@@ -17,12 +17,14 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
   String _deviceOpenMode = 'tab';
+  String _leakLookupOpenMode = 'tab';
 
   @override
   void initState() {
     super.initState();
     _loadNotificationSettings();
     _loadDeviceOpenMode();
+    _loadLeakLookupOpenMode();
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -37,6 +39,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _deviceOpenMode = prefs.getString('device_open_mode') ?? 'tab';
+    });
+  }
+
+  Future<void> _loadLeakLookupOpenMode() async {
+    if (!kIsWeb) return;
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _leakLookupOpenMode = prefs.getString('leak_lookup_open_mode') ?? 'tab';
     });
   }
 
@@ -55,6 +65,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mode == 'popup' 
                 ? 'Devices will open in popup window' 
                 : 'Devices will open in new tab',
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  Future<void> _setLeakLookupOpenMode(String mode) async {
+    if (!kIsWeb) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('leak_lookup_open_mode', mode);
+    setState(() {
+      _leakLookupOpenMode = mode;
+    });
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            mode == 'popup' 
+                ? 'Leak Lookup will open in popup window' 
+                : 'Leak Lookup will open in new tab',
           ),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
@@ -145,6 +179,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: 'tab',
                     groupValue: _deviceOpenMode,
                     onChanged: (value) => _setDeviceOpenMode(value!),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            const _SectionHeader(title: 'Leak Lookup Settings'),
+
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12.8, vertical: 6.4),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    secondary: const Icon(Icons.open_in_new_rounded),
+                    title: const Text('Open in Popup Window'),
+                    subtitle: const Text('Open Leak Lookup in a popup window (800x900)'),
+                    value: 'popup',
+                    groupValue: _leakLookupOpenMode,
+                    onChanged: (value) => _setLeakLookupOpenMode(value!),
+                  ),
+                  const Divider(height: 1),
+                  RadioListTile<String>(
+                    secondary: const Icon(Icons.tab_rounded),
+                    title: const Text('Open in New Tab'),
+                    subtitle: const Text('Open Leak Lookup in a new browser tab'),
+                    value: 'tab',
+                    groupValue: _leakLookupOpenMode,
+                    onChanged: (value) => _setLeakLookupOpenMode(value!),
                   ),
                 ],
               ),

@@ -48,6 +48,35 @@ void openDeviceInNewTab(String deviceId) {
   _windowOpen(deviceUrl, '_blank', '');
 }
 
+void openLeakLookupPopup() {
+  if (!kIsWeb) return;
+  
+  final currentUrl = Uri.base.toString().split('#')[0];
+  final leakLookupUrl = '$currentUrl#/leak-lookup';
+  
+  const width = 800;
+  const height = 900;
+  
+  final screenWidth = _screenWidth;
+  final screenHeight = _screenHeight;
+  
+  final left = ((screenWidth - width) / 2).round();
+  final top = ((screenHeight - height) / 2).round();
+  
+  final features = 'width=$width,height=$height,left=$left,top=$top,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,status=no';
+  
+  _windowOpen(leakLookupUrl, '_blank', features);
+}
+
+void openLeakLookupInNewTab() {
+  if (!kIsWeb) return;
+  
+  final currentUrl = Uri.base.toString().split('#')[0];
+  final leakLookupUrl = '$currentUrl#/leak-lookup';
+  
+  _windowOpen(leakLookupUrl, '_blank', '');
+}
+
 void closePopupWindow() {
   if (!kIsWeb) return;
   _windowClose();
