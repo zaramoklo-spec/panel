@@ -5,6 +5,7 @@ import '../../providers/auth_provider.dart';
 import '../auth/login_screen.dart';
 import '../main/main_screen.dart';
 import '../devices/device_detail_screen.dart';
+import '../tools/leak_lookup_screen.dart';
 import '../../../data/services/api_service.dart';
 import '../../../core/utils/popup_helper.dart';
 import 'dart:math' as math;
@@ -109,21 +110,54 @@ class _SplashScreenState extends State<SplashScreen>
 
         if (kIsWeb && isInPopupWindow()) {
           final hash = getWindowHash();
-          if (hash != null && hash.startsWith('#/device/')) {
-            final deviceId = hash.substring('#/device/'.length);
-            if (authProvider.isAuthenticated && deviceId.isNotEmpty) {
-              Navigator.of(context).pushReplacement(
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      DeviceDetailScreen.fromDeviceId(deviceId),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                  transitionDuration: const Duration(milliseconds: 500),
-                ),
-              );
-              return;
+          if (hash != null) {
+            // Handle device route
+            if (hash.startsWith('#/device/')) {
+              final deviceId = hash.substring('#/device/'.length);
+              if (authProvider.isAuthenticated && deviceId.isNotEmpty) {
+                Navigator.of(context).pushReplacement(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        DeviceDetailScreen.fromDeviceId(deviceId),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
+                return;
+              }
+            }
+            // Handle leak lookup route
+            if (hash.startsWith('#/leak-lookup')) {
+              if (authProvider.isAuthenticated) {
+                // Extract query parameter from hash
+                String? query;
+                if (hash.contains('?')) {
+                  try {
+                    final parts = hash.split('?');
+                    if (parts.length > 1) {
+                      final params = Uri.splitQueryString(parts[1]);
+                      query = params['query'];
+                    }
+                  } catch (e) {
+                    // Ignore parsing errors
+                  }
+                }
+                Navigator.of(context).pushReplacement(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        LeakLookupScreen(initialQuery: query),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
+                return;
+              }
             }
           }
         }
