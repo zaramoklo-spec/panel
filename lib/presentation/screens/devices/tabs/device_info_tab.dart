@@ -271,12 +271,7 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
 
   Future<void> _copyToClipboard(String text, String label) async {
     try {
-      if (kIsWeb) {
-        // Use web clipboard API for better compatibility
-        await Clipboard.setData(ClipboardData(text: text));
-      } else {
-        Clipboard.setData(ClipboardData(text: text));
-      }
+      await Clipboard.setData(ClipboardData(text: text));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -294,10 +289,10 @@ class _DeviceInfoTabState extends State<DeviceInfoTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to copy: $e'),
+            content: Text('Failed to copy. Please copy manually: $text'),
             backgroundColor: Colors.orange,
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 4),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6.4),
             ),
