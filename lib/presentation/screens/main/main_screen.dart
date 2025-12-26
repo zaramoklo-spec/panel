@@ -1134,7 +1134,7 @@ class _DevicesPageState extends State<_DevicesPage> {
                           activeDevices: deviceProvider.stats?.activeDevices ?? deviceProvider.activeDevices,
                           pendingDevices: deviceProvider.stats?.pendingDevices ?? deviceProvider.pendingDevices,
                           onlineDevices: deviceProvider.stats?.onlineDevices ?? deviceProvider.onlineDevices,
-                          uninstalledDevices: deviceProvider.uninstalledDevices,
+                          uninstalledDevices: deviceProvider.stats?.uninstalledDevices ?? deviceProvider.uninstalledDevices,
                           onStatTap: (filter) {
                             switch (filter) {
                               case 'active':
