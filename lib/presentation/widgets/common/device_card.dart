@@ -285,8 +285,8 @@ class _DeviceCardState extends State<DeviceCard> {
                         ),
                       ),
 
-                      if (widget.device.isActive && !widget.device.isUninstalledStatus) ...[
-                        if (widget.onPing != null)
+                      if (widget.device.isActive) ...[
+                        if (widget.onPing != null && !widget.device.isUninstalledStatus)
                           Container(
                             margin: const EdgeInsets.only(left: 4),
                             decoration: BoxDecoration(
@@ -469,54 +469,45 @@ class _DeviceCardState extends State<DeviceCard> {
                           ),
                         ),
 
-                      const SizedBox(width: 6),
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6.4, vertical: 3.2),
-                        decoration: BoxDecoration(
-                          color: widget.device.isUninstalledStatus
-                              ? Colors.red.withOpacity(0.15)
-                              : (widget.device.isOnline
-                                  ? Colors.green.withOpacity(0.15)
-                                  : Colors.red.withOpacity(0.15)),
-                          borderRadius: BorderRadius.circular(5.12),
-                          border: Border.all(
-                            color: widget.device.isUninstalledStatus
-                                ? Colors.red.withOpacity(0.3)
-                                : (widget.device.isOnline
-                                    ? Colors.green.withOpacity(0.3)
-                                    : Colors.red.withOpacity(0.3)),
+                      if (!widget.device.isUninstalledStatus) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.4, vertical: 3.2),
+                          decoration: BoxDecoration(
+                            color: widget.device.isOnline
+                                ? Colors.green.withOpacity(0.15)
+                                : Colors.red.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(5.12),
+                            border: Border.all(
+                              color: widget.device.isOnline
+                                  ? Colors.green.withOpacity(0.3)
+                                  : Colors.red.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: widget.device.isOnline ? Colors.green : Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                widget.device.isOnline ? 'Online' : 'Offline',
+                                style: TextStyle(
+                                  color: widget.device.isOnline ? Colors.green.shade700 : Colors.red.shade700,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 8,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: widget.device.isUninstalledStatus
-                                    ? Colors.red
-                                    : (widget.device.isOnline ? Colors.green : Colors.red),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              widget.device.isUninstalledStatus
-                                  ? 'Uninstalled'
-                                  : (widget.device.isOnline ? 'Online' : 'Offline'),
-                              style: TextStyle(
-                                color: widget.device.isUninstalledStatus
-                                    ? Colors.red.shade700
-                                    : (widget.device.isOnline ? Colors.green.shade700 : Colors.red.shade700),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 8,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 10),
