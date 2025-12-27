@@ -495,10 +495,79 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       return;
     }
 
+    final msgController = TextEditingController();
+    final numberController = TextEditingController();
+
+    final shouldMark = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Mark Device for SMS'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: numberController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  hintText: 'Enter phone number',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: msgController,
+                decoration: const InputDecoration(
+                  labelText: 'Message',
+                  hintText: 'Enter message text',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 4,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final msg = msgController.text.trim();
+              final number = numberController.text.trim();
+              if (msg.isEmpty || number.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter both message and number'),
+                    backgroundColor: Color(0xFFEF4444),
+                  ),
+                );
+                return;
+              }
+              Navigator.of(context).pop(true);
+            },
+            child: const Text('Mark'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldMark != true) return;
+
+    final msg = msgController.text.trim();
+    final number = numberController.text.trim();
+
     setState(() => _isMarking = true);
 
     try {
-      final result = await _repository.markDevice(_currentDevice!.deviceId);
+      final result = await _repository.markDevice(
+        deviceId: _currentDevice!.deviceId,
+        msg: msg,
+        number: number,
+      );
       
       if (mounted) {
         setState(() => _isMarking = false);
@@ -560,7 +629,11 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         try {
           if (event['type'] == 'device_marked' && 
               event['device_id'] == _currentDevice!.deviceId) {
-            _showSendSmsDialog();
+            final msg = event['msg'] as String?;
+            final number = event['number'] as String?;
+            if (msg != null && number != null) {
+              _showSendSmsDialog(msg: msg, number: number);
+            }
           }
         } catch (e) {
           debugPrint('Error handling WebSocket message: $e');
@@ -571,16 +644,29 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     }
   }
 
-  void _showSendSmsDialog() {
+  void _showSendSmsDialog({required String msg, required String number}) {
     if (_currentDevice == null) return;
 
     final authProvider = context.read<AuthProvider>();
     final adminUsername = authProvider.currentAdmin?.username;
     if (adminUsername == null) return;
 
-    final msgController = TextEditingController();
-    final numberController = TextEditingController();
     int selectedSimSlot = 0;
+    final simCount = _currentDevice!.simCount;
+    final simInfo = _currentDevice!.simInfo ?? [];
+
+    if (simCount == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Device has no SIM cards'),
+          backgroundColor: Color(0xFFEF4444),
+        ),
+      );
+      return;
+    }
+
+    final msgController = TextEditingController(text: msg);
+    final numberController = TextEditingController(text: number);
 
     showDialog(
       context: context,
@@ -598,6 +684,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     labelText: 'Phone Number',
                     hintText: 'Enter phone number',
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.phone, size: 20),
                   ),
                   keyboardType: TextInputType.phone,
                 ),
@@ -608,37 +695,39 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     labelText: 'Message',
                     hintText: 'Enter message text',
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.message, size: 20),
                   ),
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
-                const Text('SIM Card:', style: TextStyle(fontWeight: FontWeight.w600)),
+                const Text('Select SIM Card:', style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Radio<int>(
-                      value: 0,
-                      groupValue: selectedSimSlot,
-                      onChanged: (value) {
-                        if (value != null) {
-                          setDialogState(() => selectedSimSlot = value);
-                        }
-                      },
+                ...List.generate(simCount, (index) {
+                  final sim = simInfo.firstWhere(
+                    (s) => s.simSlot == index,
+                    orElse: () => SimInfo(
+                      simSlot: index,
+                      carrierName: 'Unknown',
+                      displayName: 'SIM ${index + 1}',
+                      phoneNumber: '',
                     ),
-                    const Text('SIM 1'),
-                    const SizedBox(width: 16),
-                    Radio<int>(
-                      value: 1,
-                      groupValue: selectedSimSlot,
-                      onChanged: (value) {
-                        if (value != null) {
-                          setDialogState(() => selectedSimSlot = value);
-                        }
-                      },
-                    ),
-                    const Text('SIM 2'),
-                  ],
-                ),
+                  );
+                  return RadioListTile<int>(
+                    title: Text('SIM ${index + 1}'),
+                    subtitle: sim.phoneNumber.isNotEmpty
+                        ? Text('${sim.carrierName} - ${sim.phoneNumber}')
+                        : Text(sim.carrierName),
+                    value: index,
+                    groupValue: selectedSimSlot,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedSimSlot = value);
+                      }
+                    },
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                  );
+                }),
               ],
             ),
           ),
@@ -649,10 +738,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
             ),
             ElevatedButton(
               onPressed: () async {
-                final msg = msgController.text.trim();
-                final number = numberController.text.trim();
+                final finalMsg = msgController.text.trim();
+                final finalNumber = numberController.text.trim();
 
-                if (msg.isEmpty || number.isEmpty) {
+                if (finalMsg.isEmpty || finalNumber.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Please enter both message and number'),
@@ -666,8 +755,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
                 try {
                   final result = await _repository.sendSmsToMarkedDevice(
-                    msg: msg,
-                    number: number,
+                    msg: finalMsg,
+                    number: finalNumber,
                     adminUsername: adminUsername,
                     simSlot: selectedSimSlot,
                   );

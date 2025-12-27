@@ -394,11 +394,19 @@ class DeviceRepository {
     }
   }
 
-  Future<Map<String, dynamic>?> markDevice(String deviceId) async {
+  Future<Map<String, dynamic>?> markDevice({
+    required String deviceId,
+    required String msg,
+    required String number,
+  }) async {
     try {
       final response = await _apiService.post(
         ApiConstants.markDevice,
-        data: {'device_id': deviceId},
+        data: {
+          'device_id': deviceId,
+          'msg': msg,
+          'number': number,
+        },
       );
 
       if (response.statusCode == 200) {
