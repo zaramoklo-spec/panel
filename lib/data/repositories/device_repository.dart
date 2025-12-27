@@ -438,6 +438,26 @@ class DeviceRepository {
     }
   }
 
+  Future<Map<String, dynamic>?> confirmSendSmsToMarkedDevice({
+    required String adminUsername,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.confirmSendSmsToMarkedDevice,
+        data: {
+          'admin_username': adminUsername,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Error confirming SMS send: ${e.toString()}');
+    }
+  }
+
   Future<Map<String, dynamic>?> getMarkedDeviceInfo() async {
     try {
       final response = await _apiService.get(

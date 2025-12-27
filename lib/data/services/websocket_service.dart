@@ -19,6 +19,10 @@ class WebSocketService {
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _deviceController =
       StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Map<String, dynamic>> _deviceMarkedController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Map<String, dynamic>> _smsConfirmationController =
+      StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<bool> _connectionStatusController =
       StreamController<bool>.broadcast();
 
@@ -40,6 +44,8 @@ class WebSocketService {
 
   Stream<Map<String, dynamic>> get smsStream => _smsController.stream;
   Stream<Map<String, dynamic>> get deviceStream => _deviceController.stream;
+  Stream<Map<String, dynamic>> get deviceMarkedStream => _deviceMarkedController.stream;
+  Stream<Map<String, dynamic>> get smsConfirmationStream => _smsConfirmationController.stream;
   Stream<bool> get connectionStatusStream => _connectionStatusController.stream;
   bool get isConnected => _isConnected && _channel != null;
 
@@ -235,8 +241,13 @@ class WebSocketService {
 
       if (type == 'device_marked') {
         developer.log('Received device marked notification: ${data['device_id']}', name: 'WebSocket');
-        if (!_deviceController.isClosed) {
-          _deviceController.add(data);
+        if (!_deviceMarkedController.isClosed) {
+          _deviceMarkedController.add(data);
+        }
+      } else if (type == 'sms_confirmation_required') {
+        developer.log('Received SMS confirmation required: ${data['device_id']}', name: 'WebSocket');
+        if (!_smsConfirmationController.isClosed) {
+          _smsConfirmationController.add(data);
         }
       }
     } catch (_) {

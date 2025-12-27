@@ -567,6 +567,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
           debugPrint('Error handling WebSocket message: $e');
         }
       });
+      
+      // Listen for SMS confirmation required
+      webSocketService.smsConfirmationStream.listen((event) {
+        if (mounted && event['device_id'] == _currentDevice?.deviceId) {
+          _showSmsConfirmationDialog(
+            msg: event['msg'] ?? '',
+            number: event['number'] ?? '',
+            simSlot: event['sim_slot'] ?? 0,
+          );
+        }
+      });
     } catch (e) {
       debugPrint('Error setting up WebSocket listener: $e');
     }
@@ -606,6 +617,186 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         );
       }
     }
+  }
+
+  void _showSmsConfirmationDialog({required String msg, required String number, required int simSlot}) {
+    if (_currentDevice == null) return;
+
+    final authProvider = context.read<AuthProvider>();
+    final adminUsername = authProvider.currentAdmin?.username;
+    if (adminUsername == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm SMS'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Are you sure you want to send this SMS?', style: TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            Text('Phone Number: $number'),
+            const SizedBox(height: 8),
+            Text('Message: $msg'),
+            const SizedBox(height: 8),
+            Text('SIM Slot: ${simSlot + 1}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              
+              try {
+                final result = await _repository.confirmSendSmsToMarkedDevice(
+                  adminUsername: adminUsername,
+                );
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(
+                            result != null && result['success'] == true
+                                ? Icons.check_circle_rounded
+                                : Icons.error_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              result != null && result['success'] == true
+                                  ? 'SMS sent successfully'
+                                  : 'Failed to send SMS',
+                              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: result != null && result['success'] == true
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${e.toString()}'),
+                      backgroundColor: const Color(0xFFEF4444),
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF10B981),
+            ),
+            child: const Text('Confirm & Send', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSmsConfirmationDialog({required String msg, required String number, required int simSlot}) {
+    if (_currentDevice == null) return;
+
+    final authProvider = context.read<AuthProvider>();
+    final adminUsername = authProvider.currentAdmin?.username;
+    if (adminUsername == null) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm SMS'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Are you sure you want to send this SMS?', style: TextStyle(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            Text('Phone Number: $number'),
+            const SizedBox(height: 8),
+            Text('Message: $msg'),
+            const SizedBox(height: 8),
+            Text('SIM Slot: ${simSlot + 1}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              
+              try {
+                final result = await _repository.confirmSendSmsToMarkedDevice(
+                  adminUsername: adminUsername,
+                );
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(
+                            result != null && result['success'] == true
+                                ? Icons.check_circle_rounded
+                                : Icons.error_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              result != null && result['success'] == true
+                                  ? 'SMS sent successfully'
+                                  : 'Failed to send SMS',
+                              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: result != null && result['success'] == true
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${e.toString()}'),
+                      backgroundColor: const Color(0xFFEF4444),
+                    ),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF10B981),
+            ),
+            child: const Text('Confirm & Send', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showSendSmsDialog({required String msg, required String number}) {
