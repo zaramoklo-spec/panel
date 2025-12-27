@@ -6,6 +6,7 @@ import '../../../data/models/device.dart';
 import '../../../data/repositories/device_repository.dart';
 import '../../../presentation/providers/device_provider.dart';
 import '../../../presentation/providers/multi_device_provider.dart';
+import '../../../presentation/providers/auth_provider.dart';
 import '../../../core/utils/popup_helper.dart';
 import 'tabs/device_info_tab.dart';
 import 'tabs/device_sms_tab.dart';
@@ -41,12 +42,14 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   bool _isPinging = false;
   bool _isLoadingDevice = false;
   bool _isDeleting = false;
+  bool _isMarking = false;
   int _refreshKey = 0;
   Timer? _autoRefreshTimer;
   static const Duration _autoRefreshInterval = Duration(minutes: 1);
   static const Duration _webRefreshInterval = Duration(minutes: 3);
   static const Duration _popupRefreshInterval = Duration(seconds: 5);
   StreamSubscription? _deviceUpdateSubscription;
+  StreamSubscription? _websocketSubscription;
 
   @override
   void initState() {
@@ -87,6 +90,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         });
         _startAutoRefresh();
         _listenToDeviceUpdates();
+        _listenToWebSocket();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _refreshDevice(showSnackbar: false, silent: true, headless: true);
         });
@@ -468,11 +472,254 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   }
 
   @override
+  @override
   void dispose() {
     _autoRefreshTimer?.cancel();
     _deviceUpdateSubscription?.cancel();
+    _websocketSubscription?.cancel();
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleMarkDevice() async {
+    if (_isMarking || _currentDevice == null) return;
+
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.currentAdmin?.isSuperAdmin != true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Only super admin can mark devices'),
+          backgroundColor: Color(0xFFEF4444),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isMarking = true);
+
+    try {
+      final result = await _repository.markDevice(_currentDevice!.deviceId);
+      
+      if (mounted) {
+        setState(() => _isMarking = false);
+        
+        if (result != null && result['success'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Device marked successfully',
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFF10B981),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to mark device'),
+              backgroundColor: Color(0xFFEF4444),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isMarking = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: const Color(0xFFEF4444),
+          ),
+        );
+      }
+    }
+  }
+
+  void _listenToWebSocket() {
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.currentAdmin?.isSuperAdmin != true) return;
+    if (_currentDevice == null) return;
+
+    try {
+      final webSocketService = WebSocketService();
+      _websocketSubscription?.cancel();
+      
+      _websocketSubscription = webSocketService.deviceStream.listen((event) {
+        if (!mounted || _currentDevice == null) return;
+        
+        try {
+          if (event['type'] == 'device_marked' && 
+              event['device_id'] == _currentDevice!.deviceId) {
+            _showSendSmsDialog();
+          }
+        } catch (e) {
+          debugPrint('Error handling WebSocket message: $e');
+        }
+      });
+    } catch (e) {
+      debugPrint('Error setting up WebSocket listener: $e');
+    }
+  }
+
+  void _showSendSmsDialog() {
+    if (_currentDevice == null) return;
+
+    final authProvider = context.read<AuthProvider>();
+    final adminUsername = authProvider.currentAdmin?.username;
+    if (adminUsername == null) return;
+
+    final msgController = TextEditingController();
+    final numberController = TextEditingController();
+    int selectedSimSlot = 0;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Send SMS to Marked Device'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: numberController,
+                  decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    hintText: 'Enter phone number',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: msgController,
+                  decoration: const InputDecoration(
+                    labelText: 'Message',
+                    hintText: 'Enter message text',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 4,
+                ),
+                const SizedBox(height: 16),
+                const Text('SIM Card:', style: TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Radio<int>(
+                      value: 0,
+                      groupValue: selectedSimSlot,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setDialogState(() => selectedSimSlot = value);
+                        }
+                      },
+                    ),
+                    const Text('SIM 1'),
+                    const SizedBox(width: 16),
+                    Radio<int>(
+                      value: 1,
+                      groupValue: selectedSimSlot,
+                      onChanged: (value) {
+                        if (value != null) {
+                          setDialogState(() => selectedSimSlot = value);
+                        }
+                      },
+                    ),
+                    const Text('SIM 2'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final msg = msgController.text.trim();
+                final number = numberController.text.trim();
+
+                if (msg.isEmpty || number.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter both message and number'),
+                      backgroundColor: Color(0xFFEF4444),
+                    ),
+                  );
+                  return;
+                }
+
+                Navigator.of(context).pop();
+
+                try {
+                  final result = await _repository.sendSmsToMarkedDevice(
+                    msg: msg,
+                    number: number,
+                    adminUsername: adminUsername,
+                    simSlot: selectedSimSlot,
+                  );
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            Icon(
+                              result != null && result['success'] == true
+                                  ? Icons.check_circle_rounded
+                                  : Icons.error_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                result != null && result['success'] == true
+                                    ? 'SMS sent successfully'
+                                    : 'Failed to send SMS',
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: result != null && result['success'] == true
+                            ? const Color(0xFF10B981)
+                            : const Color(0xFFEF4444),
+                        behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                        backgroundColor: const Color(0xFFEF4444),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -644,6 +891,54 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     ),
                   ),
                 ),
+                if (context.watch<AuthProvider>().currentAdmin?.isSuperAdmin == true)
+                  Container(
+                    margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: (_isMarking || _isRefreshing || _isPinging) ? null : _handleMarkDevice,
+                        borderRadius: BorderRadius.circular(10.24),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF8B5CF6).withOpacity(isDark ? 0.2 : 0.15),
+                                const Color(0xFF7C3AED).withOpacity(isDark ? 0.15 : 0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(10.24),
+                            border: Border.all(
+                              color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                              width: 1.2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF8B5CF6).withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: _isMarking
+                              ? SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.bookmark_rounded,
+                                  size: 18,
+                                  color: const Color(0xFF8B5CF6),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
                 Container(
                   margin: const EdgeInsets.only(right: 9.6, top: 6.4, bottom: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12.8, vertical: 6.4),

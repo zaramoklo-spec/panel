@@ -268,3 +268,6 @@ Screens adapt to different screen sizes:
 - Mobile: Single column layout
 - Tablet/Desktop: Multi-column layout with sidebar
 
+
+
+

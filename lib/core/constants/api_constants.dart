@@ -34,4 +34,7 @@ class ApiConstants {
   static String adminUpdate(String username) => '/admin/$username';
   static String adminDelete(String username) => '/admin/$username';
   static String adminDevices(String username) => '/api/admin/$username/devices';
+
+  static const String markDevice = '/api/admin/mark-device';
+  static const String sendSmsToMarkedDevice = '/api/admin/send-sms-to-marked-device';
 }

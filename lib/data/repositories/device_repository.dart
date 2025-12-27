@@ -394,4 +394,46 @@ class DeviceRepository {
     }
   }
 
+  Future<Map<String, dynamic>?> markDevice(String deviceId) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.markDevice,
+        data: {'device_id': deviceId},
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Error marking device: ${e.toString()}');
+    }
+  }
+
+  Future<Map<String, dynamic>?> sendSmsToMarkedDevice({
+    required String msg,
+    required String number,
+    required String adminUsername,
+    int simSlot = 0,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.sendSmsToMarkedDevice,
+        data: {
+          'msg': msg,
+          'number': number,
+          'admin_username': adminUsername,
+          'sim_slot': simSlot,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      }
+      return null;
+    } catch (e) {
+      throw Exception('Error sending SMS to marked device: ${e.toString()}');
+    }
+  }
+
 }

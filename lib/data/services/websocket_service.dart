@@ -232,6 +232,13 @@ class WebSocketService {
           _deviceController.add(data);
         }
       }
+
+      if (type == 'device_marked') {
+        developer.log('Received device marked notification: ${data['device_id']}', name: 'WebSocket');
+        if (!_deviceController.isClosed) {
+          _deviceController.add(data);
+        }
+      }
     } catch (_) {
     }
   }
