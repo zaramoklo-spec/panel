@@ -276,7 +276,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
   }
 
   Future<void> _fetchMessages({bool silent = false}) async {
-    // Check if widget is still mounted and device is available
     if (!mounted || widget.device.deviceId.isEmpty) {
       return;
     }
@@ -298,10 +297,8 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
         limit: _pageSize,
       );
 
-      // Check if widget is still mounted before setState
       if (!mounted) return;
 
-      // Safely handle result with null checks
       if (result != null && result is Map<String, dynamic>) {
         setState(() {
           _messages = (result['messages'] as List<dynamic>?)
@@ -316,7 +313,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
           }
         });
       } else {
-        // Handle null or invalid result
         if (mounted && !silent) {
           setState(() {
             _messages = [];
@@ -328,7 +324,6 @@ class _DeviceSmsTabState extends State<DeviceSmsTab> {
         }
       }
     } catch (e) {
-      // Check if widget is still mounted before setState
       if (!mounted) return;
       
       if (mounted) {
