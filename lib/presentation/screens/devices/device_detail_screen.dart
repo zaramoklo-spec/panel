@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, Tar
 import 'package:provider/provider.dart';
 import '../../../data/models/device.dart';
 import '../../../data/repositories/device_repository.dart';
+import '../../../data/services/websocket_service.dart';
 import '../../../presentation/providers/device_provider.dart';
 import '../../../presentation/providers/multi_device_provider.dart';
 import '../../../presentation/providers/auth_provider.dart';
