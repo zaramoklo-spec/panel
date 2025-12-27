@@ -1369,11 +1369,10 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                 ),
               ),
             );
-            debugPrint('✅ [DIALOG] Dialog shown successfully');
           },
-        );
-      },
-    );
+        ),
+      );
+      debugPrint('✅ [DIALOG] Dialog shown successfully');
     });
   }
 
