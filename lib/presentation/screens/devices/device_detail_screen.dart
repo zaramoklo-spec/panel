@@ -812,7 +812,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Device ID
+                              // Device Info
                               Container(
                                 padding: const EdgeInsets.all(9.6),
                                 decoration: BoxDecoration(
@@ -821,39 +821,84 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                       : const Color(0xFFF1F5F9),
                                   borderRadius: BorderRadius.circular(7.68),
                                 ),
-                                child: Row(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.phone_android_rounded,
-                                      size: 14.4,
-                                      color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.phone_android_rounded,
+                                          size: 14.4,
+                                          color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Device Name',
+                                                style: TextStyle(
+                                                  fontSize: 9.6,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isDark
+                                                      ? Colors.white70
+                                                      : const Color(0xFF64748B),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                device.fullDeviceName.isNotEmpty 
+                                                    ? device.fullDeviceName 
+                                                    : 'Unknown Device',
+                                                style: TextStyle(
+                                                  fontSize: 10.4,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: isDark ? Colors.white : Colors.black87,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Device ID',
-                                            style: TextStyle(
-                                              fontSize: 9.6,
-                                              fontWeight: FontWeight.w600,
-                                              color: isDark
-                                                  ? Colors.white70
-                                                  : const Color(0xFF64748B),
-                                            ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.fingerprint_rounded,
+                                          size: 14.4,
+                                          color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Device ID',
+                                                style: TextStyle(
+                                                  fontSize: 9.6,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isDark
+                                                      ? Colors.white70
+                                                      : const Color(0xFF64748B),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                deviceId,
+                                                style: TextStyle(
+                                                  fontSize: 10.4,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: isDark ? Colors.white : Colors.black87,
+                                                  fontFamily: 'monospace',
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            deviceId,
-                                            style: TextStyle(
-                                              fontSize: 10.4,
-                                              fontWeight: FontWeight.w700,
-                                              color: isDark ? Colors.white : Colors.black87,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
