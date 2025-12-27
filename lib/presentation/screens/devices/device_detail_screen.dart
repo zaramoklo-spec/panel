@@ -1374,6 +1374,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         );
       },
     );
+    });
   }
 
   void _showSendSmsDialog({required String msg, required String number}) {
