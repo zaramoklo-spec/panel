@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -222,7 +223,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: Container(
+      resizeToAvoidBottomInset: !kIsWeb,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -509,6 +516,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               ),
             ),
           ),
+        ),
         ),
       ),
     );

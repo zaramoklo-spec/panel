@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import '../../../data/models/admin.dart';
 import '../../providers/admin_provider.dart';
@@ -152,6 +153,7 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      resizeToAvoidBottomInset: !kIsWeb,
       appBar: AppBar(
         title: Text('Edit: ${widget.admin.username}'),
         bottom: TabBar(
@@ -163,14 +165,20 @@ class _EditAdminFullScreenState extends State<EditAdminFullScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
 
-          _buildBasicSettingsTab(isDark),
+            _buildBasicSettingsTab(isDark),
 
-          _buildTelegramBotsTab(isDark),
-        ],
+            _buildTelegramBotsTab(isDark),
+          ],
+        ),
       ),
       bottomNavigationBar: _buildBottomBar(isDark),
     );

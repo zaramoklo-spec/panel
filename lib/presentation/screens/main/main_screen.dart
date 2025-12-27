@@ -989,6 +989,7 @@ class _DevicesPageState extends State<_DevicesPage> {
     final admin = authProvider.currentAdmin;
 
     return Scaffold(
+      resizeToAvoidBottomInset: !kIsWeb,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('Devices'),

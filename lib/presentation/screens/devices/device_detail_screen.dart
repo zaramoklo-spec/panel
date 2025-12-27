@@ -1305,6 +1305,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
     if (_isLoadingDevice) {
       return Scaffold(
+        resizeToAvoidBottomInset: !kIsWeb,
         backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -1335,6 +1336,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: !kIsWeb,
       backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {

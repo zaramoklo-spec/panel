@@ -203,7 +203,13 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: Container(
+      resizeToAvoidBottomInset: !kIsWeb,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -1175,6 +1181,7 @@ class _LeakLookupScreenState extends State<LeakLookupScreen>
             ),
           ),
         ],
+        ),
       ),
     );
   }

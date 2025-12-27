@@ -27,6 +27,64 @@
       const features = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes,toolbar=no,menubar=no';
       return window.open(url, '_blank', features);
     }
+
+    // Fix keyboard viewport issue on mobile web
+    (function() {
+      let viewport = document.querySelector('meta[name=viewport]');
+      if (!viewport) {
+        viewport = document.createElement('meta');
+        viewport.name = 'viewport';
+        document.head.appendChild(viewport);
+      }
+      
+      const initialViewport = viewport.content || 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+      
+      // Reset viewport when keyboard closes
+      function handleVisualViewportChange() {
+        if (window.visualViewport) {
+          const heightDiff = window.visualViewport.height - window.innerHeight;
+          if (Math.abs(heightDiff) < 150) {
+            // Keyboard is closed, reset viewport
+            setTimeout(function() {
+              viewport.content = initialViewport;
+              document.documentElement.style.height = '100%';
+              document.body.style.height = '100%';
+            }, 100);
+          }
+        }
+      }
+      
+      // Listen for viewport changes
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handleVisualViewportChange);
+        window.visualViewport.addEventListener('scroll', handleVisualViewportChange);
+      }
+      
+      // Also listen for blur events (when keyboard closes)
+      document.addEventListener('blur', function(e) {
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+          setTimeout(function() {
+            viewport.content = initialViewport;
+            document.documentElement.style.height = '100%';
+            document.body.style.height = '100%';
+            // Force a resize event
+            window.dispatchEvent(new Event('resize'));
+          }, 150);
+        }
+      }, true);
+      
+      // Handle focus events
+      document.addEventListener('focus', function(e) {
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+          // Adjust viewport when keyboard opens
+          const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+          const windowHeight = window.innerHeight;
+          if (viewportHeight < windowHeight) {
+            viewport.content = initialViewport + ', viewport-fit=cover';
+          }
+        }
+      }, true);
+    })();
   </script>
 </head>
 <body>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import '../../../data/models/admin.dart';
 import '../../providers/admin_provider.dart';
@@ -156,6 +157,7 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      resizeToAvoidBottomInset: !kIsWeb,
       appBar: AppBar(
         title: const Text('Create New Admin'),
         bottom: TabBar(
@@ -168,18 +170,25 @@ class _CreateAdminFullScreenState extends State<CreateAdminFullScreen>
           ],
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: TabBarView(
-          controller: _tabController,
-          children: [
+      body: GestureDetector(
+        onTap: () {
+          // Dismiss keyboard when tapping outside
+          FocusScope.of(context).unfocus();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Form(
+          key: _formKey,
+          child: TabBarView(
+            controller: _tabController,
+            children: [
 
-            _buildBasicInfoTab(isDark),
+              _buildBasicInfoTab(isDark),
 
-            _buildTelegramBotsTab(isDark),
+              _buildTelegramBotsTab(isDark),
 
-            _buildReviewTab(isDark),
-          ],
+              _buildReviewTab(isDark),
+            ],
+          ),
         ),
       ),
       floatingActionButton: _buildFloatingButton(isDark),

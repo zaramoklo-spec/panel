@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'dart:ui';
 import '../../providers/auth_provider.dart';
@@ -78,6 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: !kIsWeb,
       backgroundColor: Colors.transparent,
       body: RefreshIndicator(
         onRefresh: () async {
