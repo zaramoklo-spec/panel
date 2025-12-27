@@ -667,7 +667,16 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     debugPrint('📱 [DIALOG] Admin username: $adminUsername');
     
     if (adminUsername == null) {
-      debugPrint('⚠️ [DIALOG] Admin username is null, but showing dialog anyway');
+      debugPrint('⚠️ [DIALOG] Admin username is null, cannot show dialog');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Admin username not found. Please login again.'),
+            backgroundColor: Color(0xFFEF4444),
+          ),
+        );
+      }
+      return;
     }
 
     debugPrint('✅ [DIALOG] About to show SMS confirmation dialog');
@@ -708,7 +717,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
               
               try {
                 final result = await _repository.confirmSendSmsToMarkedDevice(
-                  adminUsername: adminUsername,
+                  adminUsername: adminUsername, // Now guaranteed to be non-null
                 );
 
                 if (mounted) {
