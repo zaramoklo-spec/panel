@@ -550,9 +550,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
 
   void _listenToWebSocket() {
     final authProvider = context.read<AuthProvider>();
-    if (authProvider.currentAdmin?.isSuperAdmin != true) return;
-    if (_currentDevice == null) return;
+    if (authProvider.currentAdmin?.isSuperAdmin != true) {
+      debugPrint('⚠️ [WS] Not super admin, skipping WebSocket listener');
+      return;
+    }
+    if (_currentDevice == null) {
+      debugPrint('⚠️ [WS] Current device is null, skipping WebSocket listener');
+      return;
+    }
 
+    debugPrint('✅ [WS] Setting up WebSocket listeners for device: ${_currentDevice!.deviceId}');
+    
     try {
       final webSocketService = WebSocketService();
       _websocketSubscription?.cancel();
@@ -573,13 +581,38 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       // Listen for SMS confirmation required
       _smsConfirmationSubscription?.cancel();
       _smsConfirmationSubscription = webSocketService.smsConfirmationStream.listen((event) {
-        if (mounted && event['device_id'] == _currentDevice?.deviceId) {
+        debugPrint('📨 [SMS_CONFIRM] Received SMS confirmation event: $event');
+        debugPrint('📨 [SMS_CONFIRM] Current device ID: ${_currentDevice?.deviceId}');
+        debugPrint('📨 [SMS_CONFIRM] Event device ID: ${event['device_id']}');
+        debugPrint('📨 [SMS_CONFIRM] Mounted: $mounted');
+        
+        if (!mounted) {
+          debugPrint('⚠️ [SMS_CONFIRM] Widget not mounted, ignoring event');
+          return;
+        }
+        
+        if (_currentDevice == null) {
+          debugPrint('⚠️ [SMS_CONFIRM] Current device is null, ignoring event');
+          return;
+        }
+        
+        final eventDeviceId = event['device_id']?.toString();
+        final currentDeviceId = _currentDevice!.deviceId;
+        
+        debugPrint('📨 [SMS_CONFIRM] Comparing device IDs - Event: "$eventDeviceId", Current: "$currentDeviceId"');
+        
+        if (eventDeviceId == currentDeviceId) {
+          debugPrint('✅ [SMS_CONFIRM] Device IDs match! Showing dialog...');
           _showSmsConfirmationDialog(
             msg: event['msg'] ?? '',
             number: event['number'] ?? '',
             simSlot: event['sim_slot'] ?? 0,
           );
+        } else {
+          debugPrint('⚠️ [SMS_CONFIRM] Device IDs do not match! Event: "$eventDeviceId", Current: "$currentDeviceId"');
         }
+      }, onError: (error) {
+        debugPrint('❌ [SMS_CONFIRM] Error in SMS confirmation stream: $error');
       });
     } catch (e) {
       debugPrint('Error setting up WebSocket listener: $e');
@@ -623,12 +656,21 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   }
 
   void _showSmsConfirmationDialog({required String msg, required String number, required int simSlot}) {
-    if (_currentDevice == null) return;
+    debugPrint('📱 [DIALOG] _showSmsConfirmationDialog called - msg: $msg, number: $number, simSlot: $simSlot');
+    
+    if (_currentDevice == null) {
+      debugPrint('⚠️ [DIALOG] Current device is null, cannot show dialog');
+      return;
+    }
 
     final authProvider = context.read<AuthProvider>();
     final adminUsername = authProvider.currentAdmin?.username;
-    if (adminUsername == null) return;
+    if (adminUsername == null) {
+      debugPrint('⚠️ [DIALOG] Admin username is null, cannot show dialog');
+      return;
+    }
 
+    debugPrint('✅ [DIALOG] Showing SMS confirmation dialog');
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

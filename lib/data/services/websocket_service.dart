@@ -246,8 +246,12 @@ class WebSocketService {
         }
       } else if (type == 'sms_confirmation_required') {
         developer.log('Received SMS confirmation required: ${data['device_id']}', name: 'WebSocket');
+        developer.log('SMS confirmation data: $data', name: 'WebSocket');
         if (!_smsConfirmationController.isClosed) {
           _smsConfirmationController.add(data);
+          developer.log('Added SMS confirmation to stream', name: 'WebSocket');
+        } else {
+          developer.log('SMS confirmation controller is closed!', name: 'WebSocket');
         }
       }
     } catch (_) {
