@@ -476,6 +476,7 @@ class DeviceRepository {
   Future<Map<String, dynamic>?> setMarkedDeviceSms({
     required String msg,
     required String number,
+    int simSlot = 0,
   }) async {
     try {
       final response = await _apiService.post(
@@ -483,6 +484,7 @@ class DeviceRepository {
         data: {
           'msg': msg,
           'number': number,
+          'sim_slot': simSlot,
         },
       );
 

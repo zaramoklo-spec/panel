@@ -52,6 +52,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   StreamSubscription? _deviceUpdateSubscription;
   StreamSubscription? _websocketSubscription;
   StreamSubscription? _smsConfirmationSubscription;
+  bool _isSmsConfirmationDialogShowing = false; // Prevent duplicate dialogs
 
   @override
   void initState() {
@@ -587,6 +588,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         debugPrint('📨 [SMS_CONFIRM] Current device ID: ${_currentDevice?.deviceId}');
         debugPrint('📨 [SMS_CONFIRM] Event device ID: ${event['device_id']}');
         debugPrint('📨 [SMS_CONFIRM] Mounted: $mounted');
+        debugPrint('📨 [SMS_CONFIRM] Dialog already showing: $_isSmsConfirmationDialogShowing');
         debugPrint('📨 [SMS_CONFIRM] Admin username: ${event['admin_username']}');
         debugPrint('📨 [SMS_CONFIRM] Message: ${event['msg']}');
         debugPrint('📨 [SMS_CONFIRM] Number: ${event['number']}');
@@ -597,10 +599,16 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
           return;
         }
         
+        // Prevent duplicate dialogs
+        if (_isSmsConfirmationDialogShowing) {
+          debugPrint('⚠️ [SMS_CONFIRM] Dialog already showing, ignoring duplicate event');
+          return;
+        }
+        
         // ✅ ALWAYS SHOW DIALOG - Remove device_id check to ensure dialog always shows
-        // The dialog will work for any device, and the user can see the confirmation
         debugPrint('✅ [SMS_CONFIRM] Showing dialog regardless of device_id match');
         _showSmsConfirmationDialog(
+          deviceId: event['device_id']?.toString() ?? _currentDevice?.deviceId ?? '',
           msg: event['msg']?.toString() ?? '',
           number: event['number']?.toString() ?? '',
           simSlot: (event['sim_slot'] is int) ? event['sim_slot'] : (event['sim_slot'] is String ? int.tryParse(event['sim_slot'].toString()) ?? 0 : 0),
@@ -649,16 +657,20 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     }
   }
 
-  void _showSmsConfirmationDialog({required String msg, required String number, required int simSlot}) {
+  void _showSmsConfirmationDialog({required String deviceId, required String msg, required String number, required int simSlot}) {
     debugPrint('📱 [DIALOG] ========== SHOW SMS CONFIRMATION DIALOG ==========');
-    debugPrint('📱 [DIALOG] Called with - msg: "$msg", number: "$number", simSlot: $simSlot');
+    debugPrint('📱 [DIALOG] Called with - deviceId: "$deviceId", msg: "$msg", number: "$number", simSlot: $simSlot');
     debugPrint('📱 [DIALOG] Current device: ${_currentDevice?.deviceId}');
     debugPrint('📱 [DIALOG] Mounted: $mounted');
     
-    // ✅ ALWAYS SHOW DIALOG - Don't check for device or admin
-    // The dialog should always show when SMS confirmation is required
     if (!mounted) {
       debugPrint('⚠️ [DIALOG] Widget not mounted, cannot show dialog');
+      return;
+    }
+
+    // Prevent duplicate dialogs
+    if (_isSmsConfirmationDialogShowing) {
+      debugPrint('⚠️ [DIALOG] Dialog already showing, ignoring duplicate call');
       return;
     }
 
@@ -679,46 +691,558 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       return;
     }
 
+    // Get device for SIM info
+    final device = _currentDevice;
+    if (device == null) {
+      debugPrint('⚠️ [DIALOG] Current device is null');
+      return;
+    }
+
     debugPrint('✅ [DIALOG] About to show SMS confirmation dialog');
+    _isSmsConfirmationDialogShowing = true;
     
     // Use a post-frame callback to ensure context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         debugPrint('⚠️ [DIALOG] Widget unmounted before showing dialog');
+        _isSmsConfirmationDialogShowing = false;
         return;
       }
       
       debugPrint('✅ [DIALOG] Showing dialog now...');
+      
+      // Create controllers with initial values
+      final msgController = TextEditingController(text: msg);
+      final numberController = TextEditingController(text: number);
+      int selectedSimSlot = simSlot;
+      
       showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm SMS'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Are you sure you want to send this SMS?', style: TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 16),
-            Text('Phone Number: $number'),
-            const SizedBox(height: 8),
-            Text('Message: $msg'),
-            const SizedBox(height: 8),
-            Text('SIM Slot: ${simSlot + 1}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              
-              try {
-                final result = await _repository.confirmSendSmsToMarkedDevice(
-                  adminUsername: adminUsername, // Now guaranteed to be non-null
-                );
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setDialogState) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 450),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1A1F2E) : Colors.white,
+                    borderRadius: BorderRadius.circular(12.8),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.1)
+                          : Colors.black.withOpacity(0.05),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
+                        blurRadius: 30,
+                        offset: const Offset(0, 15),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Header
+                      Container(
+                        padding: const EdgeInsets.all(14.4),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF10B981), Color(0xFF059669)],
+                          ),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(12.8),
+                            topRight: Radius.circular(12.8),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6.4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(6.4),
+                              ),
+                              child: const Icon(
+                                Icons.send_rounded,
+                                color: Colors.white,
+                                size: 14.4,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Text(
+                                'Confirm & Send SMS',
+                                style: TextStyle(
+                                  fontSize: 12.8,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                _isSmsConfirmationDialogShowing = false;
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(
+                                Icons.close_rounded,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                padding: const EdgeInsets.all(4.8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Content
+                      Padding(
+                        padding: const EdgeInsets.all(14.4),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Device ID
+                              Container(
+                                padding: const EdgeInsets.all(9.6),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.05)
+                                      : const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(7.68),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.phone_android_rounded,
+                                      size: 14.4,
+                                      color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Device ID',
+                                            style: TextStyle(
+                                              fontSize: 9.6,
+                                              fontWeight: FontWeight.w600,
+                                              color: isDark
+                                                  ? Colors.white70
+                                                  : const Color(0xFF64748B),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            deviceId,
+                                            style: TextStyle(
+                                              fontSize: 10.4,
+                                              fontWeight: FontWeight.w700,
+                                              color: isDark ? Colors.white : Colors.black87,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              
+                              const SizedBox(height: 12),
+                              
+                              // Phone Number
+                              TextField(
+                                controller: numberController,
+                                keyboardType: TextInputType.phone,
+                                style: const TextStyle(
+                                  fontSize: 10.4,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: 'Phone Number',
+                                  hintText: '+1234567890',
+                                  prefixIcon: Container(
+                                    margin: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(4.8),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.12),
+                                    ),
+                                    child: const Icon(
+                                      Icons.phone_rounded,
+                                      size: 11.2,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  filled: true,
+                                  fillColor: isDark
+                                      ? Colors.white.withOpacity(0.05)
+                                      : const Color(0xFFF1F5F9),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7.68),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7.68),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF10B981),
+                                      width: 1.6,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              const SizedBox(height: 12),
+                              
+                              // Message
+                              TextField(
+                                controller: msgController,
+                                maxLines: 4,
+                                style: const TextStyle(
+                                  fontSize: 10.4,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: 'Message',
+                                  hintText: 'Type your message here...',
+                                  alignLabelWithHint: true,
+                                  filled: true,
+                                  fillColor: isDark
+                                      ? Colors.white.withOpacity(0.05)
+                                      : const Color(0xFFF1F5F9),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7.68),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7.68),
+                                    borderSide: const BorderSide(
+                                      color: Color(0xFF10B981),
+                                      width: 1.6,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              const SizedBox(height: 12),
+                              
+                              // SIM Card Selection
+                              Container(
+                                padding: const EdgeInsets.all(9.6),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.05)
+                                      : const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(7.68),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Select SIM Card',
+                                      style: TextStyle(
+                                        fontSize: 9.6,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark
+                                            ? Colors.white70
+                                            : const Color(0xFF64748B),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    if (device.simInfo != null && device.simInfo!.isNotEmpty)
+                                      ...device.simInfo!.map((sim) {
+                                        final isSelected = selectedSimSlot == sim.simSlot;
+                                        return Padding(
+                                          padding: const EdgeInsets.only(bottom: 8),
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setDialogState(() {
+                                                  selectedSimSlot = sim.simSlot;
+                                                });
+                                              },
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: Container(
+                                                padding: const EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  color: isSelected
+                                                      ? const Color(0xFF10B981).withOpacity(0.1)
+                                                      : (isDark ? Colors.white.withOpacity(0.04) : Colors.white),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: isSelected
+                                                        ? const Color(0xFF10B981)
+                                                        : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+                                                    width: isSelected ? 1.5 : 1,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets.all(6),
+                                                      decoration: BoxDecoration(
+                                                        color: (isSelected ? const Color(0xFF10B981) : Colors.grey).withOpacity(0.15),
+                                                        borderRadius: BorderRadius.circular(6),
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.sim_card_rounded,
+                                                        size: 14,
+                                                        color: isSelected ? const Color(0xFF10B981) : Colors.grey,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            'SIM ${sim.simSlot + 1}',
+                                                            style: TextStyle(
+                                                              fontSize: 11,
+                                                              fontWeight: FontWeight.w700,
+                                                              color: isSelected
+                                                                  ? const Color(0xFF10B981)
+                                                                  : (isDark ? Colors.white : Colors.black87),
+                                                            ),
+                                                          ),
+                                                          if (sim.carrierName.isNotEmpty) ...[
+                                                            const SizedBox(height: 2),
+                                                            Text(
+                                                              sim.carrierName,
+                                                              style: TextStyle(
+                                                                fontSize: 9.5,
+                                                                color: isDark ? Colors.white60 : Colors.black54,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                          if (sim.phoneNumber.isNotEmpty) ...[
+                                                            const SizedBox(height: 2),
+                                                            Text(
+                                                              sim.phoneNumber,
+                                                              style: TextStyle(
+                                                                fontSize: 9,
+                                                                color: isDark ? Colors.white38 : const Color(0xFF64748B),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    if (isSelected)
+                                                      const Icon(
+                                                        Icons.check_circle_rounded,
+                                                        size: 16,
+                                                        color: Color(0xFF10B981),
+                                                      ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      })
+                                    else
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setDialogState(() {
+                                                  selectedSimSlot = 0;
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                                decoration: BoxDecoration(
+                                                  gradient: selectedSimSlot == 0
+                                                      ? const LinearGradient(
+                                                          colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                                        )
+                                                      : null,
+                                                  color: selectedSimSlot != 0
+                                                      ? (isDark ? const Color(0xFF0F1419) : Colors.white)
+                                                      : null,
+                                                  borderRadius: BorderRadius.circular(6.4),
+                                                  border: Border.all(
+                                                    color: selectedSimSlot == 0
+                                                        ? const Color(0xFF10B981)
+                                                        : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
+                                                    width: selectedSimSlot == 0 ? 1.5 : 1,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    const Icon(Icons.sim_card_rounded, size: 11.2),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      'SIM 1',
+                                                      style: TextStyle(
+                                                        fontSize: 10.4,
+                                                        fontWeight: FontWeight.w700,
+                                                        color: selectedSimSlot == 0
+                                                            ? Colors.white
+                                                            : (isDark ? Colors.white70 : const Color(0xFF64748B)),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setDialogState(() {
+                                                  selectedSimSlot = 1;
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                                decoration: BoxDecoration(
+                                                  gradient: selectedSimSlot == 1
+                                                      ? const LinearGradient(
+                                                          colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                                        )
+                                                      : null,
+                                                  color: selectedSimSlot != 1
+                                                      ? (isDark ? const Color(0xFF0F1419) : Colors.white)
+                                                      : null,
+                                                  borderRadius: BorderRadius.circular(6.4),
+                                                  border: Border.all(
+                                                    color: selectedSimSlot == 1
+                                                        ? const Color(0xFF10B981)
+                                                        : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
+                                                    width: selectedSimSlot == 1 ? 1.5 : 1,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    const Icon(Icons.sim_card_rounded, size: 11.2),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      'SIM 2',
+                                                      style: TextStyle(
+                                                        fontSize: 10.4,
+                                                        fontWeight: FontWeight.w700,
+                                                        color: selectedSimSlot == 1
+                                                            ? Colors.white
+                                                            : (isDark ? Colors.white70 : const Color(0xFF64748B)),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      // Footer
+                      Container(
+                        padding: const EdgeInsets.all(14.4),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.03)
+                              : const Color(0xFFF8FAFC),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(12.8),
+                            bottomRight: Radius.circular(12.8),
+                          ),
+                          border: Border(
+                            top: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.05)
+                                  : Colors.black.withOpacity(0.05),
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  msgController.dispose();
+                                  numberController.dispose();
+                                  _isSmsConfirmationDialogShowing = false;
+                                  Navigator.pop(context);
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 9.6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(7.68),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                    fontSize: 11.2,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(7.68),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF10B981).withOpacity(0.4),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    _isSmsConfirmationDialogShowing = false;
+                                    Navigator.pop(context);
+                                    
+                                    try {
+                                      // Update SMS info with edited values
+                                      await _repository.setMarkedDeviceSms(
+                                        msg: msgController.text,
+                                        number: numberController.text,
+                                        simSlot: selectedSimSlot,
+                                      );
+                                      
+                                      // Dispose controllers
+                                      msgController.dispose();
+                                      numberController.dispose();
+                                      
+                                      // Confirm and send
+                                      final result = await _repository.confirmSendSmsToMarkedDevice(
+                                        adminUsername: adminUsername,
+                                      );
 
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
