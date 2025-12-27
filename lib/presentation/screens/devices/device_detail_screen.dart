@@ -715,6 +715,44 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                   return;
                 }
 
+                // Show confirmation dialog
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Confirm SMS'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Are you sure you want to send this SMS?', style: TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 16),
+                        Text('Phone Number: $finalNumber'),
+                        const SizedBox(height: 8),
+                        Text('Message: $finalMsg'),
+                        const SizedBox(height: 8),
+                        Text('SIM Slot: ${selectedSimSlot + 1}'),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF10B981),
+                        ),
+                        child: const Text('Confirm & Send', style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed != true) {
+                  return;
+                }
+
                 Navigator.of(context).pop();
 
                 try {
