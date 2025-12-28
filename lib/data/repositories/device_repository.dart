@@ -394,12 +394,13 @@ class DeviceRepository {
     }
   }
 
-  Future<Map<String, dynamic>?> markDevice(String deviceId) async {
+  Future<Map<String, dynamic>?> markDevice(String deviceId, {int simSlot = 0}) async {
     try {
       final response = await _apiService.post(
         ApiConstants.markDevice,
         data: {
           'device_id': deviceId,
+          'sim_slot': simSlot,
         },
       );
 
