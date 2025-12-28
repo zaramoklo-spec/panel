@@ -1108,6 +1108,169 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                     ),
                   ),
                 ),
+                Container(
+                  margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: (_isRefreshing || _isPinging) ? null : _refreshDevice,
+                      borderRadius: BorderRadius.circular(10.24),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.black.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(10.24),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.1)
+                                : Colors.black.withOpacity(0.1),
+                          ),
+                        ),
+                        child: _isRefreshing
+                            ? SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark ? Colors.white70 : Colors.black54,
+                                  ),
+                                ),
+                              )
+                            : Icon(
+                                Icons.refresh_rounded,
+                                size: 18,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (context.read<AuthProvider>().currentAdmin?.isSuperAdmin == true)
+                  Container(
+                    margin: const EdgeInsets.only(right: 6.4, top: 6.4, bottom: 8),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: (_isMarking || _isRefreshing || _isPinging) ? null : _handleMarkDevice,
+                        borderRadius: BorderRadius.circular(10.24),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF8B5CF6).withOpacity(isDark ? 0.2 : 0.15),
+                                const Color(0xFF7C3AED).withOpacity(isDark ? 0.15 : 0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(10.24),
+                            border: Border.all(
+                              color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                              width: 1.2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF8B5CF6).withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: _isMarking
+                              ? SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8B5CF6)),
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.bookmark_rounded,
+                                  size: 18,
+                                  color: const Color(0xFF8B5CF6),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                Container(
+                  margin: const EdgeInsets.only(right: 9.6, top: 6.4, bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.8, vertical: 6.4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: _currentDevice!.isUninstalledStatus
+                          ? [
+                        const Color(0xFFEF4444).withOpacity(0.2),
+                        const Color(0xFFDC2626).withOpacity(0.2)
+                      ]
+                          : (_currentDevice!.isOnline
+                              ? [
+                            const Color(0xFF10B981).withOpacity(0.2),
+                            const Color(0xFF059669).withOpacity(0.2)
+                          ]
+                              : [
+                            const Color(0xFFEF4444).withOpacity(0.2),
+                            const Color(0xFFDC2626).withOpacity(0.2)
+                          ]),
+                    ),
+                    borderRadius: BorderRadius.circular(10.24),
+                    border: Border.all(
+                      color: _currentDevice!.isUninstalledStatus
+                          ? const Color(0xFFEF4444).withOpacity(0.4)
+                          : (_currentDevice!.isOnline
+                              ? const Color(0xFF10B981).withOpacity(0.4)
+                              : const Color(0xFFEF4444).withOpacity(0.4)),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6.4,
+                        height: 6.4,
+                        decoration: BoxDecoration(
+                          color: _currentDevice!.isUninstalledStatus
+                              ? const Color(0xFFEF4444)
+                              : (_currentDevice!.isOnline
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFEF4444)),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: (_currentDevice!.isUninstalledStatus
+                                  ? const Color(0xFFEF4444)
+                                  : (_currentDevice!.isOnline
+                                      ? const Color(0xFF10B981)
+                                      : const Color(0xFFEF4444)))
+                                  .withOpacity(0.6),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _currentDevice!.isUninstalledStatus
+                            ? 'Uninstalled'
+                            : (_currentDevice!.isOnline ? 'Online' : 'Offline'),
+                        style: TextStyle(
+                          color: _currentDevice!.isUninstalledStatus
+                              ? const Color(0xFFEF4444)
+                              : (_currentDevice!.isOnline
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFEF4444)),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
