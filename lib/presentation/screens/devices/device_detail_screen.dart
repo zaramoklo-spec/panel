@@ -569,6 +569,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     if (_currentDevice == null) return null;
     
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    int? selectedSimSlot; // Variable that persists in closure
     
     final result = await showDialog<int>(
       context: context,
@@ -654,8 +655,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                 // Content and Footer in StatefulBuilder
                 StatefulBuilder(
                   builder: (context, setDialogState) {
-                    int? dialogSelectedSimSlot;
-                    
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -678,7 +677,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                               
                               if (_currentDevice!.simInfo != null && _currentDevice!.simInfo!.isNotEmpty)
                                 ..._currentDevice!.simInfo!.map((sim) {
-                                  final isSelected = dialogSelectedSimSlot == sim.simSlot;
+                                  final isSelected = selectedSimSlot == sim.simSlot;
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: Material(
@@ -686,7 +685,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                       child: InkWell(
                                         onTap: () {
                                           setDialogState(() {
-                                            dialogSelectedSimSlot = sim.simSlot;
+                                            selectedSimSlot = sim.simSlot;
                                           });
                                         },
                                         borderRadius: BorderRadius.circular(8),
@@ -774,9 +773,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                       child: _buildSimSlotButton(
                                         0,
                                         'SIM 1',
-                                        dialogSelectedSimSlot == 0,
+                                        selectedSimSlot == 0,
                                         isDark,
-                                        () => setDialogState(() => dialogSelectedSimSlot = 0),
+                                        () => setDialogState(() => selectedSimSlot = 0),
                                       ),
                                     ),
                                     const SizedBox(width: 8),
@@ -784,9 +783,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                       child: _buildSimSlotButton(
                                         1,
                                         'SIM 2',
-                                        dialogSelectedSimSlot == 1,
+                                        selectedSimSlot == 1,
                                         isDark,
-                                        () => setDialogState(() => dialogSelectedSimSlot = 1),
+                                        () => setDialogState(() => selectedSimSlot = 1),
                                       ),
                                     ),
                                   ],
@@ -848,8 +847,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                     ],
                                   ),
                                   child: ElevatedButton(
-                                    onPressed: dialogSelectedSimSlot != null
-                                        ? () => Navigator.pop(context, dialogSelectedSimSlot)
+                                    onPressed: selectedSimSlot != null
+                                        ? () => Navigator.pop(context, selectedSimSlot)
                                         : null,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.transparent,
