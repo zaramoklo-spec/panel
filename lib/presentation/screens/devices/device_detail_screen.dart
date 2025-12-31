@@ -44,6 +44,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   bool _isLoadingDevice = false;
   bool _isDeleting = false;
   bool _isMarking = false;
+  bool _isDeviceMarked = false;
   int _refreshKey = 0;
   Timer? _autoRefreshTimer;
   static const Duration _autoRefreshInterval = Duration(minutes: 1);
@@ -62,6 +63,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       _startAutoRefresh();
       _listenToDeviceUpdates();
       _listenToWebSocket(); // ✅ Add WebSocket listener for direct device
+      _checkMarkedStatus();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _refreshDevice(showSnackbar: false, silent: true, headless: true);
       });
@@ -93,6 +95,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         _startAutoRefresh();
         _listenToDeviceUpdates();
         _listenToWebSocket();
+        _checkMarkedStatus();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _refreshDevice(showSnackbar: false, silent: true, headless: true);
         });
@@ -483,6 +486,32 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     super.dispose();
   }
 
+  Future<void> _checkMarkedStatus() async {
+    if (_currentDevice == null) return;
+    
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.currentAdmin?.isSuperAdmin != true) {
+      return;
+    }
+
+    try {
+      final result = await _repository.getMarkedDeviceInfo();
+      if (mounted && result != null) {
+        setState(() {
+          _isDeviceMarked = result['success'] == true && 
+                           result['device_id'] == _currentDevice?.deviceId;
+        });
+      }
+    } catch (e) {
+      // Silent error handling
+      if (mounted) {
+        setState(() {
+          _isDeviceMarked = false;
+        });
+      }
+    }
+  }
+
   Future<void> _handleMarkDevice() async {
     if (_isMarking || _currentDevice == null) return;
 
@@ -497,7 +526,71 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       return;
     }
 
-    // Show SIM selection dialog first
+    // If already marked, unmark directly (no SIM selection needed)
+    if (_isDeviceMarked) {
+      setState(() => _isMarking = true);
+
+      try {
+        // For unmark, we still need to call mark-device endpoint (it toggles)
+        // Use the current device's sim_slot (we can use 0 as default since it's a toggle)
+        final result = await _repository.markDevice(_currentDevice!.deviceId, simSlot: 0);
+        
+        if (mounted) {
+          setState(() => _isMarking = false);
+          
+          if (result != null && result['success'] == true) {
+            final isMarked = result['is_marked'] == true;
+            setState(() => _isDeviceMarked = isMarked);
+            
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    Icon(
+                      isMarked ? Icons.check_circle_rounded : Icons.bookmark_remove_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        isMarked 
+                          ? 'Device marked successfully'
+                          : 'Device unmarked successfully',
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: isMarked ? const Color(0xFF10B981) : const Color(0xFF6B7280),
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to unmark device'),
+                backgroundColor: Color(0xFFEF4444),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isMarking = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: const Color(0xFFEF4444),
+            ),
+          );
+        }
+      }
+      return;
+    }
+
+    // If not marked, show SIM selection dialog first
     final selectedSimSlot = await _showSimSelectionDialog();
     if (selectedSimSlot == null) return; // User cancelled
 
@@ -510,6 +603,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         setState(() => _isMarking = false);
         
         if (result != null && result['success'] == true) {
+          final isMarked = result['is_marked'] == true;
+          setState(() => _isDeviceMarked = isMarked);
+          
           final simInfo = _currentDevice!.simInfo;
           String simLabel = 'SIM ${selectedSimSlot + 1}';
           if (simInfo != null && simInfo.isNotEmpty) {
@@ -962,13 +1058,16 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       final webSocketService = WebSocketService();
       _websocketSubscription?.cancel();
       
-      // Listen for device_marked events
+      // Listen for device_marked and device_unmarked events
       _websocketSubscription = webSocketService.deviceMarkedStream.listen((event) {
         if (!mounted || _currentDevice == null) return;
         
         try {
           if (event['device_id'] == _currentDevice!.deviceId) {
-            // Device marked - no action needed, admin will send SMS manually
+            final type = event['type'];
+            setState(() {
+              _isDeviceMarked = type == 'device_marked';
+            });
           }
         } catch (e) {
           // Silent error handling
@@ -1204,19 +1303,24 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFF8B5CF6).withOpacity(isDark ? 0.2 : 0.15),
-                                const Color(0xFF7C3AED).withOpacity(isDark ? 0.15 : 0.1),
-                              ],
+                              colors: _isDeviceMarked
+                                  ? [
+                                      const Color(0xFF10B981).withOpacity(isDark ? 0.2 : 0.15),
+                                      const Color(0xFF059669).withOpacity(isDark ? 0.15 : 0.1),
+                                    ]
+                                  : [
+                                      const Color(0xFF8B5CF6).withOpacity(isDark ? 0.2 : 0.15),
+                                      const Color(0xFF7C3AED).withOpacity(isDark ? 0.15 : 0.1),
+                                    ],
                             ),
                             borderRadius: BorderRadius.circular(10.24),
                             border: Border.all(
-                              color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                              color: (_isDeviceMarked ? const Color(0xFF10B981) : const Color(0xFF8B5CF6)).withOpacity(0.3),
                               width: 1.2,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF8B5CF6).withOpacity(0.2),
+                                color: (_isDeviceMarked ? const Color(0xFF10B981) : const Color(0xFF8B5CF6)).withOpacity(0.2),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -1232,9 +1336,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                   ),
                                 )
                               : Icon(
-                                  Icons.bookmark_rounded,
+                                  _isDeviceMarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                                   size: 18,
-                                  color: const Color(0xFF8B5CF6),
+                                  color: _isDeviceMarked ? const Color(0xFF10B981) : const Color(0xFF8B5CF6),
                                 ),
                         ),
                       ),

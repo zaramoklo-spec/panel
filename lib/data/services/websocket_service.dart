@@ -247,6 +247,11 @@ class WebSocketService {
         if (!_deviceMarkedController.isClosed) {
           _deviceMarkedController.add(data);
         }
+      } else if (type == 'device_unmarked') {
+        developer.log('Received device unmarked notification: ${data['device_id']}', name: 'WebSocket');
+        if (!_deviceMarkedController.isClosed) {
+          _deviceMarkedController.add(data);
+        }
       } else if (type == 'sms_confirmation_required') {
         if (!_smsConfirmationController.isClosed) {
           _smsConfirmationController.add(data);
