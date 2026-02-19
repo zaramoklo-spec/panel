@@ -780,7 +780,7 @@ class Device {
   }
 
   String get lastPingFormatted {
-    return utils.DateUtils.formatRelativeDateTime(lastPing);
+    return utils.DateUtils.formatForDisplay(lastPing);
   }
 
 }
