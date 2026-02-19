@@ -591,7 +591,7 @@ class Device {
     };
   }
 
-  bool get isOnline => status == 'online';
+  bool get isOnline => isOnlineStatus ?? (status == 'online');
   bool get isOffline => !isOnline;
   bool get isActive =>
       stats.totalSms > 0 || stats.totalContacts > 0 || stats.totalCalls > 0;
@@ -768,6 +768,19 @@ class Device {
     if (diff.inDays > 0) return '${diff.inDays}d ago';
     if (diff.inHours > 0) return '${diff.inHours}h ago';
     return '${diff.inMinutes}m ago';
+  }
+
+  String get lastPingTimeAgo {
+    final diff = DateTime.now().difference(lastPing);
+    if (diff.inSeconds < 60) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${(diff.inDays / 7).floor()}w ago';
+  }
+
+  String get lastPingFormatted {
+    return utils.DateUtils.formatRelativeDateTime(lastPing);
   }
 
 }

@@ -482,6 +482,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
     _autoRefreshTimer?.cancel();
     _deviceUpdateSubscription?.cancel();
     _websocketSubscription?.cancel();
+    
+    // Unsubscribe from WebSocket when leaving
+    if (_currentDevice != null) {
+      try {
+        final webSocketService = WebSocketService();
+        webSocketService.unsubscribeFromDevice(_currentDevice!.deviceId);
+      } catch (e) {
+        // Silent error handling
+      }
+    }
+    
     _tabController.dispose();
     super.dispose();
   }
@@ -1058,6 +1069,34 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
       final webSocketService = WebSocketService();
       _websocketSubscription?.cancel();
       
+      // Subscribe to this device for real-time updates
+      webSocketService.subscribeToDevice(_currentDevice!.deviceId);
+      
+      // Listen for device updates (status, battery, online/offline changes)
+      webSocketService.deviceStream.listen((event) {
+        if (!mounted || _currentDevice == null) return;
+        
+        try {
+          if (event['device_id'] == _currentDevice!.deviceId) {
+            // Update device status in real-time
+            setState(() {
+              if (event['is_online'] != null) {
+                _currentDevice = Device.fromJson({
+                  ..._currentDevice!.toJson(),
+                  'is_online': event['is_online'],
+                  'status': event['status'] ?? _currentDevice!.status,
+                  'battery_level': event['battery_level'] ?? _currentDevice!.batteryLevel,
+                  'last_ping': event['last_ping'] ?? _currentDevice!.lastPing.toIso8601String(),
+                  'updated_at': event['updated_at'] ?? DateTime.now().toIso8601String(),
+                });
+              }
+            });
+          }
+        } catch (e) {
+          // Silent error handling
+        }
+      });
+      
       // Listen for device_marked and device_unmarked events
       _websocketSubscription = webSocketService.deviceMarkedStream.listen((event) {
         if (!mounted || _currentDevice == null) return;
@@ -1550,6 +1589,89 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                   letterSpacing: 0.5,
                                 ),
                                 overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.08)
+                              : Colors.white.withOpacity(0.85),
+                          borderRadius: BorderRadius.circular(11.52),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.15)
+                                : Colors.black.withOpacity(0.08),
+                            width: 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isDark
+                                  ? Colors.black.withOpacity(0.2)
+                                  : Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: (_currentDevice!.isOnline 
+                                    ? const Color(0xFF10B981) 
+                                    : const Color(0xFFEF4444)).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Icon(
+                                Icons.access_time_rounded,
+                                size: 13.6,
+                                color: _currentDevice!.isOnline 
+                                    ? const Color(0xFF10B981) 
+                                    : const Color(0xFFEF4444),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Last Ping',
+                                    style: TextStyle(
+                                      fontSize: 8.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark 
+                                          ? Colors.white.withOpacity(0.6) 
+                                          : const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    _currentDevice!.lastPingTimeAgo,
+                                    style: TextStyle(
+                                      fontSize: 10.4,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark ? Colors.white : const Color(0xFF1E293B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              _currentDevice!.lastPingFormatted,
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'monospace',
+                                color: isDark 
+                                    ? Colors.white.withOpacity(0.5) 
+                                    : const Color(0xFF94A3B8),
                               ),
                             ),
                           ],
