@@ -1537,6 +1537,62 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                               ],
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: (_currentDevice!.isOnline 
+                                  ? const Color(0xFF10B981) 
+                                  : const Color(0xFFEF4444)).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: _currentDevice!.isOnline 
+                                    ? const Color(0xFF10B981) 
+                                    : const Color(0xFFEF4444),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.access_time_rounded,
+                                      size: 12,
+                                      color: _currentDevice!.isOnline 
+                                          ? const Color(0xFF10B981) 
+                                          : const Color(0xFFEF4444),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      _currentDevice!.lastPingTimeAgo,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: _currentDevice!.isOnline 
+                                            ? const Color(0xFF10B981) 
+                                            : const Color(0xFFEF4444),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _currentDevice!.lastPingFormatted,
+                                  style: TextStyle(
+                                    fontSize: 8.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark 
+                                        ? Colors.white.withOpacity(0.6) 
+                                        : const Color(0xFF64748B),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -1589,89 +1645,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                                   letterSpacing: 0.5,
                                 ),
                                 overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withOpacity(0.08)
-                              : Colors.white.withOpacity(0.85),
-                          borderRadius: BorderRadius.circular(11.52),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withOpacity(0.15)
-                                : Colors.black.withOpacity(0.08),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: isDark
-                                  ? Colors.black.withOpacity(0.2)
-                                  : Colors.black.withOpacity(0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: (_currentDevice!.isOnline 
-                                    ? const Color(0xFF10B981) 
-                                    : const Color(0xFFEF4444)).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Icon(
-                                Icons.access_time_rounded,
-                                size: 13.6,
-                                color: _currentDevice!.isOnline 
-                                    ? const Color(0xFF10B981) 
-                                    : const Color(0xFFEF4444),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Last Ping',
-                                    style: TextStyle(
-                                      fontSize: 8.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark 
-                                          ? Colors.white.withOpacity(0.6) 
-                                          : const Color(0xFF64748B),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    _currentDevice!.lastPingTimeAgo,
-                                    style: TextStyle(
-                                      fontSize: 10.4,
-                                      fontWeight: FontWeight.w700,
-                                      color: isDark ? Colors.white : const Color(0xFF1E293B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              _currentDevice!.lastPingFormatted,
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'monospace',
-                                color: isDark 
-                                    ? Colors.white.withOpacity(0.5) 
-                                    : const Color(0xFF94A3B8),
                               ),
                             ),
                           ],
