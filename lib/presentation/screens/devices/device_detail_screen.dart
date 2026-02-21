@@ -1089,7 +1089,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                   // ❌ DON'T use DateTime.now() as fallback! Keep existing timestamps if not provided
                   'last_ping': event['last_ping'] ?? _currentDevice!.lastPing.toIso8601String(),
                   'last_online_update': event['last_online_update'] ?? _currentDevice!.lastOnlineUpdate?.toIso8601String(),
-                  'updated_at': event['updated_at'] ?? _currentDevice!.updatedAt.toIso8601String(),
+                  'updated_at': event['updated_at'] ?? _currentDevice!.updatedAt?.toIso8601String(),
                 });
               }
             });
