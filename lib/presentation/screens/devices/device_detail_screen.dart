@@ -1087,6 +1087,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                   'status': event['status'] ?? _currentDevice!.status,
                   'battery_level': event['battery_level'] ?? _currentDevice!.batteryLevel,
                   'last_ping': event['last_ping'] ?? _currentDevice!.lastPing.toIso8601String(),
+                  'last_online_update': event['last_online_update'] ?? event['updated_at'] ?? DateTime.now().toIso8601String(),
                   'updated_at': event['updated_at'] ?? DateTime.now().toIso8601String(),
                 });
               }

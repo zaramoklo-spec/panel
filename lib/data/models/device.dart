@@ -771,7 +771,9 @@ class Device {
   }
 
   String get lastPingTimeAgo {
-    final diff = DateTime.now().difference(lastPing);
+    // Use lastOnlineUpdate if available (more accurate), otherwise fall back to lastPing
+    final referenceTime = lastOnlineUpdate ?? lastPing;
+    final diff = DateTime.now().difference(referenceTime);
     if (diff.inSeconds < 60) return 'Just now';
     if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
     if (diff.inHours < 24) return '${diff.inHours}h ago';
@@ -780,7 +782,9 @@ class Device {
   }
 
   String get lastPingFormatted {
-    return utils.DateUtils.formatForDisplay(lastPing);
+    // Use lastOnlineUpdate if available (more accurate), otherwise fall back to lastPing
+    final referenceTime = lastOnlineUpdate ?? lastPing;
+    return utils.DateUtils.formatForDisplay(referenceTime);
   }
 
 }
