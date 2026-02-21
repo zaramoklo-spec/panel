@@ -161,8 +161,17 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
               updatedDevice.stats.totalContacts != _currentDevice!.stats.totalContacts;
           
           if (hasStatusChange || hasDataChange) {
+            // 🔍 LOG: Device update from provider
+            print('🔄 [PROVIDER] Device update detected');
+            print('🔄 [PROVIDER] hasStatusChange: $hasStatusChange, hasDataChange: $hasDataChange');
+            print('🔄 [PROVIDER] BEFORE - lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
+            print('🔄 [PROVIDER] OLD last_ping: ${_currentDevice!.lastPing}');
+            print('🔄 [PROVIDER] NEW last_ping: ${updatedDevice.lastPing}');
+            
             // Headless update: update device silently
             _currentDevice = updatedDevice;
+            
+            print('🔄 [PROVIDER] AFTER - lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
             
             // Only trigger setState for critical UI changes (status, battery)
             // Data changes (SMS count, contacts) don't need immediate UI update
@@ -304,22 +313,44 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
   Future<void> _handlePingDevice() async {
     if (_isPinging || _currentDevice == null || _currentDevice!.isUninstalledStatus) return;
 
+    // 🔍 LOG: Before ping
+    print('🔵 [PING] BEFORE PING - Device: ${_currentDevice!.deviceId}');
+    print('🔵 [PING] last_ping: ${_currentDevice!.lastPing}');
+    print('🔵 [PING] last_online_update: ${_currentDevice!.lastOnlineUpdate}');
+    print('🔵 [PING] lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
+
     setState(() => _isPinging = true);
+
+    // 🔍 LOG: After setState
+    print('🟡 [PING] AFTER setState - lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
 
     final deviceProvider = context.read<DeviceProvider>();
 
     try {
+      print('🟠 [PING] Sending command...');
       final success = await deviceProvider.sendCommand(
         _currentDevice!.deviceId,
         'ping',
         parameters: {'type': 'firebase'},
       );
+      print('🟠 [PING] Command sent - success: $success');
 
       await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
         setState(() => _isPinging = false);
+        
+        // 🔍 LOG: Before refresh
+        print('🟣 [PING] BEFORE REFRESH - lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
+        
         await _refreshDevice();
+        
+        // 🔍 LOG: After refresh
+        print('🟢 [PING] AFTER REFRESH - Device: ${_currentDevice!.deviceId}');
+        print('🟢 [PING] last_ping: ${_currentDevice!.lastPing}');
+        print('🟢 [PING] last_online_update: ${_currentDevice!.lastOnlineUpdate}');
+        print('🟢 [PING] lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -1078,6 +1109,14 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
         
         try {
           if (event['device_id'] == _currentDevice!.deviceId) {
+            // 🔍 LOG: WebSocket event received
+            print('📡 [WS] Event received for device: ${event['device_id']}');
+            print('📡 [WS] is_online: ${event['is_online']}');
+            print('📡 [WS] status: ${event['status']}');
+            print('📡 [WS] last_ping: ${event['last_ping']}');
+            print('📡 [WS] last_online_update: ${event['last_online_update']}');
+            print('📡 [WS] BEFORE UPDATE - lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
+            
             // Update device status in real-time
             setState(() {
               if (event['is_online'] != null) {
@@ -1091,10 +1130,13 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen>
                   'last_online_update': event['last_online_update'] ?? _currentDevice!.lastOnlineUpdate?.toIso8601String(),
                   'updated_at': event['updated_at'] ?? _currentDevice!.updatedAt?.toIso8601String(),
                 });
+                
+                print('📡 [WS] AFTER UPDATE - lastPingTimeAgo: ${_currentDevice!.lastPingTimeAgo}');
               }
             });
           }
         } catch (e) {
+          print('❌ [WS] Error: $e');
           // Silent error handling
         }
       });
