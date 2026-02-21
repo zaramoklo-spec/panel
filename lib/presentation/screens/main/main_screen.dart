@@ -800,6 +800,8 @@ class _DevicesPageState extends State<_DevicesPage> {
         parameters: {'type': 'firebase'},
       );
 
+      // Don't refresh immediately! Wait for device to respond
+      // The device will send /ping-response which will trigger WebSocket update
       await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
@@ -809,7 +811,7 @@ class _DevicesPageState extends State<_DevicesPage> {
         });
 
         if (success) {
-          await deviceProvider.refreshSingleDevice(deviceId);
+          // Start polling to check if device responded (via WebSocket or polling)
           _startDeviceStatusWatcher(deviceId);
         }
 
